@@ -193,6 +193,12 @@ public class Customer { // extends AbstractSelfValidator<Customer> {
 	public void validate() {
         MessageBuilder messageBuilder = new MessageBuilder();
         
+        if (id == null) {
+            messageBuilder.append("id must not be null.\n");
+        } else if (id < 1) {
+            messageBuilder.append("id must be positive and higher than 0.\n");
+        }
+        
         if (messageBuilder.length() > 0) {
             throw new IllegalStateException(messageBuilder.build().getContentRaw());
         }

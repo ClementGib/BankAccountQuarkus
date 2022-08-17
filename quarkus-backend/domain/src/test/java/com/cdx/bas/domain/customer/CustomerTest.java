@@ -115,4 +115,116 @@ public class CustomerTest {
             assertThat(exception.getMessage()).hasToString("id must be positive and higher than 0.\n");
         }
     }
+    
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_firstNameIsEmptyString() {
+        try {
+            new Customer(10L,
+                    "",
+                    "Dupont",
+                    Gender.MALE,
+                    MaritalStatus.SINGLE,
+                    LocalDate.of(1995, 05, 05),
+                    "FR",
+                    "100 avenue de la république",
+                    "Paris",
+                    "jean.dupont@yahoo.fr",
+                    "+33642645678",
+                    null,
+                    null);
+
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("firstName must contain at least 1 character.\n");
+        }
+    }
+
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_firstNameIsTooLong() {
+        try {
+            String longStr = "Blaine Charles David Earl Frederick Gerald Hubert Irvin John Kenneth Lloyd Martin "
+                    + "Nero Oliver Paul Quincy Randolph Sherman Thomas Uncas Victor William Xerxes Yancy Zeus "
+                    + "Wolfeschlegelsteinhausenbergerdorffwelchevoralternwarengewissenhaftschaferswessenschaf"
+                    + "ewarenwohlgepflegeundsorgfaltigkeitbeschutzenvonangreifendurchihrraubgierigfeindewelch"
+                    + "evoralternzwolftausendjahresvorandieerscheinenvanderersteerdemenschderraumschiffgebrau"
+                    + "chlichtalsseinursprungvonkraftgestartseinlangefahrthinzwischensternartigraumaufdersuch"
+                    + "enachdiesternwelchegehabtbewohnbarplanetenkreisedrehensichundwohinderneurassevonversta"
+                    + "ndigmenschlichkeitkonntefortpflanzenundsicherfreuenanlebenslanglichfreudeundruhemitnic"
+                    + "hteinfurchtvorangreifenvonandererintelligentgeschopfsvonhinzwischensternartigraum.";
+
+            new Customer(10L,
+                    longStr,
+                    "Dupont",
+                    Gender.MALE,
+                    MaritalStatus.SINGLE,
+                    LocalDate.of(1995, 05, 05),
+                    "FR",
+                    "100 avenue de la république",
+                    "Paris",
+                    "jean.dupont@yahoo.fr",
+                    "+33642645678",
+                    null,
+                    null);
+
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("firstName cannot have more than 750 characters.\n");
+        }
+    }
+
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_lastNameIsEmptyString() {
+        try {
+            new Customer(10L,
+                    "Jean",
+                    "",
+                    Gender.MALE,
+                    MaritalStatus.SINGLE,
+                    LocalDate.of(1995, 05, 05),
+                    "FR",
+                    "100 avenue de la république", 
+                    "Paris", 
+                   "jean.dupont@yahoo.fr",
+                   "+33642645678",
+                   null,
+                   null);
+
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("lastName  must contain at least 1 character.\n");
+        }
+    }
+
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_lastNameIsTooLong() {
+        try {
+            String longStr = "Blaine Charles David Earl Frederick Gerald Hubert Irvin John Kenneth Lloyd Martin "
+                    + "Nero Oliver Paul Quincy Randolph Sherman Thomas Uncas Victor William Xerxes Yancy Zeus "
+                    + "Wolfeschlegelsteinhausenbergerdorffwelchevoralternwarengewissenhaftschaferswessenschaf"
+                    + "ewarenwohlgepflegeundsorgfaltigkeitbeschutzenvonangreifendurchihrraubgierigfeindewelch"
+                    + "evoralternzwolftausendjahresvorandieerscheinenvanderersteerdemenschderraumschiffgebrau"
+                    + "chlichtalsseinursprungvonkraftgestartseinlangefahrthinzwischensternartigraumaufdersuch"
+                    + "enachdiesternwelchegehabtbewohnbarplanetenkreisedrehensichundwohinderneurassevonversta"
+                    + "ndigmenschlichkeitkonntefortpflanzenundsicherfreuenanlebenslanglichfreudeundruhemitnic"
+                    + "hteinfurchtvorangreifenvonandererintelligentgeschopfsvonhinzwischensternartigraum.";
+
+            new Customer(10L,
+                    "Jean",
+                    longStr,
+                    Gender.MALE,
+                    MaritalStatus.SINGLE,
+                    LocalDate.of(1995, 05, 05),
+                    "FR",
+                    "100 avenue de la république",
+                    "Paris",
+                   "jean.dupont@yahoo.fr",
+                   "+33642645678",
+                   null,
+                   null);
+
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("lastName cannot have more than 750 characters.\n");
+        }
+    }
 }
