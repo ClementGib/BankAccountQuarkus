@@ -215,6 +215,20 @@ public class Customer { // extends AbstractSelfValidator<Customer> {
             messageBuilder.append("lastName cannot have more than 750 characters.\n");
         }
         
+        if (gender == null) {
+            messageBuilder.append("gender must not be null.\n");
+        }
+        
+        if (maritalStatus == null) {
+            messageBuilder.append("maritalStatus must not be null.\n");
+        }
+        
+        if (birthdate == null) {
+            messageBuilder.append("birthdate must not be null.\n");
+        } else if (birthdate != null && birthdate.isAfter(LocalDate.now())) {
+            messageBuilder.append("birthdate cannot be null and before the current time.\n");
+        }
+        
         if (messageBuilder.length() > 0) {
             throw new IllegalStateException(messageBuilder.build().getContentRaw());
         }
