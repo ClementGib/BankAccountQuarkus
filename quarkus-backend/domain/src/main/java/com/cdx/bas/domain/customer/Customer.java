@@ -199,6 +199,22 @@ public class Customer { // extends AbstractSelfValidator<Customer> {
             messageBuilder.append("id must be positive and higher than 0.\n");
         }
         
+        if (firstName == null) {
+            messageBuilder.append("firstName must not be null.\n");
+        } else if (firstName.length() < 1) {
+            messageBuilder.append("firstName must contain at least 1 character.\n");
+        } else if (firstName.length() > 750) {
+            messageBuilder.append("firstName cannot have more than 750 characters.\n");
+        }
+        
+        if (lastName == null) {
+            messageBuilder.append("lastName must not be null.\n");
+        } else if (lastName.length() < 1) {
+            messageBuilder.append("lastName  must contain at least 1 character.\n");
+        } else if (lastName.length() > 750) {
+            messageBuilder.append("lastName cannot have more than 750 characters.\n");
+        }
+        
         if (messageBuilder.length() > 0) {
             throw new IllegalStateException(messageBuilder.build().getContentRaw());
         }

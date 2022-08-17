@@ -38,6 +38,7 @@ public class CustomerTest {
 		customer.setPhoneNumber("+33642645678");
 		customer.setAccounts(accounts);
 		customer.setMetadatas(metadatas);
+		
 		customer.validate();
 
 		assertThat(customer.getId()).isEqualTo(10);
@@ -74,6 +75,7 @@ public class CustomerTest {
 		customer.setPhoneNumber("+33642645678");
 		customer.setAccounts(null);
 		customer.setMetadatas(null);
+		
 		customer.validate();
 		
 		assertThat(customer.getId()).isEqualTo(10);
@@ -119,7 +121,7 @@ public class CustomerTest {
     @Test
     public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_firstNameIsEmptyString() {
         try {
-            new Customer(10L,
+        	Customer customer = new Customer(10L,
                     "",
                     "Dupont",
                     Gender.MALE,
@@ -133,6 +135,7 @@ public class CustomerTest {
                     null,
                     null);
 
+            customer.validate();
             fail();
         } catch (IllegalStateException exception) {
             assertThat(exception.getMessage()).hasToString("firstName must contain at least 1 character.\n");
@@ -152,7 +155,7 @@ public class CustomerTest {
                     + "ndigmenschlichkeitkonntefortpflanzenundsicherfreuenanlebenslanglichfreudeundruhemitnic"
                     + "hteinfurchtvorangreifenvonandererintelligentgeschopfsvonhinzwischensternartigraum.";
 
-            new Customer(10L,
+            Customer customer = new Customer(10L,
                     longStr,
                     "Dupont",
                     Gender.MALE,
@@ -165,7 +168,8 @@ public class CustomerTest {
                     "+33642645678",
                     null,
                     null);
-
+            
+        	customer.validate();
             fail();
         } catch (IllegalStateException exception) {
             assertThat(exception.getMessage()).hasToString("firstName cannot have more than 750 characters.\n");
@@ -175,7 +179,7 @@ public class CustomerTest {
     @Test
     public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_lastNameIsEmptyString() {
         try {
-            new Customer(10L,
+        	Customer customer = new Customer(10L,
                     "Jean",
                     "",
                     Gender.MALE,
@@ -189,6 +193,7 @@ public class CustomerTest {
                    null,
                    null);
 
+        	customer.validate();
             fail();
         } catch (IllegalStateException exception) {
             assertThat(exception.getMessage()).hasToString("lastName  must contain at least 1 character.\n");
@@ -208,7 +213,7 @@ public class CustomerTest {
                     + "ndigmenschlichkeitkonntefortpflanzenundsicherfreuenanlebenslanglichfreudeundruhemitnic"
                     + "hteinfurchtvorangreifenvonandererintelligentgeschopfsvonhinzwischensternartigraum.";
 
-            new Customer(10L,
+            Customer customer = new Customer(10L,
                     "Jean",
                     longStr,
                     Gender.MALE,
@@ -222,6 +227,7 @@ public class CustomerTest {
                    null,
                    null);
 
+        	customer.validate();
             fail();
         } catch (IllegalStateException exception) {
             assertThat(exception.getMessage()).hasToString("lastName cannot have more than 750 characters.\n");
