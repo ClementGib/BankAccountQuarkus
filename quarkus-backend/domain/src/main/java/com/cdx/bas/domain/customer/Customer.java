@@ -7,7 +7,7 @@ import java.util.Objects;
 import com.cdx.bas.domain.bank.account.BankAccount;
 
 /***
- * Customer class that describes a bank customer
+ * Banking service customer class
  * 
  */
 public class Customer {
