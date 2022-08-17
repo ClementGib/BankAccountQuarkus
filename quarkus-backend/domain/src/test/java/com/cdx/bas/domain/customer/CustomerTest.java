@@ -233,4 +233,52 @@ public class CustomerTest {
             assertThat(exception.getMessage()).hasToString("lastName cannot have more than 750 characters.\n");
         }
     }
+    
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_birthdateIsAfterCurrentDate() {
+        try {
+        	Customer customer = new Customer(10L,
+                    "Jean",
+                    "Dupont",
+                    Gender.MALE,
+                    MaritalStatus.SINGLE,
+                    LocalDate.of(2099, 05, 05),
+                    "FR",
+                    "100 avenue de la république",
+                    "Paris",
+                    "jean.dupont@yahoo.fr",
+                    "+33642645678",
+                    null,
+                    null);
+
+        	customer.validate();
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("birthdate cannot be null and before the current time.\n");
+        }
+    }
+    
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_genderOrMaritalStatusAreNull() {
+        try {
+        	Customer customer = new Customer(10L,
+                    "Jean",
+                    "Dupont",
+                    null,
+                    null,
+                    LocalDate.of(1995, 05, 05),
+                    "FR",
+                    "100 avenue de la république",
+                    "Paris",
+                    "jean.dupont@yahoo.fr",
+                    "+33642645678",
+                    null,
+                    null);
+
+        	customer.validate();
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("gender must not be null.\nmaritalStatus must not be null.\n");
+        }
+    }
 }
