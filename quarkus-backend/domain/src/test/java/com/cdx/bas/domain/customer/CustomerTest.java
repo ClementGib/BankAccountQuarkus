@@ -93,6 +93,18 @@ public class CustomerTest {
 		assertThat(customer.getAccounts()).isNull();
 		assertThat(customer.getMetadatas()).isNull();
 	}
+	
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithRequiredFieldsNotBeNullMessage_requiredFieldsAreNull() {
+        try {
+            Customer customer = new Customer(null, null, null, null, null, null, null, null, null, null, null, null, null);
+            customer.validate();
+
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage().split("\n")).hasSize(11);
+        }
+    }
     
     @Test
     public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_idIsLowerThanOne() {
