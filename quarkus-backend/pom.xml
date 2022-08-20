@@ -30,8 +30,6 @@
 		<junit5.version>2.11.2.Final</junit5.version>
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<dv8tion.version>5.0.0-alpha.13</dv8tion.version>
-		<version.javax.validation>2.0.1.Final</version.javax.validation>
-		<version.hibernate.validator>7.0.5.Final</version.hibernate.validator>
 	</properties>
 
 	<dependencyManagement>
