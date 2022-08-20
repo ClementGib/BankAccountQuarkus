@@ -235,6 +235,30 @@ public class CustomerTest {
     }
     
     @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_genderOrMaritalStatusAreNull() {
+        try {
+            Customer customer = new Customer(10L,
+                    "Jean",
+                    "Dupont",
+                    null,
+                    null,
+                    LocalDate.of(1995, 05, 05),
+                    "FR",
+                    "100 avenue de la république",
+                    "Paris",
+                    "jean.dupont@yahoo.fr",
+                    "+33642645678",
+                    null,
+                    null);
+
+            customer.validate();
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("gender must not be null.\nmaritalStatus must not be null.\n");
+        }
+    }
+    
+    @Test
     public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_birthdateIsAfterCurrentDate() {
         try {
         	Customer customer = new Customer(10L,
@@ -259,26 +283,124 @@ public class CustomerTest {
     }
     
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_genderOrMaritalStatusAreNull() {
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_nationalityIsNotInTheISOCoutries() {
         try {
-        	Customer customer = new Customer(10L,
+            Customer customer = new Customer(10L,
                     "Jean",
                     "Dupont",
+                    Gender.MALE, 
+                   MaritalStatus.SINGLE,
+                   LocalDate.of(1995, 05, 05),
+                   "ABC",
+                    "100 avenue de la république",
+                    "Paris", 
+                   "jean.dupont@yahoo.fr",
+                    "+33642645678",
                     null,
-                    null,
+                    null);
+
+            customer.validate();
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("nationality must contain an ISO 3166 country code.\n");
+        }
+    }
+    
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_addressIsEmptyString() {
+        try {
+            Customer customer = new Customer(10L, 
+                   "Jean",
+                   "Dupont",
+                   Gender.MALE,
+                   MaritalStatus.SINGLE,
+                   LocalDate.of(1995, 05, 05),
+                   "FR",
+                   "",
+                    "Paris", 
+                   "jean.dupont@yahoo.fr", 
+                  "+33642645678",
+                  null,
+                  null);
+
+            customer.validate();
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("address must contain at least 1 character.\n");
+        }
+    }
+
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_cityIsEmptyString() {
+        try {
+            Customer customer = new Customer(10L, 
+                   "Jean",
+                    "Dupont",
+                    Gender.MALE, 
+                    MaritalStatus.SINGLE,
                     LocalDate.of(1995, 05, 05),
                     "FR",
                     "100 avenue de la république",
-                    "Paris",
+                    "",
                     "jean.dupont@yahoo.fr",
                     "+33642645678",
                     null,
                     null);
 
-        	customer.validate();
+            customer.validate();
             fail();
         } catch (IllegalStateException exception) {
-            assertThat(exception.getMessage()).hasToString("gender must not be null.\nmaritalStatus must not be null.\n");
+            assertThat(exception.getMessage()).hasToString("city must contain at least 1 character.\n");
+        }
+    }
+
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_emailIsEmptyString() {
+        try {
+            Customer customer = new Customer(10L,
+                    "Jean",
+                    "Dupont",
+                    Gender.MALE, 
+                    MaritalStatus.SINGLE,
+                    LocalDate.of(1995, 05, 05),
+                    "FR",
+                    "100 avenue de la république",
+                    "Paris",
+                    "",
+                    "+33642645678",
+                    null,
+                    null);
+
+            customer.validate();
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("email must contain at least 1 character.\n");
+        }
+    }
+
+    @Test
+    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_phoneNumberIsEmptyString() {
+        try {
+            Customer customer = new Customer(10L,
+                    "Jean", 
+                    "Dupont", 
+                    Gender.MALE,
+                    MaritalStatus.SINGLE,
+                    LocalDate.of(1995, 05, 05), 
+                    "FR",
+                    "100 avenue de la république",
+                    "Paris",
+                    "jean.dupont@yahoo.fr", 
+                    "",
+                    null,
+                    null);
+            
+            customer.validate();
+            fail();
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage())
+                    .hasToString("phoneNumber must contain at least 5 digits and maximum 20 digits.\n");
         }
     }
 }
+

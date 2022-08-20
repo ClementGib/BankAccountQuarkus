@@ -60,7 +60,9 @@ Easily start your Reactive RESTful Web Services
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
 
 
-
+# DETAIL
 
 
 - validation métier: API Bean validation (JSR 303)
+
+- Naming unit test : MethodName_ExpectedBehavior_StateUnderTest
