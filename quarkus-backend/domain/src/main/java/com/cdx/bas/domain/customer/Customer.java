@@ -1,7 +1,9 @@
 package com.cdx.bas.domain.customer;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -227,6 +229,36 @@ public class Customer { // extends AbstractSelfValidator<Customer> {
             messageBuilder.append("birthdate must not be null.\n");
         } else if (birthdate != null && birthdate.isAfter(LocalDate.now())) {
             messageBuilder.append("birthdate cannot be null and before the current time.\n");
+        }
+
+        if (nationality == null) {
+            messageBuilder.append("nationality must not be null.\n");
+        } else if (Arrays.stream(Locale.getISOCountries()).noneMatch(nationality::equals)) {
+            messageBuilder.append("nationality must contain an ISO 3166 country code.\n");
+        }
+        
+        if (address == null) {
+            messageBuilder.append("address must not be null.\n");
+        } else if (address.length() < 1) {
+            messageBuilder.append("address must contain at least 1 character.\n");
+        }
+        
+        if (city == null) {
+            messageBuilder.append("city must not be null.\n");
+        } else if (city.length() < 1) {
+            messageBuilder.append("city must contain at least 1 character.\n");
+        }
+        
+        if (email == null) {
+            messageBuilder.append("email must not be null.\n");
+        } else if (email.length() < 1) {
+            messageBuilder.append("email must contain at least 1 character.\n");
+        }
+        
+        if (phoneNumber == null) {
+            messageBuilder.append("phoneNumber must not be null.\n");
+        } else if (phoneNumber.length() < 5 || phoneNumber.length() > 20) {
+            messageBuilder.append("phoneNumber must contain at least 5 digits and maximum 20 digits.\n");
         }
         
         if (messageBuilder.length() > 0) {
