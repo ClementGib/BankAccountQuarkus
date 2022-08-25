@@ -1,6 +1,16 @@
 package com.cdx.bas.domain.bank.money;
 
-public class Money {
+import java.math.BigDecimal;
 
-    public final static long ZERO = 0L;
+public class Money {
+    
+    private BigDecimal amount;
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 }
