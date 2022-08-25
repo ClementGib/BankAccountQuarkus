@@ -65,4 +65,17 @@ Easily start your Reactive RESTful Web Services
 
 - validation métier: API Bean validation (JSR 303)
 
+
+#### Domain :
+
+- validation fonctionnelle dès l'initialisation des objets métier
+- organisation métier dans le code métier (package by feature)
+### Technique
+
+- Utilisation des records et des constructeurs compact (Java 14)
+
+### Patterns:
+
 - Naming unit test : MethodName_ExpectedBehavior_StateUnderTest
+
+
