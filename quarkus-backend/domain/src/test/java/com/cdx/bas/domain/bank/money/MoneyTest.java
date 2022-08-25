@@ -166,4 +166,28 @@ public class MoneyTest {
         
         assertThat(moneyOne.isGreaterThan(moneyTwo)).isFalse();
     }
+    
+    @Test
+    public void isGreaterThanOrEqual_should_returnTrue_when_amountValueIsGreaterThanAmountParameter() {
+        Money moneyOne = new Money(new BigDecimal("100"));
+        Money moneyTwo = new Money(new BigDecimal("50"));
+        
+        assertThat(moneyOne.isGreaterThanOrEqual(moneyTwo)).isTrue();
+    }
+    
+    @Test
+    public void isGreaterThanOrEqual_should_returnFalse_when_amountValueIsLessThanAmountParameter() {
+        Money moneyOne = new Money(new BigDecimal("50"));
+        Money moneyTwo = new Money(new BigDecimal("100"));
+        
+        assertThat(moneyOne.isGreaterThanOrEqual(moneyTwo)).isFalse();
+    }
+    
+    @Test
+    public void isGreaterThanOrEqual_should_returnTrue_when_amountValueIsEqualToAmountParameter() {
+        Money moneyOne = new Money(new BigDecimal("100"));
+        Money moneyTwo = new Money(new BigDecimal("100"));
+        
+        assertThat(moneyOne.isGreaterThanOrEqual(moneyTwo)).isTrue();
+    }
 }
