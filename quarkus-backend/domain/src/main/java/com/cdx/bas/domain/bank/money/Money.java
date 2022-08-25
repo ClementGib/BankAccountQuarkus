@@ -11,6 +11,9 @@ public class Money {
     }
     
     public Money(BigDecimal amount) {
+        if (amount == null) {
+            throw new NumberFormatException("Money amount value cannot be null.");
+        }
         this.amount = amount;
     }
     
@@ -36,5 +39,9 @@ public class Money {
     
     public boolean isGreaterThan(Money money){
         return this.amount.compareTo(money.amount) >= 1;
+    }
+    
+    public boolean isGreaterThanOrEqual(Money money){
+        return this.amount.compareTo(money.amount) >= 0;
     }
 }
