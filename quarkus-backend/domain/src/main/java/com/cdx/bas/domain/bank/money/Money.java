@@ -6,12 +6,12 @@ public class Money {
     
     private BigDecimal amount;
     
-    public Money(BigDecimal amount) {
-        this.amount = amount;
-    }
-
     public BigDecimal getAmount() {
         return amount;
+    }
+    
+    public Money(BigDecimal amount) {
+        this.amount = amount;
     }
     
     public void minus(Money money) {
