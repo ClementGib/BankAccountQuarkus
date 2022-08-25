@@ -24,7 +24,7 @@ public class MoneyTest {
         Money money = new Money();
         money.setAmount(BigDecimal.TEN.negate());
         money.isPositive();
-        assertThat(money.isPositive()).isFalse()
+        assertThat(money.isPositive()).isFalse();
     }
 
     @Test

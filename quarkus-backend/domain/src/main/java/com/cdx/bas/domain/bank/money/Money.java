@@ -13,4 +13,12 @@ public class Money {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+    
+    public boolean isPositive() {
+        return amount.compareTo(BigDecimal.ZERO) > 0;
+    }
+    
+    public boolean isNegative() {
+        return amount.compareTo(BigDecimal.ZERO) < 0;
+    }
 }
