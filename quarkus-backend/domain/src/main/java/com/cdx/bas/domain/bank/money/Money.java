@@ -18,6 +18,10 @@ public class Money {
         return amount.compareTo(BigDecimal.ZERO) > 0;
     }
     
+    public boolean isPositiveOrZero(){
+        return this.amount.compareTo(BigDecimal.ZERO) >= 0;
+    }
+    
     public boolean isNegative() {
         return amount.compareTo(BigDecimal.ZERO) < 0;
     }

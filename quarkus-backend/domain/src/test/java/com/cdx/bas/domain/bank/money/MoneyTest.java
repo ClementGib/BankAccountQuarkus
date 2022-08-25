@@ -10,7 +10,6 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 public class MoneyTest {
-
     
     @Test
     public void isPositive_should_returnTrue_when_balanceValueIsGreaterToZero() {
@@ -61,6 +60,29 @@ public class MoneyTest {
         Money money = new Money();
         money.setAmount(BigDecimal.TEN);
         assertThat(money.isNegative()).isFalse();
+    }
+    
+    @Test
+    public void minus_should_subtractAmount_when_AmountIsPositiveAndValueIsPositive() {
+        Money moneyOne = new Money();
+        moneyOne.setAmount(BigDecimal.TEN);
         
+        Money moneyTwo = new Money();
+        moneyTwo.setAmount(BigDecimal.TEN);
+        
+        moneyOne.minus(moneyTwo);
+        assertThat(moneyOne.getAmount()).isEqualTo(BigDecimal.ZERO);
+    }
+    
+    @Test
+    public void minus_should_additionAmount_when_ValuesIsNegative() {
+        Money moneyOne = new Money();
+        moneyOne.setAmount(BigDecimal.TEN.negate());
+        
+        Money moneyTwo = new Money();
+        moneyTwo.setAmount(BigDecimal.TEN.negate());
+        
+        moneyOne.minus(moneyTwo);
+        assertThat(moneyOne.getAmount()).isEqualTo(BigDecimal.ZERO);
     }
 }
