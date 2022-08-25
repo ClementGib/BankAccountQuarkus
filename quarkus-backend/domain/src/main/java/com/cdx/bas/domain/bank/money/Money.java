@@ -18,6 +18,10 @@ public class Money {
         this.amount = this.amount.subtract(money.amount);
     }
     
+    public void plus(Money money) {
+        this.amount = this.amount.add(money.amount);
+    }
+    
     public boolean isPositive() {
         return amount.compareTo(BigDecimal.ZERO) > 0;
     }

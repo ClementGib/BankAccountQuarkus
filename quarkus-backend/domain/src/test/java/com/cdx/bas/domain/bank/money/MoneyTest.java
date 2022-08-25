@@ -12,6 +12,60 @@ import io.quarkus.test.junit.QuarkusTest;
 public class MoneyTest {
     
     @Test
+    public void minus_should_subtractAmount_when_AmountIsPositiveAndValueIsPositive() {
+        Money moneyOne = new Money(new BigDecimal("100"));
+        Money moneyTwo = new Money(new BigDecimal("100"));
+        
+        moneyOne.minus(moneyTwo);
+        assertThat(moneyOne.getAmount()).isEqualTo(BigDecimal.ZERO);
+    }
+    
+    @Test
+    public void minus_should_subtractAmount_when_AmountIsZeroAndValueIsPositive() {
+        Money moneyOne = new Money(new BigDecimal("0"));
+        Money moneyTwo = new Money(new BigDecimal("100"));
+        
+        moneyOne.minus(moneyTwo);
+        assertThat(moneyOne.getAmount()).isEqualTo(new BigDecimal("-100"));
+    }
+    
+    @Test
+    public void minus_should_additionAmount_when_ValuesIsNegative() {
+        Money moneyOne = new Money(new BigDecimal("-100"));
+        Money moneyTwo = new Money(new BigDecimal("-100"));
+        
+        moneyOne.minus(moneyTwo);
+        assertThat(moneyOne.getAmount()).isEqualTo(BigDecimal.ZERO);
+    }
+    
+    @Test
+    public void plus_should_additionAmount_when_AmountIsPositiveAndValueIsPositive() {
+        Money moneyOne = new Money(new BigDecimal("100"));
+        Money moneyTwo = new Money(new BigDecimal("100"));
+        
+        moneyOne.plus(moneyTwo);
+        assertThat(moneyOne.getAmount()).isEqualTo(new BigDecimal("200"));
+    }
+    
+    @Test
+    public void plus_should_additionAmount_when_AmountIsZeroAndValueIsPositive() {
+        Money moneyOne = new Money(new BigDecimal("0"));
+        Money moneyTwo = new Money(new BigDecimal("100"));
+        
+        moneyOne.plus(moneyTwo);
+        assertThat(moneyOne.getAmount()).isEqualTo(new BigDecimal("100"));
+    }
+    
+    @Test
+    public void plus_should_additionAmount_when_ValuesIsNegative() {
+        Money moneyOne = new Money(new BigDecimal("-100"));
+        Money moneyTwo = new Money(new BigDecimal("-100"));
+        
+        moneyOne.plus(moneyTwo);
+        assertThat(moneyOne.getAmount()).isEqualTo(new BigDecimal("-200"));
+    }
+    
+    @Test
     public void isPositive_should_returnTrue_when_balanceValueIsGreaterToZero() {
         Money money = new Money(new BigDecimal("100"));
         assertThat(money.isPositive()).isTrue();
@@ -53,59 +107,5 @@ public class MoneyTest {
     public void isNegative_should_returnFalse_when_balanceValueIsGreaterToZero() {
         Money money = new Money(new BigDecimal("100"));
         assertThat(money.isNegative()).isFalse();
-    }
-    
-    @Test
-    public void minus_should_subtractAmount_when_AmountIsPositiveAndValueIsPositive() {
-        Money moneyOne = new Money(new BigDecimal("100"));
-        Money moneyTwo = new Money(new BigDecimal("100"));
-        
-        moneyOne.minus(moneyTwo);
-        assertThat(moneyOne.getAmount()).isEqualTo(BigDecimal.ZERO);
-    }
-    
-    @Test
-    public void minus_should_subtractAmount_when_AmountIsZeroAndValueIsPositive() {
-        Money moneyOne = new Money(new BigDecimal("0"));
-        Money moneyTwo = new Money(new BigDecimal("100"));
-        
-        moneyOne.minus(moneyTwo);
-        assertThat(moneyOne.getAmount()).isEqualTo(BigDecimal.ZERO);
-    }
-    
-    @Test
-    public void minus_should_additionAmount_when_ValuesIsNegative() {
-        Money moneyOne = new Money(new BigDecimal("-100"));
-        Money moneyTwo = new Money(new BigDecimal("-100"));
-        
-        moneyOne.minus(moneyTwo);
-        assertThat(moneyOne.getAmount()).isEqualTo(BigDecimal.ZERO);
-    }
-    
-    @Test
-    public void plus_should_additionAmount_when_AmountIsPositiveAndValueIsPositive() {
-        Money moneyOne = new Money(new BigDecimal("100"));
-        Money moneyTwo = new Money(new BigDecimal("100"));
-        
-        moneyOne.plus(moneyTwo);
-        assertThat(moneyOne.getAmount()).isEqualTo(new BigDecimal("200"));
-    }
-    
-    @Test
-    public void plus_should_additionAmount_when_AmountIsZeroAndValueIsPositive() {
-        Money moneyOne = new Money(new BigDecimal("0"));
-        Money moneyTwo = new Money(new BigDecimal("100"));
-        
-        moneyOne.plus(moneyTwo);
-        assertThat(moneyOne.getAmount()).isEqualTo(new BigDecimal("100"));
-    }
-    
-    @Test
-    public void plus_should_additionAmount_when_ValuesIsNegative() {
-        Money moneyOne = new Money(new BigDecimal("-100"));
-        Money moneyTwo = new Money(new BigDecimal("-100"));
-        
-        moneyOne.plus(moneyTwo);
-        assertThat(moneyOne.getAmount()).isEqualTo(new BigDecimal("-200"));
     }
 }
