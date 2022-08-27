@@ -25,12 +25,12 @@ public class Money {
         }
     }
     
-    public BigDecimal getAmount() {
-        return amount;
-    }
-    
     public static Money of(long value) {
         return new Money(BigDecimal.valueOf(value));
+    }
+    
+    public BigDecimal getAmount() {
+        return amount;
     }
     
     public void minus(Money money) {

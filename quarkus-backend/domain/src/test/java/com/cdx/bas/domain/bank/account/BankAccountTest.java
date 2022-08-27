@@ -28,26 +28,26 @@ public class BankAccountTest {
         Instant firstTransactionDate = Instant.now();
         ArrayList<Transaction> history = new ArrayList<>();
         history.add(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
-        BankAccount BankAccount = new BankAccount();
-        BankAccount.setId(10L);
-        BankAccount.setType(AccountType.CHECKING);
-        BankAccount.setBalance(new Money(new BigDecimal("100")));
-        BankAccount.setOwnersId(ownersId);
-        BankAccount.setTransactions(transactions);
-        BankAccount.setHistory(history);
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setId(10L);
+        bankAccount.setType(AccountType.CHECKING);
+        bankAccount.setBalance(new Money(new BigDecimal("100")));
+        bankAccount.setOwnersId(ownersId);
+        bankAccount.setTransactions(transactions);
+        bankAccount.setHistory(history);
         
-        BankAccount.validate();
+        bankAccount.validate();
 
-        assertThat(BankAccount.getId()).isEqualTo(10);
-        assertThat(BankAccount.getType()).isEqualTo(AccountType.CHECKING);
-        assertThat(BankAccount.getBalance()).usingRecursiveComparison().isEqualTo(Money.of(100L));
-        assertThat(BankAccount.getOwnersId().size()).isEqualTo(1);
-        assertThat(BankAccount.getOwnersId().get(0)).isEqualTo(99L);
-        assertThat(BankAccount.getTransactions().size()).isEqualTo(1L);
-        assertThat(BankAccount.getTransactions().get(0)).usingRecursiveComparison()
+        assertThat(bankAccount.getId()).isEqualTo(10);
+        assertThat(bankAccount.getType()).isEqualTo(AccountType.CHECKING);
+        assertThat(bankAccount.getBalance()).usingRecursiveComparison().isEqualTo(Money.of(100L));
+        assertThat(bankAccount.getOwnersId().size()).isEqualTo(1);
+        assertThat(bankAccount.getOwnersId().get(0)).isEqualTo(99L);
+        assertThat(bankAccount.getTransactions().size()).isEqualTo(1L);
+        assertThat(bankAccount.getTransactions().get(0)).usingRecursiveComparison()
         .isEqualTo(new Transaction(100, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
-        assertThat(BankAccount.getHistory().size()).isEqualTo(1L);
-        assertThat(BankAccount.getHistory().get(0)).usingRecursiveComparison()
+        assertThat(bankAccount.getHistory().size()).isEqualTo(1L);
+        assertThat(bankAccount.getHistory().get(0)).usingRecursiveComparison()
         .isEqualTo(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
     }
 
@@ -103,15 +103,15 @@ public class BankAccountTest {
             Instant firstTransactionDate = Instant.now();
             ArrayList<Transaction> history = new ArrayList<>();
             history.add(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
-            BankAccount BankAccount = new BankAccount();
-            BankAccount.setId(0L);
-            BankAccount.setType(AccountType.CHECKING);
-            BankAccount.setBalance(new Money(new BigDecimal("100")));
-            BankAccount.setOwnersId(ownersId);
-            BankAccount.setTransactions(transactions);
-            BankAccount.setHistory(history);
+            BankAccount bankAccount = new BankAccount();
+            bankAccount.setId(0L);
+            bankAccount.setType(AccountType.CHECKING);
+            bankAccount.setBalance(new Money(new BigDecimal("100")));
+            bankAccount.setOwnersId(ownersId);
+            bankAccount.setTransactions(transactions);
+            bankAccount.setHistory(history);
             
-            BankAccount.validate();
+            bankAccount.validate();
             fail();
         } catch (IllegalStateException exception) {
             assertThat(exception.getMessage()).hasToString("id must be positive and higher than 0.\n");
@@ -128,15 +128,15 @@ public class BankAccountTest {
             ArrayList<Transaction> history = new ArrayList<>();
             history.add(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
             
-            BankAccount BankAccount = new BankAccount();
-            BankAccount.setId(1L);
-            BankAccount.setType(AccountType.CHECKING);
-            BankAccount.setBalance(new Money(new BigDecimal("100")));
-            BankAccount.setOwnersId(new ArrayList<>());
-            BankAccount.setTransactions(transactions);
-            BankAccount.setHistory(history);
+            BankAccount bankAccount = new BankAccount();
+            bankAccount.setId(1L);
+            bankAccount.setType(AccountType.CHECKING);
+            bankAccount.setBalance(new Money(new BigDecimal("100")));
+            bankAccount.setOwnersId(new ArrayList<>());
+            bankAccount.setTransactions(transactions);
+            bankAccount.setHistory(history);
             
-            BankAccount.validate();
+            bankAccount.validate();
             fail();
         } catch (IllegalStateException exception) {
             assertThat(exception.getMessage()).hasToString("ownersId must contain at least 1 owner id.\n");
