@@ -2,19 +2,35 @@ package com.cdx.bas.domain.bank.money;
 
 import java.math.BigDecimal;
 
+import net.dv8tion.jda.api.MessageBuilder;
+
 public class Money {
     
     private BigDecimal amount;
     
     public Money(BigDecimal amount) {
-        if (amount == null) {
-            throw new NumberFormatException("Money amount value cannot be null.");
-        }
         this.amount = amount;
+        validate();
+    }
+
+    private void validate() {
+        MessageBuilder messageBuilder = new MessageBuilder();
+        
+        if (amount == null) {
+            messageBuilder.append("amount must not be null.\n");
+        }
+        
+        if (messageBuilder.length() > 0) {
+            throw new IllegalStateException(messageBuilder.build().getContentRaw());
+        }
     }
     
     public BigDecimal getAmount() {
         return amount;
+    }
+    
+    public static Money of(long value) {
+        return new Money(BigDecimal.valueOf(value));
     }
     
     public void minus(Money money) {
