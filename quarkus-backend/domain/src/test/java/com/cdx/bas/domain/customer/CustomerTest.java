@@ -17,7 +17,7 @@ import io.quarkus.test.junit.QuarkusTest;
 public class CustomerTest {
 
 	@Test
-	public void Customer_should_returnValidCustomerObject_when_fillAllFieldsWithValidValues() {
+	public void validate_should_validateCustomerObject_when_fillAllFieldsWithValidValues() {
 		ArrayList<BankAccount> accounts = new ArrayList<BankAccount>();
 		accounts.add(new BankAccount());
 		HashMap<String, String> metadatas = new HashMap<String, String>();
@@ -25,7 +25,7 @@ public class CustomerTest {
 		metadatas.put("annual_salary", "48000");
 
 		Customer customer = new Customer();
-		customer.setId(10);
+		customer.setId(10L);
 		customer.setFirstName("Jean");
 		customer.setLastName("Dupont");
 		customer.setGender(Gender.MALE);
@@ -60,9 +60,9 @@ public class CustomerTest {
 	}
 
 	@Test
-	public void Customer_should_returnValidCustomerObject_when_optionalFieldsAreMissing() {
+	public void validate_should_validateCustomerObject_when_fillRequiredFieldsWithValidValues() {
 		Customer customer = new Customer();
-		customer.setId(10);
+		customer.setId(10L);
 		customer.setFirstName("Jean");
 		customer.setLastName("Dupont");
 		customer.setGender(Gender.MALE);
@@ -95,19 +95,31 @@ public class CustomerTest {
 	}
 	
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithRequiredFieldsNotBeNullMessage_requiredFieldsAreNull() {
+    public void validate_should_throwIllegalStateExceptionWithRequiredFieldsNotBeNullMessage_requiredFieldsAreNull() {
         try {
             Customer customer = new Customer(null, null, null, null, null, null, null, null, null, null, null, null, null);
             customer.validate();
 
             fail();
         } catch (IllegalStateException exception) {
-            assertThat(exception.getMessage().split("\n")).hasSize(11);
+            String[] errorMessages = exception.getMessage().split("\n");
+            assertThat(errorMessages).hasSize(11);
+            assertThat(errorMessages[0]).hasToString("id must not be null.");
+            assertThat(errorMessages[1]).hasToString("firstName must not be null.");
+            assertThat(errorMessages[2]).hasToString("lastName must not be null.");
+            assertThat(errorMessages[3]).hasToString("gender must not be null.");
+            assertThat(errorMessages[4]).hasToString("maritalStatus must not be null.");
+            assertThat(errorMessages[5]).hasToString("birthdate must not be null.");
+            assertThat(errorMessages[6]).hasToString("nationality must not be null.");
+            assertThat(errorMessages[7]).hasToString("address must not be null.");
+            assertThat(errorMessages[8]).hasToString("city must not be null.");
+            assertThat(errorMessages[9]).hasToString("email must not be null.");
+            assertThat(errorMessages[10]).hasToString("phoneNumber must not be null.");
         }
     }
     
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_idIsLowerThanOne() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_idIsLowerThanOne() {
         try {
         	Customer customer = new Customer(0L,
                     "Jean",
@@ -131,7 +143,7 @@ public class CustomerTest {
     }
     
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_firstNameIsEmptyString() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_firstNameIsEmptyString() {
         try {
         	Customer customer = new Customer(10L,
                     "",
@@ -155,7 +167,7 @@ public class CustomerTest {
     }
 
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_firstNameIsTooLong() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_firstNameIsTooLong() {
         try {
             String longStr = "Blaine Charles David Earl Frederick Gerald Hubert Irvin John Kenneth Lloyd Martin "
                     + "Nero Oliver Paul Quincy Randolph Sherman Thomas Uncas Victor William Xerxes Yancy Zeus "
@@ -189,7 +201,7 @@ public class CustomerTest {
     }
 
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_lastNameIsEmptyString() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_lastNameIsEmptyString() {
         try {
         	Customer customer = new Customer(10L,
                     "Jean",
@@ -213,7 +225,7 @@ public class CustomerTest {
     }
 
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_lastNameIsTooLong() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_lastNameIsTooLong() {
         try {
             String longStr = "Blaine Charles David Earl Frederick Gerald Hubert Irvin John Kenneth Lloyd Martin "
                     + "Nero Oliver Paul Quincy Randolph Sherman Thomas Uncas Victor William Xerxes Yancy Zeus "
@@ -247,7 +259,7 @@ public class CustomerTest {
     }
     
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_genderOrMaritalStatusAreNull() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_genderOrMaritalStatusAreNull() {
         try {
             Customer customer = new Customer(10L,
                     "Jean",
@@ -271,7 +283,7 @@ public class CustomerTest {
     }
     
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_birthdateIsAfterCurrentDate() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_birthdateIsAfterCurrentDate() {
         try {
         	Customer customer = new Customer(10L,
                     "Jean",
@@ -295,7 +307,7 @@ public class CustomerTest {
     }
     
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_nationalityIsNotInTheISOCoutries() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_nationalityIsNotInTheISOCoutries() {
         try {
             Customer customer = new Customer(10L,
                     "Jean",
@@ -319,7 +331,7 @@ public class CustomerTest {
     }
     
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_addressIsEmptyString() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_addressIsEmptyString() {
         try {
             Customer customer = new Customer(10L, 
                    "Jean",
@@ -343,7 +355,7 @@ public class CustomerTest {
     }
 
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_cityIsEmptyString() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_cityIsEmptyString() {
         try {
             Customer customer = new Customer(10L, 
                    "Jean",
@@ -367,7 +379,7 @@ public class CustomerTest {
     }
 
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_emailIsEmptyString() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_emailIsEmptyString() {
         try {
             Customer customer = new Customer(10L,
                     "Jean",
@@ -391,7 +403,7 @@ public class CustomerTest {
     }
 
     @Test
-    public void Customer_should_throwIllegalStateExceptionWithSpecificMessages_when_phoneNumberIsEmptyString() {
+    public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_phoneNumberIsEmptyString() {
         try {
             Customer customer = new Customer(10L,
                     "Jean", 

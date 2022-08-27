@@ -33,9 +33,23 @@ public class MoneyTest {
 
             fail();
 
-        } catch (NumberFormatException exception) {
-            assertThat(exception.getMessage()).hasToString("Money amount value cannot be null.");
+        } catch (IllegalStateException exception) {
+            assertThat(exception.getMessage()).hasToString("amount must not be null.\n");
         }
+    }
+    
+    @Test
+    public void of_should_returnMoneyWithAmountOfValue_when_ValueIsAPositiveNumber() {
+        Money money = Money.of(100L);
+
+        assertThat(money.getAmount()).isEqualTo(new BigDecimal("100"));
+    }
+    
+    @Test
+    public void of_should_returnMoneyWithAmountOfValue_when_ValueIsANegativeNumber() {
+        Money money = Money.of(-100L);
+
+        assertThat(money.getAmount()).isEqualTo(new BigDecimal("-100"));
     }
 
     @Test
