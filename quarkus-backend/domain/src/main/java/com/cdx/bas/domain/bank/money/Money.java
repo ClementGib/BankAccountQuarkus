@@ -6,15 +6,15 @@ public class Money {
     
     private BigDecimal amount;
     
-    public BigDecimal getAmount() {
-        return amount;
-    }
-    
     public Money(BigDecimal amount) {
         if (amount == null) {
             throw new NumberFormatException("Money amount value cannot be null.");
         }
         this.amount = amount;
+    }
+    
+    public BigDecimal getAmount() {
+        return amount;
     }
     
     public void minus(Money money) {
