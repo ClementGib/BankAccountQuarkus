@@ -17,7 +17,7 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 public class BankAccountServiceImplTest {
-    
+
     
     @Mock
     BankAccountManager bankAccountManager;
