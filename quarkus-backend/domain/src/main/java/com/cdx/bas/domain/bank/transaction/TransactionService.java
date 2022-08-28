@@ -1,5 +1,7 @@
 package com.cdx.bas.domain.bank.transaction;
 
-public interface TransactionService {
+import java.util.Queue;
 
+public interface TransactionService {
+    Queue<Transaction> getUnprocessedTransactions();
 }
