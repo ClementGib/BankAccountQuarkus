@@ -4,4 +4,5 @@ import java.util.Queue;
 
 public interface TransactionService {
     Queue<Transaction> getUnprocessedTransactions();
+    void processTransaction(Transaction transaction);
 }
