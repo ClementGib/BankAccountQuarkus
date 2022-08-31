@@ -8,11 +8,11 @@ import com.cdx.bas.domain.bank.money.Money;
 @RequestScoped
 public class BankAccountServiceImpl implements BankAccountService {
     
-//    @Inject
-//    BankAccountManager bankAccountManager;
+    @Inject
+    BankAccountManager bankAccountManager;
 
     @Override
-    public boolean deposit(Money money, Long accountId) {
+    public boolean deposit(Long accountId, Money money) {
         // TODO Auto-generated method stub
         return false;
     }
