@@ -13,7 +13,7 @@ public class TransactionServiceImpl implements TransactionService {
     BankAccountService bankAccountService;
     
     @Override
-    public void processTransaction(Transaction transaction) {
+    public void processTransaction(Transaction transaction) throws IllegalStateException {
         transaction.validate();
         if (TransactionType.CREDIT.equals(transaction.type())) {
             bankAccountService.deposit(transaction.accountId(), Money.of(transaction.amount()));
