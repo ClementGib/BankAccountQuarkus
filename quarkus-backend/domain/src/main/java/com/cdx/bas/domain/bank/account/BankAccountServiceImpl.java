@@ -1,7 +1,6 @@
 package com.cdx.bas.domain.bank.account;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 
 import com.cdx.bas.domain.bank.money.Money;
 
