@@ -7,6 +7,12 @@ import com.cdx.bas.domain.bank.account.BankAccountManager;
 
 @RequestScoped
 public class BankAccountManagerImpl implements BankAccountManager {
+    
+    @Override
+    public BankAccount findById(long id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public void create(BankAccount bankAccount) {

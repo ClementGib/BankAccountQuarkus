@@ -1,18 +1,22 @@
 package com.cdx.bas.domain.bank.account;
 
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 
 import com.cdx.bas.domain.bank.money.Money;
 import com.cdx.bas.domain.bank.transaction.Transaction;
-import com.cdx.bas.domain.bank.transaction.TransactionService;
 import com.cdx.bas.domain.bank.transaction.TransactionType;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
@@ -21,49 +25,45 @@ import io.quarkus.test.junit.mockito.InjectMock;
 public class BankAccountServiceImplTest {
     
     @Inject
-    TransactionService transactionService;
+    BankAccountService bankAccountService;
     
     @InjectMock
     BankAccountManager bankAccountManager;
 
     @Test
-    public void deposit_should_addToMoneyToTheSpecificAccount_when_accountIsFound() {
-        BankAccount bankAccount = createBankAccount();
+    public void deposit_should_throwNoSuchElementException_when_accountIsFound() {
+        long accountId = 99L;
+        Money amountOfMoney = Money.of(1000L);
         
+        when(bankAccountManager.findById(accountId)).thenThrow(new NoSuchElementException("BankAccount 99L is not found."));
         
-//        verify(bankAccountManager).update(bankAccount);
-        
+        try {
+            bankAccountService.deposit(accountId, amountOfMoney);
+            fail();
+        } catch (NoSuchElementException exception) {
+            verify(bankAccountManager).findById(eq(accountId));
+        }
     }
     
     @Test
-    public void deposit_should_ThrowBankAccountBusinessException_when_MoneyIsNegative() {
+    public void deposit_should_addToMoneyToTheSpecificAccount_when_accountIsFound() {
+        long accountId = 99L;
+        Money amountOfMoney = Money.of(1000L);
+        BankAccount bankAccount = createBankAccount(accountId);
+        BankAccount bankAccountAfterDeposit = bankAccount;
+        bankAccountAfterDeposit.getBalance().plus(amountOfMoney);
+        
+        when(bankAccountManager.findById(accountId)).thenReturn(bankAccount);
+        
+        bankAccountService.deposit(accountId, amountOfMoney);
+        
+        verify(bankAccountManager).findById(eq(accountId));
+        verify(bankAccountManager).update(bankAccountAfterDeposit);
+        
     }
- 
     
-//    private BankAccount createValidBankAccount() {
-//        ArrayList<Long> ownersId = new ArrayList<>();
-//        ownersId.add(99L);
-//        Instant lastTransactionDate = Instant.now();
-//        ArrayList<Transaction> transactions = new ArrayList<>();
-//        transactions.add(new Transaction(100, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
-//        Instant firstTransactionDate = Instant.now();
-//        ArrayList<Transaction> history = new ArrayList<>();
-//        history.add(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
-//        BankAccount BankAccount = new BankAccount();
-//        BankAccount.setId(10L);
-//        BankAccount.setType(AccountType.CHECKING);
-//        BankAccount.setBalance(new Money(new BigDecimal("100")));
-//        BankAccount.setOwnersId(ownersId);
-//        BankAccount.setTransactions(transactions);
-//        BankAccount.setHistory(history);
-//        
-//        BankAccount.validate();
-//        return BankAccount;
-//    }
-    
-    private BankAccount createBankAccount() {
+    private BankAccount createBankAccount(long accountId) {
         BankAccount bankAccount = new BankAccount();
-        long accountId = 10L;
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
