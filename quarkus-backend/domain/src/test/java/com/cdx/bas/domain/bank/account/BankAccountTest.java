@@ -20,20 +20,21 @@ public class BankAccountTest {
 
     @Test
     public void validate_should_returnValidBankAccountObject_when_fillAllFieldsWithValidValues() {
-        ArrayList<Long> ownersId = new ArrayList<>();
-        ownersId.add(99L);
-        Instant lastTransactionDate = Instant.now();
-        ArrayList<Transaction> transactions = new ArrayList<>();
-        transactions.add(new Transaction(100, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
-        Instant firstTransactionDate = Instant.now();
-        ArrayList<Transaction> history = new ArrayList<>();
-        history.add(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
         BankAccount bankAccount = new BankAccount();
-        bankAccount.setId(10L);
+        long accountId = 10L;
+        bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
+        ArrayList<Long> ownersId = new ArrayList<>();
+        ownersId.add(99L);
         bankAccount.setOwnersId(ownersId);
+        Instant lastTransactionDate = Instant.now();
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
         bankAccount.setTransactions(transactions);
+        Instant firstTransactionDate = Instant.now();
+        ArrayList<Transaction> history = new ArrayList<>();
+        history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
         bankAccount.setHistory(history);
         
         bankAccount.validate();
@@ -45,20 +46,20 @@ public class BankAccountTest {
         assertThat(bankAccount.getOwnersId().get(0)).isEqualTo(99L);
         assertThat(bankAccount.getTransactions().size()).isEqualTo(1L);
         assertThat(bankAccount.getTransactions().get(0)).usingRecursiveComparison()
-        .isEqualTo(new Transaction(100, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
+        .isEqualTo(new Transaction(accountId, 100L, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
         assertThat(bankAccount.getHistory().size()).isEqualTo(1L);
         assertThat(bankAccount.getHistory().get(0)).usingRecursiveComparison()
-        .isEqualTo(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
+        .isEqualTo(new Transaction(accountId, 500L, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
     }
 
     @Test
     public void validate_should_returnValidBankAccountObject_when_fillRequiredFieldsWithValidValues() {
-        ArrayList<Long> ownersId = new ArrayList<>();
-        ownersId.add(99L);
         BankAccount BankAccount = new BankAccount();
         BankAccount.setId(10L);
         BankAccount.setType(AccountType.CHECKING);
         BankAccount.setBalance(new Money(new BigDecimal("100")));
+        ArrayList<Long> ownersId = new ArrayList<>();
+        ownersId.add(99L);
         BankAccount.setOwnersId(ownersId);
         
         BankAccount.validate();
@@ -95,20 +96,21 @@ public class BankAccountTest {
     @Test
     public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_idIsLowerThanOne() {
         try {
-            ArrayList<Long> ownersId = new ArrayList<>();
-            ownersId.add(99L);
-            Instant lastTransactionDate = Instant.now();
-            ArrayList<Transaction> transactions = new ArrayList<>();
-            transactions.add(new Transaction(100, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
-            Instant firstTransactionDate = Instant.now();
-            ArrayList<Transaction> history = new ArrayList<>();
-            history.add(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
+            long accountId = 0L;
             BankAccount bankAccount = new BankAccount();
-            bankAccount.setId(0L);
+            bankAccount.setId(accountId);
             bankAccount.setType(AccountType.CHECKING);
             bankAccount.setBalance(new Money(new BigDecimal("100")));
+            ArrayList<Long> ownersId = new ArrayList<>();
+            ownersId.add(99L);
             bankAccount.setOwnersId(ownersId);
+            Instant lastTransactionDate = Instant.now();
+            ArrayList<Transaction> transactions = new ArrayList<>();
+            transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
             bankAccount.setTransactions(transactions);
+            Instant firstTransactionDate = Instant.now();
+            ArrayList<Transaction> history = new ArrayList<>();
+            history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
             bankAccount.setHistory(history);
             
             bankAccount.validate();
@@ -121,19 +123,19 @@ public class BankAccountTest {
     @Test
     public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_ownerIdsIsEmpty() {
         try {
-            Instant lastTransactionDate = Instant.now();
-            ArrayList<Transaction> transactions = new ArrayList<>();
-            transactions.add(new Transaction(100, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
-            Instant firstTransactionDate = Instant.now();
-            ArrayList<Transaction> history = new ArrayList<>();
-            history.add(new Transaction(500, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
-            
             BankAccount bankAccount = new BankAccount();
-            bankAccount.setId(1L);
+            long accountId = 10L;
+            bankAccount.setId(accountId);
             bankAccount.setType(AccountType.CHECKING);
             bankAccount.setBalance(new Money(new BigDecimal("100")));
             bankAccount.setOwnersId(new ArrayList<>());
+            Instant lastTransactionDate = Instant.now();
+            ArrayList<Transaction> transactions = new ArrayList<>();
+            transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
             bankAccount.setTransactions(transactions);
+            Instant firstTransactionDate = Instant.now();
+            ArrayList<Transaction> history = new ArrayList<>();
+            history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
             bankAccount.setHistory(history);
             
             bankAccount.validate();
