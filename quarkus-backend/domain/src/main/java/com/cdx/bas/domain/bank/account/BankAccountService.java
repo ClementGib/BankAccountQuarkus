@@ -4,5 +4,5 @@ import com.cdx.bas.domain.bank.money.Money;
 
 public interface BankAccountService {
 
-    public boolean deposit(Long accountId, Money money);
+    public boolean deposit(long accountId, Money money);
 }

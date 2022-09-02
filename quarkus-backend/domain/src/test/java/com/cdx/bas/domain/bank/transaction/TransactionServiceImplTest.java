@@ -31,6 +31,17 @@ public class TransactionServiceImplTest {
     BankAccountService bankAccountService;
     
     @Test
+    public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithPositiveAmount() {
+        Transaction transaction = new Transaction(10L, 100L, CREDIT, Instant.now(), "deposit of 100 euros");
+        transactionService.processTransaction(transaction);
+        
+        ArgumentCaptor<Money> argument = ArgumentCaptor.forClass(Money.class);
+        verify(bankAccountService).deposit(eq(10L), argument.capture());
+        assertThat(argument.getValue().getAmount()).isEqualTo(BigDecimal.valueOf(100L));
+        verifyNoMoreInteractions(bankAccountService);
+    }
+    
+    @Test
     public void processTransaction_should_throwIllegalStateException_when_transactionIsInvalid() {
         try {
             Instant date = Instant.now();
@@ -41,16 +52,5 @@ public class TransactionServiceImplTest {
         } catch (IllegalStateException exception) {
             assertThat(exception.getMessage()).hasToString("Credit transaction amount must be greater than 0.\n");
         }
-    }
-    
-    @Test
-    public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithPositiveAmount() {
-        Transaction transaction = new Transaction(10L, 100L, CREDIT, Instant.now(), "deposit of 100 euros");
-        transactionService.processTransaction(transaction);
-        
-        ArgumentCaptor<Money> argument = ArgumentCaptor.forClass(Money.class);
-        verify(bankAccountService).deposit(eq(10L), argument.capture());
-        assertThat(argument.getValue().getAmount()).isEqualTo(BigDecimal.valueOf(100L));
-        verifyNoMoreInteractions(bankAccountService);
     }
 }

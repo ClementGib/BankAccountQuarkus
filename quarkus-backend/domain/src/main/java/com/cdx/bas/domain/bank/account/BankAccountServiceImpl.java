@@ -11,7 +11,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 //    BankAccountManager bankAccountManager;
 
     @Override
-    public boolean deposit(Long accountId, Money money) {
+    public boolean deposit(long accountId, Money money) {
         // TODO Auto-generated method stub
         return false;
     }
