@@ -5,6 +5,7 @@
 		<artifactId>bank-account-simulator</artifactId>
 		<groupId>com.cdx.bas</groupId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../</relativePath>
 	</parent>
 	<artifactId>client</artifactId>
 
