@@ -1,4 +1,4 @@
-package com.cdx.bas.application.manager;
+package com.cdx.bas.domain.bank.account;
 
 import javax.enterprise.context.RequestScoped;
 
@@ -13,7 +13,7 @@ public class BankAccountManagerImpl implements BankAccountManager {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @Override
     public void create(BankAccount bankAccount) {
         // TODO Auto-generated method stub
