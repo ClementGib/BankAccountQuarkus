@@ -4,7 +4,16 @@ import java.time.Instant;
 
 import net.dv8tion.jda.api.MessageBuilder;
 
-public record Transaction(long accountId, long amount, TransactionType type, Instant date, String label) {
+public record Transaction(long accountId, 
+        long amount, 
+        TransactionType type, 
+        TransactionStatus status, 
+        Instant date, 
+        String label) {
+    
+    public Transaction(Transaction transaction, TransactionStatus status) {
+        this(transaction.accountId, transaction.amount, transaction.type, status, transaction.date, transaction.label);
+    }
     
     public void validate() {
         MessageBuilder messageBuilder = new MessageBuilder();
@@ -15,6 +24,10 @@ public record Transaction(long accountId, long amount, TransactionType type, Ins
             messageBuilder.append("Credit transaction amount must be greater than 0.\n");
         } else if (this.type() == TransactionType.DEBIT && this.amount() <= 0) {
             messageBuilder.append("Debit transaction amount must be greater than 0.\n");
+        }
+        
+        if (this.type() == null) {
+            messageBuilder.append("Transaction status must not be null.\n");
         }
         
         if (this.date() == null) {

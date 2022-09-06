@@ -1,8 +1,7 @@
 package com.cdx.bas.domain.bank.account;
 
-import com.cdx.bas.domain.bank.money.Money;
+import com.cdx.bas.domain.bank.transaction.Transaction;
 
 public interface BankAccountService {
-
-    public boolean deposit(long accountId, Money money);
+    public Transaction deposit(Transaction transaction);
 }

@@ -4,11 +4,15 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import com.cdx.bas.domain.bank.account.BankAccountService;
-import com.cdx.bas.domain.bank.money.Money;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RequestScoped
 public class TransactionServiceImpl implements TransactionService {
 
+    private static Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
+    
     @Inject
     BankAccountService bankAccountService;
     
@@ -16,7 +20,8 @@ public class TransactionServiceImpl implements TransactionService {
     public void processTransaction(Transaction transaction) throws IllegalStateException {
         transaction.validate();
         if (TransactionType.CREDIT.equals(transaction.type())) {
-            bankAccountService.deposit(transaction.accountId(), Money.of(transaction.amount()));
+            logger.info("Credit transaction for " +  transaction.accountId() + " of " + transaction.amount());
+            bankAccountService.deposit(transaction);
         }
     }
 }
