@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import com.cdx.bas.domain.bank.money.Money;
 import com.cdx.bas.domain.bank.transaction.Transaction;
+import com.cdx.bas.domain.bank.transaction.TransactionStatus;
 import com.cdx.bas.domain.bank.transaction.TransactionType;
 
 import org.junit.jupiter.api.Test;
@@ -30,11 +31,11 @@ public class BankAccountTest {
         bankAccount.setOwnersId(ownersId);
         Instant lastTransactionDate = Instant.now();
         ArrayList<Transaction> transactions = new ArrayList<>();
-        transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
+        transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
         bankAccount.setTransactions(transactions);
         Instant firstTransactionDate = Instant.now();
         ArrayList<Transaction> history = new ArrayList<>();
-        history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
+        history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
         bankAccount.setHistory(history);
         
         bankAccount.validate();
@@ -46,10 +47,10 @@ public class BankAccountTest {
         assertThat(bankAccount.getOwnersId().get(0)).isEqualTo(99L);
         assertThat(bankAccount.getTransactions().size()).isEqualTo(1L);
         assertThat(bankAccount.getTransactions().get(0)).usingRecursiveComparison()
-        .isEqualTo(new Transaction(accountId, 100L, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
+        .isEqualTo(new Transaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
         assertThat(bankAccount.getHistory().size()).isEqualTo(1L);
         assertThat(bankAccount.getHistory().get(0)).usingRecursiveComparison()
-        .isEqualTo(new Transaction(accountId, 500L, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
+        .isEqualTo(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
     }
 
     @Test
@@ -106,11 +107,11 @@ public class BankAccountTest {
             bankAccount.setOwnersId(ownersId);
             Instant lastTransactionDate = Instant.now();
             ArrayList<Transaction> transactions = new ArrayList<>();
-            transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
+            transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
             bankAccount.setTransactions(transactions);
             Instant firstTransactionDate = Instant.now();
             ArrayList<Transaction> history = new ArrayList<>();
-            history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
+            history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
             bankAccount.setHistory(history);
             
             bankAccount.validate();
@@ -131,11 +132,11 @@ public class BankAccountTest {
             bankAccount.setOwnersId(new ArrayList<>());
             Instant lastTransactionDate = Instant.now();
             ArrayList<Transaction> transactions = new ArrayList<>();
-            transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, lastTransactionDate, "More withdrawal to my bank account"));
+            transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
             bankAccount.setTransactions(transactions);
             Instant firstTransactionDate = Instant.now();
             ArrayList<Transaction> history = new ArrayList<>();
-            history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, firstTransactionDate, "First withdrawal to my bank account"));
+            history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
             bankAccount.setHistory(history);
             
             bankAccount.validate();
