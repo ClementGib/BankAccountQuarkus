@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 @RequestScoped
 public class TransactionServiceImpl implements TransactionService {
 
-    private static Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
     
     @Inject
     BankAccountService bankAccountService;
