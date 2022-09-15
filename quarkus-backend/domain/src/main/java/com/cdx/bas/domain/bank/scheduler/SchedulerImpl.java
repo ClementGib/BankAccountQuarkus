@@ -22,17 +22,28 @@ import io.quarkus.scheduler.Scheduled;
 public class SchedulerImpl implements Scheduler {
 
     private static final Logger logger = Logger.getLogger(SchedulerImpl.class);
-    
-    private static PriorityQueue<Transaction> currentQueue = new PriorityQueue<Transaction>();
+
+    private static PriorityQueue<Transaction> currentQueue = new PriorityQueue<>();
 
     @Inject
     TransactionService transactionService;
-    
+
     @Inject
     TransactionManager transactionManager;
 
-    @Scheduled(every="5s")
-    public void processQueue() {
+    public PriorityQueue<Transaction> getCurrentQueue() {
+        return currentQueue;
+    }
 
+    @Scheduled(every = "5s")
+    public void processQueue() {
+        logger.info("Scheduler start");
+        if (getCurrentQueue().isEmpty()) {
+            getCurrentQueue().addAll(transactionManager.getUnprocessedTransactions());
+            getCurrentQueue().forEach(transaction -> {
+                transactionService.processTransaction(transaction);
+            });
+        }
+        logger.info("Scheduler end");
     }
 }
