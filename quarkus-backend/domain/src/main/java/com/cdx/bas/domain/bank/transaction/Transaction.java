@@ -9,7 +9,7 @@ public record Transaction(long accountId,
         TransactionType type, 
         TransactionStatus status, 
         Instant date, 
-        String label) {
+        String label)implements Comparable<Transaction> {
     
     public Transaction(Transaction transaction, TransactionStatus status) {
         this(transaction.accountId, transaction.amount, transaction.type, status, transaction.date, transaction.label);
@@ -42,5 +42,9 @@ public record Transaction(long accountId,
             throw new IllegalStateException(messageBuilder.build().getContentRaw());
         }
     }
-    
+
+    @Override
+    public int compareTo(Transaction transactionToCompar) {
+        return this.date().compareTo(transactionToCompar.date());
+    }
 }

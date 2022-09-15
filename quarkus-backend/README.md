@@ -1,4 +1,4 @@
-# getting-started Project
+# BankAccountSimulator back-end
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
