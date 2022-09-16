@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.MessageBuilder;
  * Banking service customer class
  * 
  */
-public class Customer { // extends AbstractSelfValidator<Customer> {
+public class Customer {
 
 	private Long id;
 	

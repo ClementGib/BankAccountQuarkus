@@ -1,3 +1,4 @@
+
 # Bank Account 🏦
 
 ## Directives
@@ -78,4 +79,18 @@ Architecture hexagonale
 
 - Utilisation des records et des constructeurs compact (Java 14)
 
+# BankAccountSimulator
+Simulation project for bank account and money transactions
 
+
+
+### Démo
+1. Lancer le conteneur PostgreSQL 🐘
+```bash 
+docker build -t postgres-dev deployment/docker/postgres/dev/
+docker run -p 5430:5432/tcp --name postgres-bas-dev -e POSTGRES_PASSWORD=postgres -d postgres-dev
+```
+2. Lancer le back-end Quarkus 
+3. Lancer le front-end Angular
+
+Accéder au front via : `localhost:4200` 
