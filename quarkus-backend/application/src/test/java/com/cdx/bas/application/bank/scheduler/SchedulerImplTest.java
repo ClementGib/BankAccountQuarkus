@@ -1,4 +1,4 @@
-package com.cdx.bas.domain.bank.scheduler;
+package com.cdx.bas.application.bank.scheduler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
