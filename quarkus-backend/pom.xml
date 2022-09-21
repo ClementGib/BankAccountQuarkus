@@ -30,19 +30,13 @@
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<dv8tion.version>5.0.0-alpha.13</dv8tion.version>
 	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>com.cdx.bas</groupId>
 				<artifactId>domain</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.quarkus</groupId>
-				<artifactId>quarkus-bom</artifactId>
-				<version>${quarkus.platform.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.cdx.bas</groupId>
@@ -53,6 +47,13 @@
 				<groupId>com.cdx.bas</groupId>
 				<artifactId>client</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.quarkus</groupId>
+				<artifactId>quarkus-bom</artifactId>
+				<version>${quarkus.platform.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>${quarkus.platform.group-id}</groupId>
@@ -80,6 +81,11 @@
 				<groupId>net.dv8tion</groupId>
 				<artifactId>JDA</artifactId>
 				<version>${dv8tion.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.quarkus</groupId>
+				<artifactId>quarkus-maven-plugin</artifactId>
+				<version>${quarkus.platform.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

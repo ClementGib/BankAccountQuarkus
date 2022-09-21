@@ -1,4 +1,4 @@
-package com.cdx.bas.domain.bank.scheduler;
+package com.cdx.bas.application.bank.scheduler;
 
 import java.util.PriorityQueue;
 
