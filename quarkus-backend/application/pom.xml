@@ -50,7 +50,7 @@
 			<plugin>
 				<groupId>org.jboss.jandex</groupId>
 				<artifactId>jandex-maven-plugin</artifactId>
-				<version>1.2.3</version>
+				<version>${jandex.maven.version}</version>
 				<executions>
 					<execution>
 						<id>make-index</id>
@@ -63,6 +63,7 @@
 			<plugin>
 				<groupId>io.quarkus</groupId>
 				<artifactId>quarkus-maven-plugin</artifactId>
+				<version>${quarkus.platform.version}</version>
 				<executions>
 					<execution>
 						<goals>
