@@ -3,8 +3,8 @@ package com.cdx.bas.domain.bank.account;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cdx.bas.domain.bank.money.Money;
-import com.cdx.bas.domain.bank.transaction.Transaction;
+import com.cdx.bas.domain.money.Money;
+import com.cdx.bas.domain.transaction.Transaction;
 
 import net.dv8tion.jda.api.MessageBuilder;
 

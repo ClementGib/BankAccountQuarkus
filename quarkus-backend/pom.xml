@@ -11,27 +11,26 @@
 		<module>client</module>
 	</modules>
 	<properties>
+		<assertj.version>3.23.1</assertj.version>
 		<compiler-plugin.version>3.8.1</compiler-plugin.version>
+		<dv8tion.version>5.0.0-alpha.13</dv8tion.version>
+		<jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
+		<jandex.maven.version>1.2.3</jandex.maven.version>
+		<java.version>17</java.version>
+		<junit5.version>2.11.2.Final</junit5.version>
+		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<maven.compiler.release>17</maven.compiler.release>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
-		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
 		<quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
 		<quarkus.platform.version>2.11.2.Final</quarkus.platform.version>
-		<jandex.maven.version>1.2.3</jandex.maven.version>
+		<quarkus-plugin.version>${quarkus.platform.version}</quarkus-plugin.version>
 		<skipITs>true</skipITs>
 		<surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-		<surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-		<jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
-		<assertj.version>3.23.1</assertj.version>
-		<junit5.version>2.11.2.Final</junit5.version>
-		<mapstruct.version>1.5.2.Final</mapstruct.version>
-		<dv8tion.version>5.0.0-alpha.13</dv8tion.version>
 	</properties>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -93,26 +92,62 @@
 				<artifactId>jandex-maven-plugin</artifactId>
 				<version>${jandex.maven.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>io.quarkiverse.hibernatetypes</groupId>
+				<artifactId>quarkus-hibernate-types</artifactId>
+				<version>0.2.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${surefire-plugin.version}</version>
-				<configuration>
-					<systemPropertyVariables>
-						<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-						<maven.home>${maven.home}</maven.home>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>${quarkus.platform.group-id}</groupId>
-				<artifactId>quarkus-maven-plugin</artifactId>
-				<version>${quarkus.platform.version}</version>
-			</plugin>
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.jboss.jandex</groupId>
+					<artifactId>jandex-maven-plugin</artifactId>
+					<version>${jandex-maven-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>make-index</id>
+							<goals>
+								<goal>jandex</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>io.quarkus</groupId>
+					<artifactId>quarkus-maven-plugin</artifactId>
+					<version>${quarkus-plugin.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>build</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${surefire-plugin.version}</version>
+					<configuration>
+						<systemProperties>
+							<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+						</systemProperties>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
+	<profiles>
+		<profile>
+			<id>native</id>
+			<activation>
+				<property>
+					<name>native</name>
+				</property>
+			</activation>
+		</profile>
+	</profiles>
 </project>
