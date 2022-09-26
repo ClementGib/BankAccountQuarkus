@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.Instant;
 
+import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionStatus;
+import com.cdx.bas.domain.transaction.TransactionType;
+
 import org.junit.jupiter.api.Test;
 
 public class TransactionTest {

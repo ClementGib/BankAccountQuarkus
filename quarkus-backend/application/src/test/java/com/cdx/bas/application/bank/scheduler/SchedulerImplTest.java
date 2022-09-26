@@ -14,14 +14,14 @@ import java.time.ZoneId;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
-import com.cdx.bas.domain.bank.transaction.Transaction;
-import com.cdx.bas.domain.bank.transaction.TransactionManager;
-import com.cdx.bas.domain.bank.transaction.TransactionService;
-import com.cdx.bas.domain.bank.transaction.TransactionStatus;
-import com.cdx.bas.domain.bank.transaction.TransactionType;
+import com.cdx.bas.application.scheduler.Scheduler;
+import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionPersistencePort;
+import com.cdx.bas.domain.transaction.TransactionServicePort;
+import com.cdx.bas.domain.transaction.TransactionStatus;
+import com.cdx.bas.domain.transaction.TransactionType;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -39,10 +39,10 @@ public class SchedulerImplTest {
     Scheduler scheduler;
 
     @InjectMock
-    TransactionService transactionService;
+    TransactionServicePort transactionService;
 
     @InjectMock
-    TransactionManager transactionManager;
+    TransactionPersistencePort transactionManager;
 
     @Test
     @Order(1)
@@ -83,15 +83,6 @@ public class SchedulerImplTest {
         verify(transactionManager).getUnprocessedTransactions();
         verify(transactionService, times(5)).processTransaction(any());
         verifyNoMoreInteractions(transactionManager, transactionService);
-    }
-
-    @RequestScoped
-    public static class TransactionManagerImplMock implements TransactionManager {
-
-        @Override
-        public Queue<Transaction> getUnprocessedTransactions() {
-            return createDepositTransactions();
-        }
     }
 
     static Queue<Transaction> createDepositTransactions() {

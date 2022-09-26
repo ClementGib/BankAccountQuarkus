@@ -1,8 +1,8 @@
 package com.cdx.bas.application.customer;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,16 +17,23 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.cdx.bas.domain.bank.account.BankAccount;
+import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
+import io.quarkiverse.hibernate.types.json.JsonBinaryType;
+import io.quarkiverse.hibernate.types.json.JsonTypes;
+
 @Entity
 @Table(schema = "basapp", name = "customers", uniqueConstraints = @UniqueConstraint(columnNames = "customer_id"))
+@TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
 public class CustomerEntity {
     
     @Id
-    @Column(name = "comment_id", nullable = false)
+    @Column(name = "customer_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customers_customer_id_seq_gen")
     @SequenceGenerator(name = "customers_customer_id_seq_gen", sequenceName = "customers_customer_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
@@ -38,10 +45,10 @@ public class CustomerEntity {
     private String lastName;
     
     @Column(name = "gender", nullable = false)
-    private Gender gender;
+    private String gender;
     
     @Column(name = "marital_status", nullable = false)
-    private MaritalStatus maritalStatus;
+    private String maritalStatus;
     
     @Column(name = "birthday", nullable = false)
     private LocalDate birthdate;
@@ -62,10 +69,11 @@ public class CustomerEntity {
     private String phoneNumber;
     
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "bank_accounts_customers", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "customer_id"))
-    private List<BankAccount> accounts;
+    @JoinTable(name = "bank_accounts_customers", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
+    private Set<BankAccountEntity> accounts;
     
-    @Column(name = "metadatas", nullable = true)
+    @Type(type = JsonTypes.JSON_BIN)
+    @Column(name = "metadatas", columnDefinition = JsonTypes.JSON_BIN, nullable = true)
     private Map<String, String> metadatas;
 
     public Long getId() {
@@ -92,19 +100,19 @@ public class CustomerEntity {
         this.lastName = lastName;
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public MaritalStatus getMaritalStatus() {
+    public String getMaritalStatus() {
         return maritalStatus;
     }
 
-    public void setMaritalStatus(MaritalStatus maritalStatus) {
+    public void setMaritalStatus(String maritalStatus) {
         this.maritalStatus = maritalStatus;
     }
 
@@ -156,11 +164,11 @@ public class CustomerEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<BankAccount> getAccounts() {
+    public Set<BankAccountEntity> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(List<BankAccount> accounts) {
+    public void setAccounts(Set<BankAccountEntity> accounts) {
         this.accounts = accounts;
     }
 

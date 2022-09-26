@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 
-import com.cdx.bas.domain.bank.money.Money;
-import com.cdx.bas.domain.bank.transaction.Transaction;
-import com.cdx.bas.domain.bank.transaction.TransactionStatus;
-import com.cdx.bas.domain.bank.transaction.TransactionType;
+import com.cdx.bas.domain.money.Money;
+import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionStatus;
+import com.cdx.bas.domain.transaction.TransactionType;
 
 import org.junit.jupiter.api.Test;
 
