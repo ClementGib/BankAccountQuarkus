@@ -65,9 +65,15 @@ Architecture hexagonale
 
 
 #### Domain :
-- module domain regroupant les règles Métiers et la validation
-- ports, contrats d'interfaces pour la persistence (PersistencePort) et les services (ServicePort)
+- module domain regroupant les objets et la logique metier ainsi que la validation (BankAccount, Transaction)
+- `ports` via les contrats d'interfaces pour la persistence (PersistencePort) et les services (ServicePort)
 
+#### Application
+- module de persistence avec les `adapters` et le broker planifié (Scheduler)
+- entités JPA (CustomerEntity, BankAccountEntity, TransactionEntity)
+
+#### Client
+- module API Rest
 ### Technique
 
 - Utilisation des records et des constructeurs compact (Java 14)
