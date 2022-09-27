@@ -58,10 +58,16 @@ I want to see the history (operation, date, amount, balance) of my operations
 ## Solution
 
 ### Conception
+Architecture hexagonale
+
+**Schema**
+
+
 
 #### Domain :
+- module domain regroupant les règles Métiers et la validation
+- ports, contrats d'interfaces pour la persistence (PersistencePort) et les services (ServicePort)
 
-- validation fonctionnelle dès l'initialisation des objets métier
 ### Technique
 
 - Utilisation des records et des constructeurs compact (Java 14)
