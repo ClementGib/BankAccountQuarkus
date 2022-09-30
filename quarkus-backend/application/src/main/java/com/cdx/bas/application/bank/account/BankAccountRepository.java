@@ -3,16 +3,22 @@ package com.cdx.bas.application.bank.account;
 import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
+import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 
 @RequestScoped
-public class BankAccountPersistenceImpl implements BankAccountPersistencePort {
+public class BankAccountRepository implements BankAccountPersistencePort {
+    
+    @Inject
+    private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
     
     @Override
     public Optional<BankAccount> findById(long id) {
-        return Optional.of(null);
+        // TODO Auto-generated method stub
+        return Optional.empty();
     }
     
     @Override

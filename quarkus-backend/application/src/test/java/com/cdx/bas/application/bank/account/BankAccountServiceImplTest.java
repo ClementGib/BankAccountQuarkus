@@ -1,4 +1,4 @@
-package com.cdx.bas.domain.bank.account;
+package com.cdx.bas.application.bank.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,12 +10,17 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import com.cdx.bas.domain.bank.account.AccountType;
+import com.cdx.bas.domain.bank.account.BankAccount;
+import com.cdx.bas.domain.bank.account.BankAccountException;
+import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
+import com.cdx.bas.domain.bank.account.BankAccountServicePort;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionStatus;
@@ -40,13 +45,13 @@ public class BankAccountServiceImplTest {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Transaction transaction = new Transaction(accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 1000 euros");
+        Transaction transaction = new Transaction(1L, accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 1000 euros");
         when(bankAccountPersistence.findById(accountId)).thenThrow(new NoSuchElementException("bank account 99L is not found."));
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(new Transaction(accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.ERROR, date, "Deposit of 1000 euros"));
+        .isEqualTo(new Transaction(1L, accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.ERROR, date, "Deposit of 1000 euros"));
         verify(bankAccountPersistence).findById(eq(accountId));
         verifyNoMoreInteractions(bankAccountPersistence);
     }
@@ -56,7 +61,7 @@ public class BankAccountServiceImplTest {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Transaction transaction = new Transaction(accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 1000 euros");
+        Transaction transaction = new Transaction(1L, accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 1000 euros");
         BankAccount bankAccount = createBankAccount(accountId);
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
         BankAccount bankAccountAfterDeposit = bankAccount;
@@ -65,7 +70,7 @@ public class BankAccountServiceImplTest {
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(new Transaction(accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.COMPLETED, date, "Deposit of 1000 euros"));
+        .isEqualTo(new Transaction(1L, accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.COMPLETED, date, "Deposit of 1000 euros"));
         verify(bankAccountPersistence).findById(eq(accountId));
         verify(bankAccountPersistence).update(eq(bankAccountAfterDeposit));
     }
@@ -75,7 +80,7 @@ public class BankAccountServiceImplTest {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Transaction transaction = new Transaction(accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 1000 euros");
+        Transaction transaction = new Transaction(1L, accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 1000 euros");
         BankAccount bankAccount = createBankAccount(accountId);
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
         BankAccount bankAccountAfterDeposit = bankAccount;
@@ -85,7 +90,7 @@ public class BankAccountServiceImplTest {
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(new Transaction(accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.REFUSED, date, "Deposit of 1000 euros"));
+        .isEqualTo(new Transaction(1L, accountId, amountOfMoney.getAmount().longValue(), TransactionType.CREDIT, TransactionStatus.REFUSED, date, "Deposit of 1000 euros"));
         verify(bankAccountPersistence).findById(eq(accountId));
         verify(bankAccountPersistence).update(eq(bankAccountAfterDeposit));
     }
@@ -95,13 +100,13 @@ public class BankAccountServiceImplTest {
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
-        ArrayList<Long> ownersId = new ArrayList<>();
+        HashSet<Long> ownersId = new HashSet<>();
         ownersId.add(99L);
         bankAccount.setOwnersId(ownersId);
-        bankAccount.setTransactions(new ArrayList<>());
+        bankAccount.setTransactions(new HashSet<>());
         Instant firstTransactionDate = Instant.now();
-        ArrayList<Transaction> history = new ArrayList<>();
-        history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, "First withdrawal to my bank account"));
+        HashSet<Transaction> history = new HashSet<>();
+        history.add(new Transaction(1L, accountId, 500L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, "First withdrawal to my bank account"));
         bankAccount.setHistory(history);
         return bankAccount;
     }

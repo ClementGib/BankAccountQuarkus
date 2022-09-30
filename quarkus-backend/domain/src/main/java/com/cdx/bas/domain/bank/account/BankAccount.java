@@ -1,7 +1,7 @@
 package com.cdx.bas.domain.bank.account;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
@@ -16,17 +16,17 @@ public class BankAccount {
     
     private Money balance;
     
-    private List<Long> ownersId;
+    private Set<Long> ownersId;
     
-    private List<Transaction> transactions = new ArrayList<>();
+    private Set<Transaction> transactions = new HashSet<>();
     
-    private List<Transaction> history = new ArrayList<>();
+    private Set<Transaction> history = new HashSet<>();
     
     public BankAccount() {
         super();
     }
 
-    public BankAccount(Long id, AccountType type, Money balance, List<Long> ownersId, List<Transaction> transactions, List<Transaction> history) {
+    public BankAccount(Long id, AccountType type, Money balance, Set<Long> ownersId, Set<Transaction> transactions, Set<Transaction> history) {
         this.id = id;
         this.type = type;
         this.balance = balance;
@@ -59,27 +59,27 @@ public class BankAccount {
         this.balance = balance;
     }
 
-    public List<Long> getOwnersId() {
+    public Set<Long> getOwnersId() {
         return ownersId;
     }
 
-    public void setOwnersId(List<Long> ownersId) {
+    public void setOwnersId(Set<Long> ownersId) {
         this.ownersId = ownersId;
     }
 
-    public List<Transaction> getTransactions() {
+    public Set<Transaction> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
+    public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
     }
 
-    public List<Transaction> getHistory() {
+    public Set<Transaction> getHistory() {
         return history;
     }
 
-    public void setHistory(List<Transaction> history) {
+    public void setHistory(Set<Transaction> history) {
         this.history = history;
     }
     

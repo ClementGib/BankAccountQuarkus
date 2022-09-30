@@ -42,16 +42,16 @@ public class SchedulerImplTest {
     TransactionServicePort transactionService;
 
     @InjectMock
-    TransactionPersistencePort transactionManager;
+    TransactionPersistencePort transactionRepository;
 
     @Test
     @Order(1)
     public void processQueue_should_tryToFillTheQueue_when_QueueWasEmpty() {
-        when(transactionManager.getUnprocessedTransactions()).thenReturn(new PriorityQueue<>());
+        when(transactionRepository.findUnprocessedTransactions()).thenReturn(new PriorityQueue<>());
         scheduler.processQueue();
 
-        verify(transactionManager).getUnprocessedTransactions();
-        verifyNoMoreInteractions(transactionManager);
+        verify(transactionRepository).findUnprocessedTransactions();
+        verifyNoMoreInteractions(transactionRepository);
         verifyNoInteractions(transactionService);
     }
 
@@ -59,47 +59,47 @@ public class SchedulerImplTest {
     @Order(2)
     public void processQueue_should_runScheduleProcessOrderedQueues_when_WaitingForSchedulerAndQueuehasBeenFilled() throws InterruptedException {
         Queue<Transaction> queue = createDepositTransactions();
-        when(transactionManager.getUnprocessedTransactions()).thenReturn(queue);
+        when(transactionRepository.findUnprocessedTransactions()).thenReturn(queue);
         Clock clock;
         Thread.sleep(5000);
 
-        verify(transactionManager).getUnprocessedTransactions();
-        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(new Transaction(16L, 20L, TransactionType.CREDIT,
+        verify(transactionRepository).findUnprocessedTransactions();
+        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(new Transaction(5L, 16L, 20L, TransactionType.CREDIT,
                 TransactionStatus.WAITING, Instant.MIN, "Fifth transaction"));
         verify(transactionService).processTransaction(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-06T10:14:00Z"), ZoneId.of("UTC"));
-        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(new Transaction(50L, 120L, TransactionType.CREDIT,
+        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(new Transaction(3L, 50L, 120L, TransactionType.CREDIT,
                 TransactionStatus.WAITING, Instant.now(clock), "Third transaction"));
         verify(transactionService).processTransaction(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-07T10:14:00Z"), ZoneId.of("UTC"));
-        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(new Transaction(100L, 99L, TransactionType.CREDIT,
+        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(new Transaction(2L, 100L, 99L, TransactionType.CREDIT,
                 TransactionStatus.WAITING, Instant.now(clock), "Second transaction"));
         verify(transactionService).processTransaction(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-07T10:18:00Z"), ZoneId.of("UTC"));
-        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(new Transaction(99L, 1000L,
+        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(new Transaction(4L, 99L, 1000L,
                 TransactionType.CREDIT, TransactionStatus.WAITING, Instant.now(clock), "Fourth transaction"));
         verify(transactionService).processTransaction(queue.poll());
 
-        verify(transactionManager).getUnprocessedTransactions();
+        verify(transactionRepository).findUnprocessedTransactions();
         verify(transactionService, times(5)).processTransaction(any());
-        verifyNoMoreInteractions(transactionManager, transactionService);
+        verifyNoMoreInteractions(transactionRepository, transactionService);
     }
 
     static Queue<Transaction> createDepositTransactions() {
         Clock clock;
         Queue<Transaction> queue = new PriorityQueue<Transaction>();
-        queue.add(new Transaction(99L, 250L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.MAX,
+        queue.add(new Transaction(1L, 99L, 250L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.MAX,
                 "First transaction"));
         clock = Clock.fixed(Instant.parse("2022-12-07T10:14:00Z"), ZoneId.of("UTC"));
-        queue.add(new Transaction(100L, 99L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.now(clock),
+        queue.add(new Transaction(2L, 100L, 99L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.now(clock),
                 "Second transaction"));
         clock = Clock.fixed(Instant.parse("2022-12-06T10:14:00Z"), ZoneId.of("UTC"));
-        queue.add(new Transaction(50L, 120L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.now(clock),
+        queue.add(new Transaction(3L, 50L, 120L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.now(clock),
                 "Third transaction"));
         clock = Clock.fixed(Instant.parse("2022-12-07T10:18:00Z"), ZoneId.of("UTC"));
-        queue.add(new Transaction(99L, 1000L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.now(clock),
+        queue.add(new Transaction(4L, 99L, 1000L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.now(clock),
                 "Fourth transaction"));
-        queue.add(new Transaction(16L, 20L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.MIN,
+        queue.add(new Transaction(5L, 16L, 20L, TransactionType.CREDIT, TransactionStatus.WAITING, Instant.MIN,
                 "Fifth transaction"));
         return queue;
     }

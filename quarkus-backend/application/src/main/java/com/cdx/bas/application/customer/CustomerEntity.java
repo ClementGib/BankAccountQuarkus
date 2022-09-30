@@ -1,12 +1,15 @@
 package com.cdx.bas.application.customer;
 
-import java.time.LocalDate;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,13 +48,15 @@ public class CustomerEntity {
     private String lastName;
     
     @Column(name = "gender", nullable = false)
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
     
     @Column(name = "marital_status", nullable = false)
-    private String maritalStatus;
+    @Enumerated(EnumType.STRING)
+    private MaritalStatus maritalStatus;
     
     @Column(name = "birthday", nullable = false)
-    private LocalDate birthdate;
+    private LocalDateTime birthdate;
     
     @Column(name = "nationality", nullable = false)
     private String nationality;
@@ -70,11 +75,11 @@ public class CustomerEntity {
     
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "bank_accounts_customers", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
-    private Set<BankAccountEntity> accounts;
+    private Set<BankAccountEntity> accounts = new HashSet<>();
     
     @Type(type = JsonTypes.JSON_BIN)
     @Column(name = "metadatas", columnDefinition = JsonTypes.JSON_BIN, nullable = true)
-    private Map<String, String> metadatas;
+    private String metadatas;
 
     public Long getId() {
         return id;
@@ -100,27 +105,27 @@ public class CustomerEntity {
         this.lastName = lastName;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
-    public String getMaritalStatus() {
+    public MaritalStatus getMaritalStatus() {
         return maritalStatus;
     }
 
-    public void setMaritalStatus(String maritalStatus) {
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
         this.maritalStatus = maritalStatus;
     }
 
-    public LocalDate getBirthdate() {
+    public LocalDateTime getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(LocalDate birthdate) {
+    public void setBirthdate(LocalDateTime birthdate) {
         this.birthdate = birthdate;
     }
 
@@ -172,11 +177,33 @@ public class CustomerEntity {
         this.accounts = accounts;
     }
 
-    public Map<String, String> getMetadatas() {
+    public String getMetadatas() {
         return metadatas;
     }
 
-    public void setMetadatas(Map<String, String> metadatas) {
+    public void setMetadatas(String metadatas) {
         this.metadatas = metadatas;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(accounts, address, birthdate, city, email, firstName, gender, id, lastName, maritalStatus,
+                metadatas, nationality, phoneNumber);
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CustomerEntity other = (CustomerEntity) obj;
+        return Objects.equals(accounts, other.accounts) && Objects.equals(address, other.address)
+                && Objects.equals(birthdate, other.birthdate) && Objects.equals(city, other.city)
+                && Objects.equals(email, other.email) && Objects.equals(firstName, other.firstName)
+                && gender == other.gender && Objects.equals(id, other.id) && Objects.equals(lastName, other.lastName)
+                && maritalStatus == other.maritalStatus && Objects.equals(metadatas, other.metadatas)
+                && Objects.equals(nationality, other.nationality) && Objects.equals(phoneNumber, other.phoneNumber);
     }
 }

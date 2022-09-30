@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
@@ -26,16 +26,16 @@ public class BankAccountTest {
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
-        ArrayList<Long> ownersId = new ArrayList<>();
+        HashSet<Long> ownersId = new HashSet<>();
         ownersId.add(99L);
         bankAccount.setOwnersId(ownersId);
         Instant lastTransactionDate = Instant.now();
-        ArrayList<Transaction> transactions = new ArrayList<>();
-        transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
+        HashSet<Transaction> transactions = new HashSet<>();
+        transactions.add(new Transaction(2L, accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
         bankAccount.setTransactions(transactions);
         Instant firstTransactionDate = Instant.now();
-        ArrayList<Transaction> history = new ArrayList<>();
-        history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
+        HashSet<Transaction> history = new HashSet<>();
+        history.add(new Transaction(1L, accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
         bankAccount.setHistory(history);
         
         bankAccount.validate();
@@ -44,13 +44,13 @@ public class BankAccountTest {
         assertThat(bankAccount.getType()).isEqualTo(AccountType.CHECKING);
         assertThat(bankAccount.getBalance()).usingRecursiveComparison().isEqualTo(Money.of(100L));
         assertThat(bankAccount.getOwnersId().size()).isEqualTo(1);
-        assertThat(bankAccount.getOwnersId().get(0)).isEqualTo(99L);
+        assertThat(bankAccount.getOwnersId().iterator().next()).isEqualTo(99L);
         assertThat(bankAccount.getTransactions().size()).isEqualTo(1L);
-        assertThat(bankAccount.getTransactions().get(0)).usingRecursiveComparison()
-        .isEqualTo(new Transaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
+        assertThat(bankAccount.getTransactions().iterator().next()).usingRecursiveComparison()
+        .isEqualTo(new Transaction(2L, accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
         assertThat(bankAccount.getHistory().size()).isEqualTo(1L);
-        assertThat(bankAccount.getHistory().get(0)).usingRecursiveComparison()
-        .isEqualTo(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
+        assertThat(bankAccount.getHistory().iterator().next()).usingRecursiveComparison()
+        .isEqualTo(new Transaction(1L, accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class BankAccountTest {
         BankAccount.setId(10L);
         BankAccount.setType(AccountType.CHECKING);
         BankAccount.setBalance(new Money(new BigDecimal("100")));
-        ArrayList<Long> ownersId = new ArrayList<>();
+        HashSet<Long> ownersId = new HashSet<>();
         ownersId.add(99L);
         BankAccount.setOwnersId(ownersId);
         
@@ -69,10 +69,9 @@ public class BankAccountTest {
         assertThat(BankAccount.getType()).isEqualTo(AccountType.CHECKING);
         assertThat(BankAccount.getBalance()).usingRecursiveComparison().isEqualTo(Money.of(100L));
         assertThat(BankAccount.getOwnersId().size()).isEqualTo(1);
-        assertThat(BankAccount.getOwnersId().get(0)).isEqualTo(99L);
+        assertThat(BankAccount.getOwnersId().iterator().next()).isEqualTo(99L);
         assertThat(BankAccount.getTransactions().size()).isEqualTo(0);
         assertThat(BankAccount.getHistory().size()).isEqualTo(0);
-
     }
     
     @Test
@@ -102,16 +101,16 @@ public class BankAccountTest {
             bankAccount.setId(accountId);
             bankAccount.setType(AccountType.CHECKING);
             bankAccount.setBalance(new Money(new BigDecimal("100")));
-            ArrayList<Long> ownersId = new ArrayList<>();
+            HashSet<Long> ownersId = new HashSet<>();
             ownersId.add(99L);
             bankAccount.setOwnersId(ownersId);
             Instant lastTransactionDate = Instant.now();
-            ArrayList<Transaction> transactions = new ArrayList<>();
-            transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
+            HashSet<Transaction> transactions = new HashSet<>();
+            transactions.add(new Transaction(2L, accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
             bankAccount.setTransactions(transactions);
             Instant firstTransactionDate = Instant.now();
-            ArrayList<Transaction> history = new ArrayList<>();
-            history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
+            HashSet<Transaction> history = new HashSet<>();
+            history.add(new Transaction(1L, accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
             bankAccount.setHistory(history);
             
             bankAccount.validate();
@@ -129,14 +128,14 @@ public class BankAccountTest {
             bankAccount.setId(accountId);
             bankAccount.setType(AccountType.CHECKING);
             bankAccount.setBalance(new Money(new BigDecimal("100")));
-            bankAccount.setOwnersId(new ArrayList<>());
+            bankAccount.setOwnersId(new HashSet<>());
             Instant lastTransactionDate = Instant.now();
-            ArrayList<Transaction> transactions = new ArrayList<>();
-            transactions.add(new Transaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
+            HashSet<Transaction> transactions = new HashSet<>();
+            transactions.add(new Transaction(2L, accountId, 100L, TransactionType.CREDIT, TransactionStatus.WAITING, lastTransactionDate, "More withdrawal to my bank account"));
             bankAccount.setTransactions(transactions);
             Instant firstTransactionDate = Instant.now();
-            ArrayList<Transaction> history = new ArrayList<>();
-            history.add(new Transaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
+            HashSet<Transaction> history = new HashSet<>();
+            history.add(new Transaction(1L, accountId, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, firstTransactionDate, "First withdrawal to my bank account"));
             bankAccount.setHistory(history);
             
             bankAccount.validate();

@@ -1,11 +1,13 @@
 package com.cdx.bas.domain.customer;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import com.cdx.bas.domain.bank.account.BankAccount;
 
@@ -27,7 +29,7 @@ public class Customer {
 	
 	private MaritalStatus maritalStatus;
     
-	private LocalDate birthdate;
+	private LocalDateTime birthdate;
     
 	private String nationality;
     
@@ -39,17 +41,17 @@ public class Customer {
 	
 	private String phoneNumber;
 	
-	private List<BankAccount> accounts;
+	private Set<BankAccount> accounts = new HashSet<>();
 	
-	private Map<String, String> metadatas;
+	private Map<String, String> metadatas = new HashMap<>();
 	
 	public Customer() {
 		super();
 	}
 
 	public Customer(Long id, String firstName, String lastName, Gender gender, MaritalStatus maritalStatus,
-			LocalDate birthdate, String nationality, String address, String city, String email, String phoneNumber,
-			List<BankAccount> accounts, Map<String, String> metadatas) {
+	        LocalDateTime birthdate, String nationality, String address, String city, String email, String phoneNumber,
+	        Set<BankAccount> accounts, Map<String, String> metadatas) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -106,11 +108,11 @@ public class Customer {
 		this.maritalStatus = maritalStatus;
 	}
 	
-	public LocalDate getBirthdate() {
+	public LocalDateTime getBirthdate() {
 		return birthdate;
 	}
 	
-	public void setBirthdate(LocalDate birthdate) {
+	public void setBirthdate(LocalDateTime birthdate) {
 		this.birthdate = birthdate;
 	}
 	
@@ -154,11 +156,11 @@ public class Customer {
 		this.phoneNumber = phoneNumber;
 	}
 	
-	public List<BankAccount> getAccounts() {
+	public Set<BankAccount> getAccounts() {
 		return accounts;
 	}
 	
-	public void setAccounts(List<BankAccount> accounts) {
+	public void setAccounts(Set<BankAccount> accounts) {
 		this.accounts = accounts;
 	}
 	
@@ -227,7 +229,7 @@ public class Customer {
         
         if (birthdate == null) {
             messageBuilder.append("birthdate must not be null.\n");
-        } else if (birthdate != null && birthdate.isAfter(LocalDate.now())) {
+        } else if (birthdate != null && birthdate.isAfter(LocalDateTime.now())) {
             messageBuilder.append("birthdate cannot be null and before the current time.\n");
         }
 

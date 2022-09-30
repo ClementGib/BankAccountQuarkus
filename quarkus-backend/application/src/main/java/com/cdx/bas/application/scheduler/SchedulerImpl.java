@@ -39,7 +39,7 @@ public class SchedulerImpl implements Scheduler {
     public void processQueue() {
         logger.info("Scheduler start");
         if (getCurrentQueue().isEmpty()) {
-            getCurrentQueue().addAll(transactionPersistence.getUnprocessedTransactions());
+            getCurrentQueue().addAll(transactionPersistence.findUnprocessedTransactions());
             getCurrentQueue().forEach(transaction -> {
                 transactionService.processTransaction(transaction);
             });

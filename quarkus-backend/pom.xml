@@ -18,7 +18,6 @@
 		<jandex.maven.version>1.2.3</jandex.maven.version>
 		<java.version>17</java.version>
 		<junit5.version>2.11.2.Final</junit5.version>
-		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<maven.compiler.release>17</maven.compiler.release>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
@@ -71,11 +70,6 @@
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
 				<version>${assertj.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mapstruct</groupId>
-				<artifactId>mapstruct</artifactId>
-				<version>${mapstruct.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.dv8tion</groupId>

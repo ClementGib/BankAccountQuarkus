@@ -4,15 +4,17 @@ import java.time.Instant;
 
 import net.dv8tion.jda.api.MessageBuilder;
 
-public record Transaction(long accountId, 
+public record Transaction(
+        long id,
+        long accountId, 
         long amount, 
         TransactionType type, 
         TransactionStatus status, 
         Instant date, 
-        String label)implements Comparable<Transaction> {
-    
+        String label) implements Comparable<Transaction> {
+
     public Transaction(Transaction transaction, TransactionStatus status) {
-        this(transaction.accountId, transaction.amount, transaction.type, status, transaction.date, transaction.label);
+        this(transaction.id, transaction.accountId, transaction.amount, transaction.type, status, transaction.date, transaction.label);
     }
     
     public void validate() {

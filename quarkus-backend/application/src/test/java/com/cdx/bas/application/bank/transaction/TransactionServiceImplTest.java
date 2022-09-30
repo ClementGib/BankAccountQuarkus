@@ -1,4 +1,4 @@
-package com.cdx.bas.domain.bank.transaction;
+package com.cdx.bas.application.bank.transaction;
 
 import static com.cdx.bas.domain.transaction.TransactionStatus.WAITING;
 import static com.cdx.bas.domain.transaction.TransactionType.CREDIT;
@@ -32,7 +32,7 @@ public class TransactionServiceImplTest {
     
     @Test
     public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithPositiveAmount() {
-        Transaction transaction = new Transaction(10L, 100L, CREDIT, WAITING, Instant.now(), "deposit of 100 euros");
+        Transaction transaction = new Transaction(1L, 10L, 100L, CREDIT, WAITING, Instant.now(), "deposit of 100 euros");
         transactionService.processTransaction(transaction);
         
         verify(bankAccountService).deposit(transaction);
@@ -43,7 +43,7 @@ public class TransactionServiceImplTest {
     public void processTransaction_should_throwIllegalStateException_when_transactionIsInvalid() {
         try {
             Instant date = Instant.now();
-            Transaction transaction = new Transaction(99L, -100L, TransactionType.CREDIT, WAITING, date, "Deposit of 100 euros");
+            Transaction transaction = new Transaction(1L, 99L, -100L, TransactionType.CREDIT, WAITING, date, "Deposit of 100 euros");
             transactionService.processTransaction(transaction);
 
             fail();
