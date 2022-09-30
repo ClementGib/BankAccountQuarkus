@@ -20,7 +20,7 @@ SET search_path TO basapp;
 	last_name varchar(750) NOT NULL,
 	gender varchar(25) NOT NULL,
 	marital_status varchar(25) NOT NULL,
-	birthday DATE NOT NULL,
+	birthday timestamp without time zone NOT NULL,
 	nationality varchar(255) NOT NULL,
 	address text NOT NULL,
 	city varchar(255) NOT NULL,
@@ -46,7 +46,7 @@ SET search_path TO basapp;
 	type varchar(25) NOT NULL,
 	amount DECIMAL NOT NULL,
     status varchar(25) NOT NULL,
-	date DATE NOT NULL,
+	date timestamp without time zone NOT NULL,
 	label text NOT NULL,
 	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id)
 	);
@@ -67,8 +67,8 @@ SET search_path TO basapp;
 	account_id bigint NOT NULL,
 	transaction_id bigint NOT NULL,
 	PRIMARY KEY (account_id, transaction_id),
-	CONSTRAINT fk_account FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
-	CONSTRAINT fk_transaction FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
+	CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
+	CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
 	);
 
 -- CREATE bank_account_history TABLE --
@@ -77,8 +77,8 @@ SET search_path TO basapp;
 	account_id bigint NOT NULL,
 	transaction_id bigint NOT NULL,
 	PRIMARY KEY (account_id, transaction_id),
-	CONSTRAINT fk_account FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
-	CONSTRAINT fk_transaction FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
+	CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
+	CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
 	);
 
 -- GRANT basadm -- 

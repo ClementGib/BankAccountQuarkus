@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +24,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.transaction.TransactionEntity;
+import com.cdx.bas.domain.bank.account.AccountType;
 
 @Entity
 @Table(schema = "basapp", name = "bank_accounts", uniqueConstraints = @UniqueConstraint(columnNames = "account_id"))
@@ -34,16 +37,17 @@ public class BankAccountEntity {
     private Long id;
     
     @Column(name = "type", nullable = false)
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private AccountType type;
     
     @Column(name = "balance", nullable = false)
     private BigDecimal balance;
     
-    @ManyToMany(fetch=FetchType.LAZY, mappedBy = "accounts")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
     private Set<CustomerEntity> customers;
     
-    @OneToMany
-    @JoinTable(name = "bank_account_transactions", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
     @OrderBy("date")
     private Set<TransactionEntity> transactions = new HashSet<>();
     
@@ -60,11 +64,11 @@ public class BankAccountEntity {
         this.id = id;
     }
 
-    public String getType() {
+    public AccountType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(AccountType type) {
         this.type = type;
     }
 

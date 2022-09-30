@@ -3,9 +3,10 @@ package com.cdx.bas.domain.customer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.cdx.bas.domain.bank.account.BankAccount;
 
@@ -18,7 +19,7 @@ public class CustomerTest {
 
 	@Test
 	public void validate_should_validateCustomerObject_when_fillAllFieldsWithValidValues() {
-		ArrayList<BankAccount> accounts = new ArrayList<BankAccount>();
+		HashSet<BankAccount> accounts = new HashSet<BankAccount>();
 		accounts.add(new BankAccount());
 		HashMap<String, String> metadatas = new HashMap<String, String>();
 		metadatas.put("contact_preferences", "email");
@@ -30,7 +31,7 @@ public class CustomerTest {
 		customer.setLastName("Dupont");
 		customer.setGender(Gender.MALE);
 		customer.setMaritalStatus(MaritalStatus.SINGLE);
-		customer.setBirthdate(LocalDate.of(1995, 05, 05));
+		customer.setBirthdate(LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000));
 		customer.setNationality("FR");
 		customer.setAddress("100 avenue de la république");
 		customer.setCity("Paris");
@@ -45,8 +46,8 @@ public class CustomerTest {
 		assertThat(customer.getFirstName()).hasToString("Jean");
 		assertThat(customer.getLastName()).hasToString("Dupont");
 		assertThat(customer.getGender()).isEqualTo(Gender.MALE);
-		assertThat(customer.getBirthdate()).isBefore(LocalDate.now());
-		assertThat(customer.getBirthdate().toString()).hasToString("1995-05-05");
+		assertThat(customer.getBirthdate()).isBefore(LocalDateTime.now());
+		assertThat(customer.getBirthdate().toString()).hasToString("1995-05-03T06:30:40.000050");
 		assertThat(customer.getNationality()).isEqualTo("FR");
 		assertThat(customer.getMaritalStatus()).isEqualTo(MaritalStatus.SINGLE);
 		assertThat(customer.getAddress()).hasToString("100 avenue de la république");
@@ -67,7 +68,7 @@ public class CustomerTest {
 		customer.setLastName("Dupont");
 		customer.setGender(Gender.MALE);
 		customer.setMaritalStatus(MaritalStatus.SINGLE);
-		customer.setBirthdate(LocalDate.of(1995, 05, 05));
+		customer.setBirthdate(LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000));
 		customer.setNationality("FR");
 		customer.setAddress("100 avenue de la république");
 		customer.setCity("Paris");
@@ -82,8 +83,8 @@ public class CustomerTest {
 		assertThat(customer.getFirstName()).hasToString("Jean");
 		assertThat(customer.getLastName()).hasToString("Dupont");
 		assertThat(customer.getGender()).isEqualTo(Gender.MALE);
-		assertThat(customer.getBirthdate()).isBefore(LocalDate.now());
-		assertThat(customer.getBirthdate().toString()).hasToString("1995-05-05");
+		assertThat(customer.getBirthdate()).isBefore(LocalDateTime.now());
+		assertThat(customer.getBirthdate().toString()).hasToString("1995-05-03T06:30:40.000050");
 		assertThat(customer.getNationality()).isEqualTo("FR");
 		assertThat(customer.getMaritalStatus()).isEqualTo(MaritalStatus.SINGLE);
 		assertThat(customer.getAddress()).hasToString("100 avenue de la république");
@@ -126,7 +127,7 @@ public class CustomerTest {
                     "Dupont",
                     Gender.MALE,
                     MaritalStatus.SINGLE,
-                    LocalDate.of(1995, 05, 05),
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république",
                     "Paris",
@@ -150,7 +151,7 @@ public class CustomerTest {
                     "Dupont",
                     Gender.MALE,
                     MaritalStatus.SINGLE,
-                    LocalDate.of(1995, 05, 05),
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république",
                     "Paris",
@@ -184,7 +185,7 @@ public class CustomerTest {
                     "Dupont",
                     Gender.MALE,
                     MaritalStatus.SINGLE,
-                    LocalDate.of(1995, 05, 05),
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république",
                     "Paris",
@@ -208,7 +209,7 @@ public class CustomerTest {
                     "",
                     Gender.MALE,
                     MaritalStatus.SINGLE,
-                    LocalDate.of(1995, 05, 05),
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république", 
                     "Paris", 
@@ -242,7 +243,7 @@ public class CustomerTest {
                     longStr,
                     Gender.MALE,
                     MaritalStatus.SINGLE,
-                    LocalDate.of(1995, 05, 05),
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république",
                     "Paris",
@@ -266,7 +267,7 @@ public class CustomerTest {
                     "Dupont",
                     null,
                     null,
-                    LocalDate.of(1995, 05, 05),
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république",
                     "Paris",
@@ -290,7 +291,7 @@ public class CustomerTest {
                     "Dupont",
                     Gender.MALE,
                     MaritalStatus.SINGLE,
-                    LocalDate.of(2099, 05, 05),
+                    LocalDateTime.of(2099,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république",
                     "Paris",
@@ -314,7 +315,7 @@ public class CustomerTest {
                     "Dupont",
                     Gender.MALE, 
                    MaritalStatus.SINGLE,
-                   LocalDate.of(1995, 05, 05),
+                   LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                    "ABC",
                     "100 avenue de la république",
                     "Paris", 
@@ -338,7 +339,7 @@ public class CustomerTest {
                    "Dupont",
                    Gender.MALE,
                    MaritalStatus.SINGLE,
-                   LocalDate.of(1995, 05, 05),
+                   LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                    "FR",
                    "",
                     "Paris", 
@@ -362,7 +363,7 @@ public class CustomerTest {
                     "Dupont",
                     Gender.MALE, 
                     MaritalStatus.SINGLE,
-                    LocalDate.of(1995, 05, 05),
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république",
                     "",
@@ -386,7 +387,7 @@ public class CustomerTest {
                     "Dupont",
                     Gender.MALE, 
                     MaritalStatus.SINGLE,
-                    LocalDate.of(1995, 05, 05),
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000),
                     "FR",
                     "100 avenue de la république",
                     "Paris",
@@ -410,7 +411,7 @@ public class CustomerTest {
                     "Dupont", 
                     Gender.MALE,
                     MaritalStatus.SINGLE,
-                    LocalDate.of(1995, 05, 05), 
+                    LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000), 
                     "FR",
                     "100 avenue de la république",
                     "Paris",

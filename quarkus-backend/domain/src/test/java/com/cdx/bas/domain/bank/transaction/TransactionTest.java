@@ -16,7 +16,7 @@ public class TransactionTest {
     @Test
     public void validate_should_validateTransactionObject_when_fillAllFieldsWithValidValues() {
         Instant date = Instant.now();
-        Transaction transaction = new Transaction(99L, 1000L, TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
+        Transaction transaction = new Transaction(1L, 99L, 1000L, TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
         transaction.validate();
 
         assertThat(transaction.accountId()).isEqualTo(99L);
@@ -31,7 +31,7 @@ public class TransactionTest {
     public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_creditTransactionWithNegativeAmount() {
         try {
             Instant date = Instant.now();
-            Transaction transaction = new Transaction(99L, -100L, TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
+            Transaction transaction = new Transaction(1L, 99L, -100L, TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
             transaction.validate();
 
             fail();
@@ -47,7 +47,7 @@ public class TransactionTest {
     public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_debitTransactionWithNegativeAmount() {
         try {
             Instant date = Instant.now();
-            Transaction transaction = new Transaction(99L, -100L, TransactionType.DEBIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
+            Transaction transaction = new Transaction(1L, 99L, -100L, TransactionType.DEBIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
             transaction.validate();
 
             fail();
@@ -62,7 +62,7 @@ public class TransactionTest {
     public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_creditTransactionWithZeroAmount() {
         try {
             Instant date = Instant.now();
-            Transaction transaction = new Transaction(99L, 0L, TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
+            Transaction transaction = new Transaction(1L, 99L, 0L, TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
             transaction.validate();
 
             fail();
@@ -77,7 +77,7 @@ public class TransactionTest {
     public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_debitTransactionWitZeroAmount() {
         try {
             Instant date = Instant.now();
-            Transaction transaction = new Transaction(99L, 0L, TransactionType.DEBIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
+            Transaction transaction = new Transaction(1L, 99L, 0L, TransactionType.DEBIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
             transaction.validate();
 
             fail();
@@ -91,7 +91,7 @@ public class TransactionTest {
     @Test
     public void validate_should_throwIllegalStateExceptionWithSpecificMessages_when_fieldsAreNullOrInvalid() {
         try {
-            Transaction transaction = new Transaction(0, 0, null, null, null, null);
+            Transaction transaction = new Transaction(0, 0, 0, null, null, null, null);
             transaction.validate();
 
             fail();
@@ -108,7 +108,7 @@ public class TransactionTest {
     @Test
     public void Transaction_should_createNewTransactionWithSpecificStatus_when_constructorCalled() {
         Instant date = Instant.now();
-        Transaction transaction = new Transaction(99L, 1000L, TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
+        Transaction transaction = new Transaction(1L, 99L, 1000L, TransactionType.CREDIT, TransactionStatus.WAITING, date, "Deposit of 100 euros");
         transaction.validate();
         
         Transaction exceptedTransaction = new Transaction(transaction, TransactionStatus.COMPLETED);

@@ -40,11 +40,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
 			<exclusions>

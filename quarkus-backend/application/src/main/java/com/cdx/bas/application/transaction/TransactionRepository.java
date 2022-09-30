@@ -1,16 +1,68 @@
 package com.cdx.bas.application.transaction;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.stream.Collectors;
 
-import com.cdx.bas.application.repository.GenericRepository;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-public interface TransactionRepository extends GenericRepository<TransactionEntity, Long> {
+import com.cdx.bas.application.mapper.DtoEntityMapper;
+import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionPersistencePort;
+import com.cdx.bas.domain.transaction.TransactionStatus;
 
-    /**
-     * Find all existing transactions entities
-     * 
-     * 
-     * @return all the transactions
-     */
-    List<TransactionEntity> findAll();
+import org.jboss.logging.Logger;
+
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Parameters;
+
+/***
+ * specific dao interface for transaction entities
+ * 
+ * @author Clément Gibert
+ *
+ */
+@ApplicationScoped
+public class TransactionRepository implements TransactionPersistencePort, PanacheRepository<TransactionEntity> {
+    
+    private static final Logger logger = Logger.getLogger(TransactionRepository.class);
+    
+    @Inject
+    private DtoEntityMapper<Transaction, TransactionEntity> transactionEntityMapper;
+
+    @Override
+    public Optional<Transaction> findById(long id) {
+        return findByIdOptional(id).map(transactionEntityMapper::toDto);
+    }
+
+    @Override
+    public Queue<Transaction> findUnprocessedTransactions() {
+        Queue<Transaction> test = find("#TransactionEntity.findUnprocessed", Parameters.with("status", TransactionStatus.WAITING.toString()).map())
+                .list()
+                .stream().map(transactionEntityMapper::toDto)
+                .collect(Collectors.toCollection(PriorityQueue::new));
+        test.forEach(elem -> logger.info(elem.label()));
+        return new PriorityQueue<>();
+    }
+
+    @Override
+    public Transaction create(Transaction transaction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Transaction update(Transaction transaction) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void remove(Transaction transaction) {
+        // TODO Auto-generated method stub
+        
+    }
+    //extends TransactionPersistencePort , <TransactionEntity>
 }
