@@ -1,6 +1,7 @@
 package com.cdx.bas.domain.bank.account;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import com.cdx.bas.domain.money.Money;
@@ -16,7 +17,7 @@ public class BankAccount {
     
     private Money balance;
     
-    private Set<Long> ownersId;
+    private Set<Long> customersId;
     
     private Set<Transaction> transactions = new HashSet<>();
     
@@ -30,7 +31,7 @@ public class BankAccount {
         this.id = id;
         this.type = type;
         this.balance = balance;
-        this.ownersId = ownersId;
+        this.customersId = ownersId;
         this.transactions = transactions;
         this.history = history;
     }
@@ -59,15 +60,15 @@ public class BankAccount {
         this.balance = balance;
     }
 
-    public Set<Long> getOwnersId() {
-        return ownersId;
-    }
+    public Set<Long> getCustomersId() {
+		return customersId;
+	}
 
-    public void setOwnersId(Set<Long> ownersId) {
-        this.ownersId = ownersId;
-    }
+	public void setCustomersId(Set<Long> customerId) {
+		this.customersId = customerId;
+	}
 
-    public Set<Transaction> getTransactions() {
+	public Set<Transaction> getTransactions() {
         return transactions;
     }
 
@@ -100,9 +101,9 @@ public class BankAccount {
             messageBuilder.append("balance must not be null.\n");
         }
         
-        if (ownersId == null) {
+        if (customersId == null) {
             messageBuilder.append("ownersId must not be null.\n");
-        } else if (ownersId.isEmpty()) {
+        } else if (customersId.isEmpty()) {
             messageBuilder.append("ownersId must contain at least 1 owner id.\n");
         }
         
@@ -118,4 +119,23 @@ public class BankAccount {
             throw new IllegalStateException(messageBuilder.build().getContentRaw());
         }
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(balance, customersId, history, id, transactions, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BankAccount other = (BankAccount) obj;
+		return Objects.equals(balance, other.balance) && Objects.equals(customersId, other.customersId)
+				&& Objects.equals(history, other.history) && Objects.equals(id, other.id)
+				&& Objects.equals(transactions, other.transactions) && type == other.type;
+	}
 }

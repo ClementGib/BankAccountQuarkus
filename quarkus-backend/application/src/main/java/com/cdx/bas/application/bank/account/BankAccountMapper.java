@@ -1,8 +1,5 @@
 package com.cdx.bas.application.bank.account;
 
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -12,7 +9,6 @@ import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.customer.Customer;
 import com.cdx.bas.domain.customer.CustomerPersistencePort;
-import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 
 @RequestScoped
