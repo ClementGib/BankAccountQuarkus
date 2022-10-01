@@ -78,23 +78,8 @@ public class CustomerMapperTest {
     }
     
 	@Test
-	public void toDto_should_mapNullValues_when_entityHasNullValues() throws JsonMappingException, JsonProcessingException {
-        CustomerEntity entity = new CustomerEntity();
-        entity.setId(null);
-        entity.setFirstName(null);
-        entity.setLastName(null);
-        entity.setGender(null);
-        entity.setMaritalStatus(null);
-        entity.setBirthdate(null);
-        entity.setNationality(null);
-        entity.setAddress(null);
-        entity.setCity(null);
-        entity.setEmail(null);
-        entity.setPhoneNumber(null);
-        entity.setAccounts(new HashSet<>());
-        entity.setMetadatas(null);
-        
-        Customer dto = customerMapper.toDto(entity);
+	public void toDto_should_mapNullValues_when_entityValuesNotDefined() throws JsonMappingException, JsonProcessingException {
+        Customer dto = customerMapper.toDto(new CustomerEntity());
         
         assertThat(dto.getId()).isNull();
         assertThat(dto.getFirstName()).isNull();
@@ -115,23 +100,8 @@ public class CustomerMapperTest {
     }
     
     @Test
-    public void toEntity_should_mapNullValues_when_dtoHasNullValues() throws JsonProcessingException {
-        Customer dto = new Customer();
-        dto.setId(null);
-        dto.setFirstName(null);
-        dto.setLastName(null);
-        dto.setGender(null);
-        dto.setMaritalStatus(null);
-        dto.setBirthdate(null);
-        dto.setNationality(null);
-        dto.setAddress(null);
-        dto.setCity(null);
-        dto.setEmail(null);
-        dto.setPhoneNumber(null);
-        dto.setAccounts(new HashSet<>());
-        dto.setMetadatas(new HashMap<>());
-        
-        CustomerEntity entity = customerMapper.toEntity(dto);
+    public void toEntity_should_mapNullValues_when_dtoValuesNotDefined() throws JsonProcessingException {
+        CustomerEntity entity = customerMapper.toEntity(new Customer());
         
         assertThat(entity.getId()).isNull();
         assertThat(entity.getFirstName()).isNull();
@@ -277,9 +247,9 @@ public class CustomerMapperTest {
         bankAccount.setId(id);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
-        Set<Long> ownersId = new HashSet<>();
-        ownersId.add(99L);
-        bankAccount.setOwnersId(ownersId);
+        Set<Long> customersId = new HashSet<>();
+        customersId.add(99L);
+        bankAccount.setCustomersId(customersId);
         Set<Transaction> transactions = new HashSet<>();
         transactions.add(createTransaction(100L, id, instantDate));
         bankAccount.setTransactions(transactions);
@@ -295,8 +265,8 @@ public class CustomerMapperTest {
         bankAccountEntity.setId(id);
         bankAccountEntity.setType(AccountType.CHECKING);
         bankAccountEntity.setBalance(new BigDecimal("100"));
-        HashSet<Long> ownersId = new HashSet<>();
-        ownersId.add(99L);
+        HashSet<Long> customersId = new HashSet<>();
+        customersId.add(99L);
         bankAccountEntity.setCustomers(new HashSet<>());
         HashSet<TransactionEntity> transactionEntities = new HashSet<>();
         transactionEntities.add(createTransactionEntity(100L, id, instantDate));

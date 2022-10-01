@@ -2,6 +2,7 @@ package com.cdx.bas.application.bank.account;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -103,4 +104,23 @@ public class BankAccountEntity {
     public void setHistory(Set<TransactionEntity> history) {
         this.history = history;
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(balance, customers, history, id, transactions, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BankAccountEntity other = (BankAccountEntity) obj;
+		return Objects.equals(balance, other.balance) && Objects.equals(customers, other.customers)
+				&& Objects.equals(history, other.history) && Objects.equals(id, other.id)
+				&& Objects.equals(transactions, other.transactions) && type == other.type;
+	}
 }
