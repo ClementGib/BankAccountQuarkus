@@ -81,13 +81,13 @@ public class CustomerMapperTest {
 	public void toDto_should_mapNullValues_when_entityValuesNotDefined() throws JsonMappingException, JsonProcessingException {
         Customer dto = customerMapper.toDto(new CustomerEntity());
         
-        assertThat(dto.getId()).isNull();
+        assertThat(dto.getId()).isZero();
         assertThat(dto.getFirstName()).isNull();
         assertThat(dto.getLastName()).isNull();
         assertThat(dto.getGender()).isNull();
         assertThat(dto.getBirthdate()).isNull();
         assertThat(dto.getBirthdate()).isNull();
-        assertThat(dto.getNationality()).isNull();
+        assertThat(dto.getCountry()).isNull();
         assertThat(dto.getMaritalStatus()).isNull();
         assertThat(dto.getAddress()).isNull();
         assertThat(dto.getCity()).isNull();
@@ -103,13 +103,13 @@ public class CustomerMapperTest {
     public void toEntity_should_mapNullValues_when_dtoValuesNotDefined() throws JsonProcessingException {
         CustomerEntity entity = customerMapper.toEntity(new Customer());
         
-        assertThat(entity.getId()).isNull();
+        assertThat(entity.getId()).isZero();
         assertThat(entity.getFirstName()).isNull();
         assertThat(entity.getLastName()).isNull();
         assertThat(entity.getGender()).isNull();
         assertThat(entity.getBirthdate()).isNull();
         assertThat(entity.getBirthdate()).isNull();
-        assertThat(entity.getNationality()).isNull();
+        assertThat(entity.getCountry()).isNull();
         assertThat(entity.getMaritalStatus()).isNull();
         assertThat(entity.getAddress()).isNull();
         assertThat(entity.getCity()).isNull();
@@ -131,7 +131,7 @@ public class CustomerMapperTest {
         entity.setGender(Gender.MALE);
         entity.setMaritalStatus(MaritalStatus.SINGLE);
         entity.setBirthdate(LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000));
-        entity.setNationality("FR");
+        entity.setCountry("FR");
         entity.setAddress("100 avenue de la république");
         entity.setCity("Paris");
         entity.setEmail("jean.dupont@yahoo.fr");
@@ -165,7 +165,7 @@ public class CustomerMapperTest {
         assertThat(dto.getGender()).isEqualTo(Gender.MALE);
         assertThat(dto.getBirthdate()).isBefore(LocalDateTime.now());
         assertThat(dto.getBirthdate().toString()).hasToString("1995-05-03T06:30:40.000050");
-        assertThat(dto.getNationality()).isEqualTo("FR");
+        assertThat(dto.getCountry()).isEqualTo("FR");
         assertThat(dto.getMaritalStatus()).isEqualTo(MaritalStatus.SINGLE);
         assertThat(dto.getAddress()).hasToString("100 avenue de la république");
         assertThat(dto.getCity()).hasToString("Paris");
@@ -192,7 +192,7 @@ public class CustomerMapperTest {
         model.setGender(Gender.MALE);
         model.setMaritalStatus(MaritalStatus.SINGLE);
         model.setBirthdate(LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000));
-        model.setNationality("FR");
+        model.setCountry("FR");
         model.setAddress("100 avenue de la république");
         model.setCity("Paris");
         model.setEmail("jean.dupont@yahoo.fr");
@@ -225,7 +225,7 @@ public class CustomerMapperTest {
         assertThat(entity.getGender()).isEqualTo(Gender.MALE);
         assertThat(entity.getBirthdate()).isBefore(LocalDateTime.now());
         assertThat(entity.getBirthdate().toString()).hasToString("1995-05-03T06:30:40.000050");
-        assertThat(entity.getNationality()).isEqualTo("FR");
+        assertThat(entity.getCountry()).isEqualTo("FR");
         assertThat(entity.getMaritalStatus()).isEqualTo(MaritalStatus.SINGLE);
         assertThat(entity.getAddress()).hasToString("100 avenue de la république");
         assertThat(entity.getCity()).hasToString("Paris");
@@ -242,20 +242,20 @@ public class CustomerMapperTest {
         verifyNoMoreInteractions(bankAccountMapper, objectMapper);
     }
     
-    private BankAccount createBankAccount(long id, Instant instantDate) {
+    private BankAccount createBankAccount(long accountId, Instant instantDate) {
         BankAccount bankAccount = new BankAccount();
-        bankAccount.setId(id);
+        bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
         Set<Long> customersId = new HashSet<>();
         customersId.add(99L);
         bankAccount.setCustomersId(customersId);
         Set<Transaction> transactions = new HashSet<>();
-        transactions.add(createTransaction(100L, id, instantDate));
+        transactions.add(createTransaction(100L, accountId, instantDate));
         bankAccount.setTransactions(transactions);
         HashSet<Transaction> history = new HashSet<>();
-        history.add(createTransaction(99L, id, instantDate));
-        history.add(new Transaction(1L, id, 500L, TransactionType.CREDIT, TransactionStatus.WAITING, instantDate, "First withdrawal to my bank account"));
+        history.add(createTransaction(99L, accountId, instantDate));
+        history.add(createTransaction(100L, accountId, instantDate));
         bankAccount.setHistory(history);
         return bankAccount;
     }
@@ -278,8 +278,15 @@ public class CustomerMapperTest {
     }
     
     private Transaction createTransaction(long id, long accountId, Instant instantDate) {
-        Transaction transaction = new Transaction(id, accountId, 100L, TransactionType.CREDIT, TransactionStatus.ERROR, instantDate, "transaction test");
-        return transaction;
+        Transaction transactionEntity = new Transaction();
+        transactionEntity.setId(id);
+        transactionEntity.setAccountId(accountId);
+        transactionEntity.setAmount(100L);
+        transactionEntity.setType(TransactionType.CREDIT);
+        transactionEntity.setStatus(TransactionStatus.ERROR);
+        transactionEntity.setDate(instantDate);
+        transactionEntity.setLabel("transaction test");
+        return transactionEntity;
     }
     
     private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {

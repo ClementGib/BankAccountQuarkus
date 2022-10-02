@@ -32,9 +32,8 @@ public class TransactionServiceImpl implements TransactionServicePort {
     
     @Override
     public void processTransaction(Transaction transaction) throws IllegalStateException {
-        transaction.validate();
-        if (TransactionType.CREDIT.equals(transaction.type())) {
-            logger.info("Credit transaction for " +  transaction.accountId() + " of " + transaction.amount());
+        if (TransactionType.CREDIT.equals(transaction.getType())) {
+            logger.info("Credit transaction for " +  transaction.getAccountId() + " of " + transaction.getAmount());
             bankAccountService.deposit(transaction);
         }
     }

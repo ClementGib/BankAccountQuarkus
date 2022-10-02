@@ -43,7 +43,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
                 .list()
                 .stream().map(transactionEntityMapper::toDto)
                 .collect(Collectors.toCollection(PriorityQueue::new));
-        test.forEach(elem -> logger.info(elem.label()));
+        test.forEach(elem -> logger.info(elem.getLabel()));
         return new PriorityQueue<>();
     }
 

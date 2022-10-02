@@ -39,7 +39,7 @@ public class CustomerEntity {
     @Column(name = "customer_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customers_customer_id_seq_gen")
     @SequenceGenerator(name = "customers_customer_id_seq_gen", sequenceName = "customers_customer_id_seq", allocationSize = 1, initialValue = 1)
-    private Long id;
+    private long id;
     
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -58,8 +58,8 @@ public class CustomerEntity {
     @Column(name = "birthday", nullable = false)
     private LocalDateTime birthdate;
     
-    @Column(name = "nationality", nullable = false)
-    private String nationality;
+    @Column(name = "country", nullable = false)
+    private String country;
     
     @Column(name = "address", nullable = false)
     private String address;
@@ -81,11 +81,11 @@ public class CustomerEntity {
     @Column(name = "metadatas", columnDefinition = JsonTypes.JSON_BIN, nullable = true)
     private String metadatas;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -129,12 +129,12 @@ public class CustomerEntity {
         this.birthdate = birthdate;
     }
 
-    public String getNationality() {
-        return nationality;
+    public String getCountry() {
+        return country;
     }
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getAddress() {
@@ -188,7 +188,7 @@ public class CustomerEntity {
     @Override
     public int hashCode() {
         return Objects.hash(accounts, address, birthdate, city, email, firstName, gender, id, lastName, maritalStatus,
-                metadatas, nationality, phoneNumber);
+                metadatas, country, phoneNumber);
     }
     @Override
     public boolean equals(Object obj) {
@@ -204,6 +204,6 @@ public class CustomerEntity {
                 && Objects.equals(email, other.email) && Objects.equals(firstName, other.firstName)
                 && gender == other.gender && Objects.equals(id, other.id) && Objects.equals(lastName, other.lastName)
                 && maritalStatus == other.maritalStatus && Objects.equals(metadatas, other.metadatas)
-                && Objects.equals(nationality, other.nationality) && Objects.equals(phoneNumber, other.phoneNumber);
+                && Objects.equals(country, other.country) && Objects.equals(phoneNumber, other.phoneNumber);
     }
 }

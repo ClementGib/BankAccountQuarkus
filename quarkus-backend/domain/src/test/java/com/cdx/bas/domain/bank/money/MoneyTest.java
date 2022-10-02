@@ -1,7 +1,6 @@
 package com.cdx.bas.domain.bank.money;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 
@@ -26,18 +25,6 @@ public class MoneyTest {
         Money money = new Money(new BigDecimal("-100"));
 
         assertThat(money.getAmount()).isEqualTo("-100");
-    }
-
-    @Test
-    public void Money_should_instantiateMoneyWithNullAmountValue_when_amountValueIsNull() {
-        try {
-            new Money(null);
-
-            fail();
-
-        } catch (IllegalStateException exception) {
-            assertThat(exception.getMessage()).hasToString("amount must not be null.\n");
-        }
     }
     
     @Test

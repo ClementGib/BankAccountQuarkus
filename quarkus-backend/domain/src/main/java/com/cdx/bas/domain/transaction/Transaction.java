@@ -1,52 +1,124 @@
 package com.cdx.bas.domain.transaction;
 
 import java.time.Instant;
+import java.util.Objects;
 
-import net.dv8tion.jda.api.MessageBuilder;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-public record Transaction(
-        long id,
-        long accountId, 
-        long amount, 
-        TransactionType type, 
-        TransactionStatus status, 
-        Instant date, 
-        String label) implements Comparable<Transaction> {
+public class Transaction implements Comparable<Transaction> {
+	
+	@Min(value=1, message="id must be positive and greater than 0.")
+    private long id;
+    
+	@NotNull(message="gender must not be null.")
+    private long accountId;
+    
+	@Min(value=1, message="amount must be positive and greater than 0.")
+    private long amount;
+    
+	@NotNull(message="type must not be null.")
+    private TransactionType type; 
+    
+	@NotNull(message="status must not be null.")
+    private TransactionStatus status;
 
+	@NotNull(message="date must not be null.")
+    private Instant date;
+    
+	@NotNull(message="label must not be null.")
+    private String label;
+
+    public Transaction() {
+		super();
+	}
+    
     public Transaction(Transaction transaction, TransactionStatus status) {
-        this(transaction.id, transaction.accountId, transaction.amount, transaction.type, status, transaction.date, transaction.label);
+    	this.id = transaction.id;
+    	this.accountId = transaction.accountId;
+    	this.amount = transaction.amount;
+    	this.type = transaction.type;
+    	this.status = status;
+    	this.date = transaction.date;
+    	this.label = transaction.label;
     }
     
-    public void validate() {
-        MessageBuilder messageBuilder = new MessageBuilder();
-        
-        if (this.type() == null) {
-            messageBuilder.append("Transaction type must not be null.\n");
-        } else if (this.type() == TransactionType.CREDIT && this.amount() <= 0) {
-            messageBuilder.append("Credit transaction amount must be greater than 0.\n");
-        } else if (this.type() == TransactionType.DEBIT && this.amount() <= 0) {
-            messageBuilder.append("Debit transaction amount must be greater than 0.\n");
-        }
-        
-        if (this.type() == null) {
-            messageBuilder.append("Transaction status must not be null.\n");
-        }
-        
-        if (this.date() == null) {
-            messageBuilder.append("Transaction date must not be null.\n");
-        }
-        
-        if (this.label() == null) {
-            messageBuilder.append("Transaction label must not be null.\n");
-        }
-        
-        if (messageBuilder.length() > 0) {
-            throw new IllegalStateException(messageBuilder.build().getContentRaw());
-        }
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(long accountId) {
+		this.accountId = accountId;
+	}
+
+	public long getAmount() {
+		return amount;
+	}
+
+	public void setAmount(long amount) {
+		this.amount = amount;
+	}
+
+	public TransactionType getType() {
+		return type;
+	}
+
+	public void setType(TransactionType type) {
+		this.type = type;
+	}
+
+	public TransactionStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(TransactionStatus status) {
+		this.status = status;
+	}
+
+	public Instant getDate() {
+		return date;
+	}
+
+	public void setDate(Instant date) {
+		this.date = date;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	@Override
+    public int compareTo(Transaction transactionToCompar) {
+        return this.getDate().compareTo(transactionToCompar.getDate());
     }
 
-    @Override
-    public int compareTo(Transaction transactionToCompar) {
-        return this.date().compareTo(transactionToCompar.date());
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(accountId, amount, date, id, label, status, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Transaction other = (Transaction) obj;
+		return accountId == other.accountId && amount == other.amount && Objects.equals(date, other.date)
+				&& id == other.id && Objects.equals(label, other.label) && status == other.status && type == other.type;
+	}
 }

@@ -1,28 +1,17 @@
 package com.cdx.bas.domain.money;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
-import net.dv8tion.jda.api.MessageBuilder;
+import javax.validation.constraints.NotNull;
 
 public class Money {
-    
+	
+    @NotNull
     private BigDecimal amount;
     
     public Money(BigDecimal amount) {
         this.amount = amount;
-        validate();
-    }
-
-    private void validate() {
-        MessageBuilder messageBuilder = new MessageBuilder();
-        
-        if (amount == null) {
-            messageBuilder.append("amount must not be null.\n");
-        }
-        
-        if (messageBuilder.length() > 0) {
-            throw new IllegalStateException(messageBuilder.build().getContentRaw());
-        }
     }
     
     public static Money of(long value) {
@@ -60,4 +49,21 @@ public class Money {
     public boolean isGreaterThanOrEqual(Money money){
         return this.amount.compareTo(money.amount) >= 0;
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(amount);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Money other = (Money) obj;
+		return Objects.equals(amount, other.amount);
+	}
 }

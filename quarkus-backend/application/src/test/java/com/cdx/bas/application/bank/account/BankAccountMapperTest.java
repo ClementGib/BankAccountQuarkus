@@ -3,8 +3,6 @@ package com.cdx.bas.application.bank.account;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-import java.util.HashSet;
-
 import javax.inject.Inject;
 
 import com.cdx.bas.application.customer.CustomerEntity;

@@ -4,23 +4,32 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 
-import net.dv8tion.jda.api.MessageBuilder;
-
 public class BankAccount {
 
-    private Long id;
+	@Min(value=1, message="id must be positive and greater than 0.")
+    private long id;
     
+	@NotNull(message="type must not be null.")
     private AccountType type;
     
+	@NotNull(message="balance must not be null.")
     private Money balance;
     
-    private Set<Long> customersId;
+	@NotNull(message="customersId must not be null.")
+	@Size(min=1, message="customersId must contains at least 1 customer id.")
+    private Set<Long> customersId = new HashSet<>();
     
+	@NotNull(message="transactions must not be null.")
     private Set<Transaction> transactions = new HashSet<>();
-    
+
+	@NotNull(message="history must not be null.")
     private Set<Transaction> history = new HashSet<>();
     
     public BankAccount() {
@@ -36,11 +45,11 @@ public class BankAccount {
         this.history = history;
     }
     
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -82,42 +91,6 @@ public class BankAccount {
 
     public void setHistory(Set<Transaction> history) {
         this.history = history;
-    }
-    
-    public void validate() {
-        MessageBuilder messageBuilder = new MessageBuilder();
-        
-        if (id == null) {
-            messageBuilder.append("id must not be null.\n");
-        } else if (id < 1) {
-            messageBuilder.append("id must be positive and higher than 0.\n");
-        }
-        
-        if (type == null) {
-            messageBuilder.append("type must not be null.\n");
-        }
-        
-        if (balance == null) {
-            messageBuilder.append("balance must not be null.\n");
-        }
-        
-        if (customersId == null) {
-            messageBuilder.append("ownersId must not be null.\n");
-        } else if (customersId.isEmpty()) {
-            messageBuilder.append("ownersId must contain at least 1 owner id.\n");
-        }
-        
-        if (transactions == null) {
-            messageBuilder.append("transactions must not be null.\n");
-        }
-        
-        if (history == null) {
-            messageBuilder.append("history must not be null.\n");
-        }
-        
-        if (messageBuilder.length() > 0) {
-            throw new IllegalStateException(messageBuilder.build().getContentRaw());
-        }
     }
 
 	@Override

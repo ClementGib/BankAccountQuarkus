@@ -35,7 +35,7 @@ public class BankAccountEntity {
     @Column(name = "account_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_accounts_account_id_seq_gen")
     @SequenceGenerator(name = "bank_accounts_account_id_seq_gen", sequenceName = "bank_accounts_account_id_seq", allocationSize = 1, initialValue = 1)
-    private Long id;
+    private long id;
     
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
