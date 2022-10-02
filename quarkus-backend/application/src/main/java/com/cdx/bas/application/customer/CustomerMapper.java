@@ -40,7 +40,7 @@ public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity>
         dto.setGender(entity.getGender());
         dto.setMaritalStatus(entity.getMaritalStatus());
         dto.setBirthdate(entity.getBirthdate());
-        dto.setNationality(entity.getNationality());
+        dto.setCountry(entity.getCountry());
         dto.setAddress(entity.getAddress());
         dto.setCity(entity.getCity());
         dto.setEmail(entity.getEmail());
@@ -74,7 +74,7 @@ public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity>
         entity.setGender(dto.getGender());
         entity.setMaritalStatus(dto.getMaritalStatus());
         entity.setBirthdate(dto.getBirthdate());
-        entity.setNationality(dto.getNationality());
+        entity.setCountry(dto.getCountry());
         entity.setAddress(dto.getAddress());
         entity.setCity(dto.getCity());
         entity.setEmail(dto.getEmail());

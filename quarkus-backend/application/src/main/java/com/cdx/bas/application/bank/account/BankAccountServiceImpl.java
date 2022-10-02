@@ -27,21 +27,21 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     @Override
     public Transaction deposit(Transaction transaction) {
         try {
-            BankAccount currentBankAccount = bankAccountManager.findById(transaction.accountId())
-                    .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.accountId() +" not found."));
-            logger.info("Deposit for " +  transaction.accountId() + " of " + transaction.amount());
+            BankAccount currentBankAccount = bankAccountManager.findById(transaction.getAccountId())
+                    .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() +" not found."));
+            logger.info("Deposit for " +  transaction.getAccountId() + " of " + transaction.getAmount());
             
-            currentBankAccount.getBalance().plus(Money.of(transaction.amount()));
+            currentBankAccount.getBalance().plus(Money.of(transaction.getAmount()));
             Transaction completedTransaction = new Transaction(transaction, TransactionStatus.COMPLETED);
             currentBankAccount.getHistory().add(completedTransaction);
             bankAccountManager.update(currentBankAccount);
             return completedTransaction;
             
         } catch (NoSuchElementException exception) {
-            logger.error("Deposit error for " +  transaction.accountId() + " of " + transaction.amount());
+            logger.error("Deposit error for " +  transaction.getAccountId() + " of " + transaction.getAmount());
             return new Transaction(transaction, TransactionStatus.ERROR);
         } catch (BankAccountException exception) {
-            logger.error("Deposit error for " +  transaction.accountId() + " of " + transaction.amount());
+            logger.error("Deposit error for " +  transaction.getAccountId() + " of " + transaction.getAmount());
             return new Transaction(transaction, TransactionStatus.REFUSED);
         }
     }

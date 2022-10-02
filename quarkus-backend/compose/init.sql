@@ -21,7 +21,7 @@ SET search_path TO basapp;
 	gender varchar(25) NOT NULL,
 	marital_status varchar(25) NOT NULL,
 	birthday timestamp without time zone NOT NULL,
-	nationality varchar(255) NOT NULL,
+	country varchar(255) NOT NULL,
 	address text NOT NULL,
 	city varchar(255) NOT NULL,
 	email varchar(255) UNIQUE NOT NULL,

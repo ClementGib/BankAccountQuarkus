@@ -1,4 +1,4 @@
-INSERT INTO basapp.customers(customer_id, first_name, last_name, gender, marital_status, birthday, nationality, address, city, email, phone_number, metadatas)
+INSERT INTO basapp.customers(customer_id, first_name, last_name, gender, marital_status, birthday, country, address, city, email, phone_number, metadatas)
 	VALUES (1, 'John', 'Doe', 'MALE', 'SINGLE', '1980-01-01 :12:00:00', 'US', '200 Central Park West, NY 10024', 'New York', 'johndoe@bas.com', '+1 212-769-5100', null),
 	(2, 'Anne', 'Jean', 'FEMALE', 'MARRIED', '1993-07-11 :12:00:00', 'FR', '2 rue du chateau', 'Marseille', 'annej@bas.com', '+36 6 50 44 12 05', null),
 	(3, 'Paul', 'Jean', 'MALE', 'MARRIED', '1992-04-11 :12:00:00', 'FR', '2 rue du chateau', 'Marseille', 'paulj@bas.com', '+36 6 50 44 12 05', null),
