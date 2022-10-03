@@ -45,7 +45,7 @@ public class BankAccountEntity {
     private BigDecimal balance;
     
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
-    private Set<CustomerEntity> customers;
+    private Set<CustomerEntity> customers = new HashSet<>();
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
