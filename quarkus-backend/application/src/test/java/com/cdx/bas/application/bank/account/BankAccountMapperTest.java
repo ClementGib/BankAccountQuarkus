@@ -9,6 +9,7 @@ import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.customer.Customer;
+import com.cdx.bas.domain.money.Money;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -52,9 +53,9 @@ public class BankAccountMapperTest {
 	public void toDto_should_mapNullValues_when_entityHasNullValues() throws JsonMappingException, JsonProcessingException {
         BankAccount dto = bankAccountMapper.toDto(new BankAccountEntity());
         
-        assertThat(dto.getId()).isNull();
+        assertThat(dto.getId()).isZero();
         assertThat(dto.getType()).isNull();
-        assertThat(dto.getBalance()).isNull();
+        assertThat(dto.getBalance()).usingRecursiveComparison().isEqualTo(new Money(null));
         assertThat(dto.getCustomersId()).isEmpty();
         assertThat(dto.getTransactions()).isEmpty();
         assertThat(dto.getHistory()).isEmpty();
@@ -66,7 +67,7 @@ public class BankAccountMapperTest {
     public void toEntity_should_mapNullValues_when_dtoHasNullValues() throws JsonProcessingException {
         BankAccountEntity entity = bankAccountMapper.toEntity(new BankAccount());
         
-        assertThat(entity.getId()).isNull();
+        assertThat(entity.getId()).isZero();
         assertThat(entity.getType()).isNull();
         assertThat(entity.getBalance()).isNull();
         assertThat(entity.getCustomers()).isEmpty();

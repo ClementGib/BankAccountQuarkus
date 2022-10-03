@@ -1,5 +1,8 @@
 package com.cdx.bas.application.bank.account;
 
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -9,6 +12,7 @@ import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.customer.Customer;
 import com.cdx.bas.domain.customer.CustomerPersistencePort;
+import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 
 @RequestScoped
@@ -25,13 +29,50 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
 
 	@Override
 	public BankAccount toDto(BankAccountEntity entity) {
+	
+		if (entity == null) {
+            return null;
+        }
+        
 		BankAccount dto = new BankAccount();
+		dto.setId(entity.getId());
+		dto.setType(entity.getType());
+		dto.setBalance(new Money(entity.getBalance()));
+		dto.setCustomersId(entity.getCustomers().stream()
+				.map(customerEntity -> customerMapper.toDto(customerEntity).getId()).collect(Collectors.toSet()));
+		dto.setTransactions(entity.getTransactions().stream()
+				.map(transactionMapper::toDto).collect(Collectors.toSet()));
+		dto.setHistory(entity.getHistory().stream()
+				.map(transactionMapper::toDto).collect(Collectors.toSet()));
 		return dto;
 	}
 
 	@Override
 	public BankAccountEntity toEntity(BankAccount dto) {
+	
+		if (dto == null) {
+            return null;
+        }
+        
 		BankAccountEntity entity = new BankAccountEntity();
+		entity.setId(dto.getId());
+		entity.setType(dto.getType());
+		
+		if (dto.getBalance() != null) {
+			entity.setBalance(dto.getBalance().getAmount());	
+		} else {
+			entity.setBalance(null);
+		}
+		
+		entity.setCustomers(dto.getCustomersId().stream()
+				.map(customerId -> customerRepository.findById(customerId)
+						.map(customerMapper::toEntity)
+						.orElseThrow(() -> new NoSuchElementException("Customer entity not found for id:" + customerId )))
+				.collect(Collectors.toSet()));
+		entity.setTransactions(dto.getTransactions().stream()
+				.map(transactionMapper::toEntity).collect(Collectors.toSet()));
+		entity.setHistory(dto.getHistory().stream()
+				.map(transactionMapper::toEntity).collect(Collectors.toSet()));
 		return entity;
 	}
 }
