@@ -50,7 +50,7 @@ public class BankAccountMapperTest {
     }
     
 	@Test
-	public void toDto_should_mapNullValues_when_entityHasNullValues() throws JsonMappingException, JsonProcessingException {
+	public void toDto_should_mapNullValues_when_entityHasNullValues() {
         BankAccount dto = bankAccountMapper.toDto(new BankAccountEntity());
         
         assertThat(dto.getId()).isZero();
@@ -64,7 +64,40 @@ public class BankAccountMapperTest {
     }
     
     @Test
-    public void toEntity_should_mapNullValues_when_dtoHasNullValues() throws JsonProcessingException {
+    public void toEntity_should_mapNullValues_when_dtoHasNullValues() {
+        BankAccountEntity entity = bankAccountMapper.toEntity(new BankAccount());
+        
+        assertThat(entity.getId()).isZero();
+        assertThat(entity.getType()).isNull();
+        assertThat(entity.getBalance()).isNull();
+        assertThat(entity.getCustomers()).isEmpty();
+        assertThat(entity.getTransactions()).isEmpty();
+        assertThat(entity.getHistory()).isEmpty();
+
+        verifyNoInteractions(customerMapper);
+    }
+    
+    @Test
+    public void toDto_should_mapDtoValues_when_entityHasValues() {
+    	
+    	BankAccountEntity bankAccountEntity = new BankAccountEntity();
+    	bankAccountEntity.setId(10L);
+    	bankAccountEntity.setType(BankAcc);
+        BankAccount dto = bankAccountMapper.toDto(bankAccountEntity);
+        
+        assertThat(dto.getId()).isZero();
+        assertThat(dto.getType()).isNull();
+        assertThat(dto.getBalance()).usingRecursiveComparison().isEqualTo(new Money(null));
+        assertThat(dto.getCustomersId()).isEmpty();
+        assertThat(dto.getTransactions()).isEmpty();
+        assertThat(dto.getHistory()).isEmpty();
+
+        verifyNoInteractions(customerMapper);
+    }
+    
+
+    @Test
+    public void toEntity_should_mapEntityValues_when_dtoHasValues() {
         BankAccountEntity entity = bankAccountMapper.toEntity(new BankAccount());
         
         assertThat(entity.getId()).isZero();
