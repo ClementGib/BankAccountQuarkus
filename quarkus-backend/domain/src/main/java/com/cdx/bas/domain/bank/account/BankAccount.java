@@ -11,38 +11,39 @@ import javax.validation.constraints.Size;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 
-public class BankAccount {
+public abstract class BankAccount {
 
 	@Min(value=1, message="id must be positive and greater than 0.")
-    private long id;
+    protected long id;
     
 	@NotNull(message="type must not be null.")
-    private AccountType type;
+	protected AccountType type;
     
 	@NotNull(message="balance must not be null.")
-    private Money balance;
+	protected Money balance;
     
 	@NotNull(message="customersId must not be null.")
 	@Size(min=1, message="customersId must contains at least 1 customer id.")
-    private Set<Long> customersId = new HashSet<>();
+	protected Set<Long> customersId = new HashSet<>();
     
 	@NotNull(message="transactions must not be null.")
-    private Set<Transaction> transactions = new HashSet<>();
+	protected Set<Transaction> transactions = new HashSet<>();
 
 	@NotNull(message="history must not be null.")
-    private Set<Transaction> history = new HashSet<>();
+	protected Set<Transaction> history = new HashSet<>();
     
-    public BankAccount() {
-        super();
+    public BankAccount(AccountType type) {
+        this.type = type;
     }
 
-    public BankAccount(Long id, AccountType type, Money balance, Set<Long> ownersId, Set<Transaction> transactions, Set<Transaction> history) {
-        this.id = id;
-        this.type = type;
-        this.balance = balance;
-        this.customersId = ownersId;
-        this.transactions = transactions;
-        this.history = history;
+    public BankAccount(Long id, AccountType type, Money balance, Set<Long> customersId, Set<Transaction> transactions, Set<Transaction> history) {
+      this.id = id;
+      this.type = type;
+      this.balance = balance;
+      this.customersId = customersId;
+      this.transactions = transactions;
+      this.history = history;
+      this.balance = balance;
     }
     
     public long getId() {
