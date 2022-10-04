@@ -26,6 +26,7 @@ import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountException;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
+import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionStatus;
@@ -101,7 +102,7 @@ public class BankAccountServiceImplTest {
     }
     
     private static BankAccount createBankAccount(long accountId) {
-        BankAccount bankAccount = new BankAccount();
+        BankAccount bankAccount = new CheckingBankAccount();
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));

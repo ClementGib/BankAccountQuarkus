@@ -33,10 +33,9 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
 		if (entity == null) {
             return null;
         }
-        
-		BankAccount dto = new BankAccount();
+		
+		BankAccount dto = BankAccountFactory.createBankAccount(entity.getType());
 		dto.setId(entity.getId());
-		dto.setType(entity.getType());
 		dto.setBalance(new Money(entity.getBalance()));
 		dto.setCustomersId(entity.getCustomers().stream()
 				.map(customerEntity -> customerMapper.toDto(customerEntity).getId()).collect(Collectors.toSet()));
@@ -53,7 +52,7 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
 		if (dto == null) {
             return null;
         }
-        
+		
 		BankAccountEntity entity = new BankAccountEntity();
 		entity.setId(dto.getId());
 		entity.setType(dto.getType());

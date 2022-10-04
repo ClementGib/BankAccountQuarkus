@@ -26,6 +26,7 @@ import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
+import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.customer.Customer;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
@@ -243,7 +244,7 @@ public class CustomerMapperTest {
     }
     
     private BankAccount createBankAccount(long accountId, Instant instantDate) {
-        BankAccount bankAccount = new BankAccount();
+        BankAccount bankAccount = new CheckingBankAccount();
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
