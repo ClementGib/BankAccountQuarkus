@@ -30,7 +30,7 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
 	@Override
 	public BankAccount toDto(BankAccountEntity entity) {
 	
-		if (entity == null) {
+		if (entity == null || entity.getType() == null) {
             return null;
         }
 		
@@ -66,7 +66,7 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
 		entity.setCustomers(dto.getCustomersId().stream()
 				.map(customerId -> customerRepository.findById(customerId)
 						.map(customerMapper::toEntity)
-						.orElseThrow(() -> new NoSuchElementException("Customer entity not found for id:" + customerId )))
+						.orElseThrow(() -> new NoSuchElementException("Customer entity not found for id: " + customerId)))
 				.collect(Collectors.toSet()));
 		entity.setTransactions(dto.getTransactions().stream()
 				.map(transactionMapper::toEntity).collect(Collectors.toSet()));
