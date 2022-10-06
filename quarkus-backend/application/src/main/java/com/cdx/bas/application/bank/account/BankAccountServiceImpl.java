@@ -36,7 +36,7 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
         try {
             BankAccount currentBankAccount = BankAccountRepository.findById(transaction.getAccountId())
                     .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() +" not found."));
-            logger.info("Deposit for " +  transaction.getAccountId() + " of " + transaction.getAmount());
+            logger.info("Deposit for bank account id " +  transaction.getAccountId() + " transaction " + transaction.getId() + " of "+ transaction.getAmount());
             
             metadatas.put("amount_before", currentBankAccount.getBalance().getAmount().toString());
             currentBankAccount.getBalance().plus(Money.of(transaction.getAmount()));

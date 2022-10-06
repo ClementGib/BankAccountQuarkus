@@ -38,8 +38,7 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
 		BankAccount dto = BankAccountFactory.createBankAccount(entity.getType());
 		dto.setId(entity.getId());
 		dto.setBalance(new Money(entity.getBalance()));
-		dto.setCustomersId(entity.getCustomers().stream()
-				.map(CustomerEntity::getId).collect(Collectors.toSet()));
+		
 		dto.setTransactions(entity.getTransactions().stream()
 				.map(transactionMapper::toDto).collect(Collectors.toSet()));
 		dto.setHistory(entity.getHistory().stream()

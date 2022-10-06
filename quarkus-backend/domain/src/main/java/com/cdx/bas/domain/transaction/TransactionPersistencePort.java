@@ -3,6 +3,8 @@ package com.cdx.bas.domain.transaction;
 import java.util.Optional;
 import java.util.Queue;
 
+import com.cdx.bas.domain.bank.account.BankAccount;
+
 public interface TransactionPersistencePort {
     
     /**
@@ -39,7 +41,7 @@ public interface TransactionPersistencePort {
     /**
      * delete the current Transaction
      * 
-     * @param Transaction to remove
+     * @param Transaction id to remove
      */
-    public void remove(Transaction transaction);
+    public Optional<Transaction> deleteById(long id);
 }
