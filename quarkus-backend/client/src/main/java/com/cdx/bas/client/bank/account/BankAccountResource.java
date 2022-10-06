@@ -9,7 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import com.cdx.bas.domain.bank.account.BankAccount;
-import com.cdx.bas.domain.bank.account.BankAccountFacadePort;
+import com.cdx.bas.domain.bank.account.BankAccountControllerPort;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
@@ -17,7 +17,7 @@ import com.cdx.bas.domain.transaction.TransactionType;
 
 
 @Path("/account")
-public class BankAccountResource implements BankAccountFacadePort{
+public class BankAccountResource implements BankAccountControllerPort{
 
     @Inject
     BankAccountPersistencePort bankAccountRepository;

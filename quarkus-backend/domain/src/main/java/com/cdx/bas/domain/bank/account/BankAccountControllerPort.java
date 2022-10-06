@@ -1,6 +1,6 @@
 package com.cdx.bas.domain.bank.account;
 
-public interface BankAccountFacadePort {
+public interface BankAccountControllerPort {
 
     
     /**
