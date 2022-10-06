@@ -22,19 +22,19 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     private static final Logger logger = LoggerFactory.getLogger(BankAccountServiceImpl.class);
     
     @Inject
-    BankAccountPersistencePort bankAccountManager;
+    BankAccountPersistencePort BankAccountRepository;
 
     @Override
     public Transaction deposit(Transaction transaction) {
         try {
-            BankAccount currentBankAccount = bankAccountManager.findById(transaction.getAccountId())
+            BankAccount currentBankAccount = BankAccountRepository.findById(transaction.getAccountId())
                     .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() +" not found."));
             logger.info("Deposit for " +  transaction.getAccountId() + " of " + transaction.getAmount());
             
             currentBankAccount.getBalance().plus(Money.of(transaction.getAmount()));
             Transaction completedTransaction = new Transaction(transaction, TransactionStatus.COMPLETED);
             currentBankAccount.getHistory().add(completedTransaction);
-            bankAccountManager.update(currentBankAccount);
+            BankAccountRepository.update(currentBankAccount);
             return completedTransaction;
             
         } catch (NoSuchElementException exception) {

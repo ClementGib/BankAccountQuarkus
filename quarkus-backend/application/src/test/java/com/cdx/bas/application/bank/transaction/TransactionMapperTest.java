@@ -1,23 +1,56 @@
 package com.cdx.bas.application.bank.transaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.cdx.bas.application.bank.account.BankAccountEntity;
+import com.cdx.bas.application.bank.account.BankAccountRepository;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.application.transaction.TransactionMapper;
+import com.cdx.bas.domain.bank.account.AccountType;
+import com.cdx.bas.domain.bank.account.BankAccount;
+import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionStatus;
+import com.cdx.bas.domain.transaction.TransactionType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class TransactionMapperTest {
 
     @Inject
     TransactionMapper transactionMapper;
+    
+    @InjectMock
+    private BankAccountRepository bankAccountRepository;
+    
+    @InjectMock
+    private ObjectMapper objectMapper;
 
     @Test
     public void toDto_should_returnNullDto_when_entityIsNull() {
@@ -42,27 +75,119 @@ public class TransactionMapperTest {
         Transaction dto = transactionMapper.toDto(new TransactionEntity());
 
         assertThat(dto.getId()).isZero();
-        assertThat(dto.getAccountId()).usingRecursiveComparison().isEqualTo(new Money(null));
-        assertThat(dto.getAmount()).isNull();
+        assertThat(dto.getAccountId()).isEqualTo(0L);
+        assertThat(dto.getAmount()).isEqualTo(0L);
         assertThat(dto.getType()).isNull();
         assertThat(dto.getStatus()).isNull();
         assertThat(dto.getDate()).isNull();
         assertThat(dto.getLabel()).isNull();
-        assertThat(dto.getMetadatas()).isNull();
+        assertThat(dto.getMetadatas()).isEmpty();
     }
 
     @Test
     public void toEntity_should_mapNullValues_when_dtoHasNullValues() {
-        TransactionEntity entity = transactionMapper.toEntity(new Transaction());
+        
+        try {
+            transactionMapper.toEntity(new Transaction());
+            fail();
+        } catch (NoSuchElementException exception) {
+            assertThat(exception.getMessage()).hasToString("Bank Account entity not found for id: 0");
+            
+        }
 
-        assertThat(entity.getId()).isZero();
-        assertThat(entity.getAccount()).isNull();
-        assertThat(entity.getAmount()).isNull();
-        assertThat(entity.getType()).isNull();
-        assertThat(entity.getStatus()).isNull();
-        assertThat(entity.getDate()).isNull();
-        assertThat(entity.getLabel()).isNull();
-        assertThat(entity.getMetadatas()).isNull();
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void toDto_should_mapEntityValues_when_entityHasValues() throws JsonMappingException, JsonProcessingException {
+        Instant date = Instant.now();
+        String strMetadatas = "{\"amount_after\" : \"100\", \"amount_before\" : \"0\"}";
+        Map<String, String> metadatas = new HashMap<>();
+        metadatas.put("amount_after", "100");
+        metadatas.put("amount_before", "0");
+        TransactionEntity transactionEntity = createTransactionEntity(10L, 99L, date);
+        
+        when(objectMapper.readValue(eq(strMetadatas), any(TypeReference.class))).thenReturn(metadatas);
+        
+        Transaction dto = transactionMapper.toDto(transactionEntity);
+
+        assertThat(dto.getId()).isEqualTo(10L);
+        assertThat(dto.getAccountId()).isEqualTo(99L);
+        assertThat(dto.getAmount()).isEqualTo(100L);
+        assertThat(dto.getType()).isEqualTo(TransactionType.CREDIT);
+        assertThat(dto.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
+        assertThat(dto.getDate()).isEqualTo(date);
+        assertThat(dto.getLabel()).hasToString("transaction test");
+        assertThat(dto.getMetadatas()).usingRecursiveComparison().isEqualTo(metadatas);
+
+        verify(objectMapper).readValue(eq(strMetadatas), any(TypeReference.class));
+        verifyNoMoreInteractions(objectMapper);
+    }
+    
+    @Test
+    public void toEntity_should_mapEntityValues_when_dtoHasValues() throws JsonProcessingException {
+        Instant date = Instant.now();
+        String strMetadatas = "{\"amount_after\" : \"100\", \"amount_before\" : \"0\"}";
+        Map<String, String> metadatas = new HashMap<>();
+        metadatas.put("amount_after", "100");
+        metadatas.put("amount_before", "0");
+        BankAccountEntity bankAccountEntity = createBankAccountEntity(99L, date);
+        Transaction transaction = createTransaction(10L, 99L, date);
+        
+        when(bankAccountRepository.findByIdOptional(99L)).thenReturn(Optional.of(bankAccountEntity));
+        when(objectMapper.writeValueAsString(transaction.getMetadatas())).thenReturn(strMetadatas);
+        
+        TransactionEntity entity = transactionMapper.toEntity(transaction);
+        
+        assertThat(entity.getId()).isEqualTo(10L);
+        assertThat(entity.getAccount()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
+        assertThat(entity.getAmount()).usingRecursiveComparison().isEqualTo(new BigDecimal(100L));
+        assertThat(entity.getType()).isEqualTo(TransactionType.CREDIT);
+        assertThat(entity.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
+        assertThat(entity.getDate()).isEqualTo(date);
+        assertThat(entity.getLabel()).hasToString("transaction test");
+        assertThat(entity.getMetadatas()).isEqualTo(strMetadatas);
+        
+        verify(objectMapper).writeValueAsString(metadatas);
+        verifyNoMoreInteractions(objectMapper);
+    }
+    
+    private Transaction createTransaction(long id, long accountId, Instant instantDate) {
+        Transaction transactionEntity = new Transaction();
+        transactionEntity.setId(id);
+        transactionEntity.setAccountId(accountId);
+        transactionEntity.setAmount(100L);
+        transactionEntity.setType(TransactionType.CREDIT);
+        transactionEntity.setStatus(TransactionStatus.COMPLETED);
+        transactionEntity.setDate(instantDate);
+        transactionEntity.setLabel("transaction test");
+        Map<String, String> metadatas = new HashMap<>();
+        metadatas.put("amount_after", "100");
+        metadatas.put("amount_before", "0");
+        transactionEntity.setMetadatas(metadatas);
+        return transactionEntity;
     }
 
+    private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {
+        TransactionEntity transactionEntity = new TransactionEntity();
+        transactionEntity.setId(id);
+        transactionEntity.setAccount(createBankAccountEntity(accountId, instantDate));
+        transactionEntity.setAmount(new BigDecimal("100"));
+        transactionEntity.setType(TransactionType.CREDIT);
+        transactionEntity.setStatus(TransactionStatus.COMPLETED);
+        transactionEntity.setDate(instantDate);
+        transactionEntity.setLabel("transaction test");
+        transactionEntity.setMetadatas("{\"amount_after\" : \"100\", \"amount_before\" : \"0\"}");
+        return transactionEntity;
+    }
+    
+    private BankAccountEntity createBankAccountEntity(long id, Instant instantDate) {
+        BankAccountEntity bankAccountEntity = new BankAccountEntity();
+        bankAccountEntity.setId(id);
+        bankAccountEntity.setType(AccountType.CHECKING);
+        bankAccountEntity.setBalance(new BigDecimal("100"));
+        HashSet<Long> customersId = new HashSet<>();
+        customersId.add(99L);
+        return bankAccountEntity;
+    }
 }
