@@ -9,16 +9,17 @@ import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+
 @RequestScoped
-public class BankAccountRepository implements BankAccountPersistencePort {
+public class BankAccountRepository implements BankAccountPersistencePort, PanacheRepository<BankAccountEntity> {
     
     @Inject
     private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
     
     @Override
     public Optional<BankAccount> findById(long id) {
-        // TODO Auto-generated method stub
-        return Optional.empty();
+        return findByIdOptional(id).map(bankAccountMapper::toDto);
     }
     
     @Override
@@ -38,5 +39,4 @@ public class BankAccountRepository implements BankAccountPersistencePort {
         // TODO Auto-generated method stub
         return Optional.empty();
     }
-
 }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.quarkus.jackson.ObjectMapperCustomizer;
 
 @Singleton
-public class ObjectMapperCustom implements ObjectMapperCustomizer {
+public class CustomObjectMapper implements ObjectMapperCustomizer {
 
     @Override
     public void customize(ObjectMapper objectMapper) {

@@ -136,8 +136,6 @@ public class BankAccountMapperTest {
         historyEntities.add(historyEntity);
         entity.setHistory(historyEntities);
 
-        Customer customer = createCustomer();
-        when(customerMapper.toDto(customerEntity)).thenReturn(customer);
         Transaction transaction = createTransaction(5000L, 10L, date);
         when(transactionMapper.toDto(transactionEntity)).thenReturn(transaction);
         Transaction history = createTransaction(2000L, 10L, date);
@@ -148,7 +146,7 @@ public class BankAccountMapperTest {
         assertThat(dto.getType()).isEqualTo(AccountType.CHECKING);
         assertThat(dto.getBalance()).usingRecursiveComparison().isEqualTo(new Money(new BigDecimal("1000")));
         assertThat(dto.getCustomersId()).hasSize(1);
-        assertThat(dto.getCustomersId().iterator().next()).isEqualTo(customer.getId());
+        assertThat(dto.getCustomersId().iterator().next()).isEqualTo(99L);
         assertThat(dto.getTransactions()).hasSize(1);
         assertThat(dto.getTransactions().iterator().next()).usingRecursiveComparison().isEqualTo(transaction);
         assertThat(dto.getHistory()).hasSize(1);
@@ -156,7 +154,6 @@ public class BankAccountMapperTest {
 
         verify(transactionMapper).toDto(transactionEntity);
         verify(transactionMapper).toDto(historyEntity);
-        verify(customerMapper).toDto(customerEntity);
         verifyNoMoreInteractions(customerMapper, transactionMapper);
     }
 
@@ -195,7 +192,7 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toDto_should_mapEntityValues_when_dtoHasValues() {
+    public void toEntity_should_mapDtoValues_when_dtoHasValues() {
         Instant date = Instant.now();
         BankAccount dto = new CheckingBankAccount();
         dto.setId(10L);

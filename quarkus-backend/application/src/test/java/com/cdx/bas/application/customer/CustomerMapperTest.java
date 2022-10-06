@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
@@ -300,10 +299,5 @@ public class CustomerMapperTest {
         transactionEntity.setDate(instantDate);
         transactionEntity.setLabel("transaction test");
         return transactionEntity;
-    }
-    
-    @ApplicationScoped
-    public static class ObjectMapperMock extends ObjectMapper {
-        private static final long serialVersionUID = 1L;
     }
 }
