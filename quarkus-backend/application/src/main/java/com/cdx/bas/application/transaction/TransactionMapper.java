@@ -29,14 +29,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
 //        entity.setCreationDate(model.creationDate());
 //        entity.setLikeCount(model.likeCount());
 //        entity.setImageId(model.imageId());
+        //metadatas
         return entity;
     }
 }
-
-//private Long id;
-//private BankAccountEntity account;
-//private String type;
-//private BigDecimal amount;
-//private String status;
-//private Instant date;
-//private String label;

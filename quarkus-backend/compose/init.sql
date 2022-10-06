@@ -48,6 +48,7 @@ SET search_path TO basapp;
     status varchar(25) NOT NULL,
 	date timestamp without time zone NOT NULL,
 	label text NOT NULL,
+	metadatas jsonb,
 	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id)
 	);
 	

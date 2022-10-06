@@ -1,6 +1,8 @@
 package com.cdx.bas.domain.transaction;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.Min;
@@ -28,6 +30,8 @@ public class Transaction implements Comparable<Transaction> {
     
 	@NotNull(message="label must not be null.")
     private String label;
+	
+	private Map<String, String> metadatas = new HashMap<>();
 
     public Transaction() {
 		super();
@@ -98,27 +102,39 @@ public class Transaction implements Comparable<Transaction> {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	
+	public Map<String, String> getMetadatas() {
+        return metadatas;
+    }
 
-	@Override
+    public void setMetadatas(Map<String, String> metadatas) {
+        this.metadatas = metadatas;
+    }
+
+    @Override
     public int compareTo(Transaction transactionToCompar) {
         return this.getDate().compareTo(transactionToCompar.getDate());
     }
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(accountId, amount, date, id, label, status, type);
-	}
+    public int hashCode() {
+        return Objects.hash(accountId, amount, date, id, label, metadatas, status, type);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Transaction other = (Transaction) obj;
-		return accountId == other.accountId && amount == other.amount && Objects.equals(date, other.date)
-				&& id == other.id && Objects.equals(label, other.label) && status == other.status && type == other.type;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Transaction other = (Transaction) obj;
+        return accountId == other.accountId && amount == other.amount && Objects.equals(date, other.date)
+                && id == other.id && Objects.equals(label, other.label) && Objects.equals(metadatas, other.metadatas)
+                && status == other.status && type == other.type;
+    }
 }
