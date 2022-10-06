@@ -30,18 +30,18 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     private static final Logger logger = Logger.getLogger(TransactionRepository.class);
     
     @Inject
-    private DtoEntityMapper<Transaction, TransactionEntity> transactionEntityMapper;
+    private DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
 
     @Override
     public Optional<Transaction> findById(long id) {
-        return findByIdOptional(id).map(transactionEntityMapper::toDto);
+        return findByIdOptional(id).map(transactionMapper::toDto);
     }
 
     @Override
     public Queue<Transaction> findUnprocessedTransactions() {
-        Queue<Transaction> test = find("#TransactionEntity.findUnprocessed", Parameters.with("status", TransactionStatus.WAITING.toString()).map())
+        Queue<Transaction> test = find("#TransactionEntity.findUnprocessed", Parameters.with("status", TransactionStatus.WAITING).map())
                 .list()
-                .stream().map(transactionEntityMapper::toDto)
+                .stream().map(transactionMapper::toDto)
                 .collect(Collectors.toCollection(PriorityQueue::new));
         test.forEach(elem -> logger.info(elem.getLabel()));
         return new PriorityQueue<>();

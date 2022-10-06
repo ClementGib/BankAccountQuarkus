@@ -2,6 +2,7 @@ package com.cdx.bas.application.transaction;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,9 +25,16 @@ import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
+import io.quarkiverse.hibernate.types.json.JsonBinaryType;
+import io.quarkiverse.hibernate.types.json.JsonTypes;
+
 @Entity
 @Table(schema = "basapp", name = "transactions", uniqueConstraints = @UniqueConstraint(columnNames = "transaction_id"))
 @NamedQueries(@NamedQuery(name = "TransactionEntity.findUnprocessed", query = "SELECT t FROM TransactionEntity t WHERE t.status = :status ORDER BY t.date ASC"))
+@TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
 public class TransactionEntity {
     
     @Id
@@ -55,6 +63,10 @@ public class TransactionEntity {
     
     @Column(name = "label", nullable = false)
     private String label;
+    
+    @Type(type = JsonTypes.JSON_BIN)
+    @Column(name = "metadatas", columnDefinition = JsonTypes.JSON_BIN, nullable = true)
+    private String metadatas;
 
     public long getId() {
         return id;
@@ -110,5 +122,35 @@ public class TransactionEntity {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getMetadatas() {
+        return metadatas;
+    }
+
+    public void setMetadatas(String metadatas) {
+        this.metadatas = metadatas;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(account, amount, date, id, label, metadatas, status, type);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TransactionEntity other = (TransactionEntity) obj;
+        return Objects.equals(account, other.account) && Objects.equals(amount, other.amount)
+                && Objects.equals(date, other.date) && id == other.id && Objects.equals(label, other.label)
+                && Objects.equals(metadatas, other.metadatas) && status == other.status && type == other.type;
     }
 }

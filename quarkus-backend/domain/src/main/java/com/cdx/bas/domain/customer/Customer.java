@@ -205,12 +205,15 @@ public class Customer {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+		    return true;
+		}
+		if (obj == null)  {
+		    return false;
+		}
+		if (getClass() != obj.getClass()) {
+		    return false;
+		}
 		Customer other = (Customer) obj;
 		return Objects.equals(accounts, other.accounts) && Objects.equals(address, other.address)
 				&& Objects.equals(birthdate, other.birthdate) && Objects.equals(city, other.city)
