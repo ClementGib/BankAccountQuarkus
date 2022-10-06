@@ -91,7 +91,7 @@ I want to see the history (operation, date, amount, balance) of my operations
 - Implémentation des `adapters` Controller via des API Rest
 
 ### Technique
-*Développé sur 22.04 et Eclipse* 
+*Développé sur Ubuntu 22.04 et Eclipse 2022* 
 
 - **Quarkus Framework**:
     - Evoqué par `Julien Guisset`
