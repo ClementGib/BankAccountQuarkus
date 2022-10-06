@@ -145,8 +145,6 @@ public class BankAccountMapperTest {
         assertThat(dto.getId()).isEqualTo(10L);
         assertThat(dto.getType()).isEqualTo(AccountType.CHECKING);
         assertThat(dto.getBalance()).usingRecursiveComparison().isEqualTo(new Money(new BigDecimal("1000")));
-        assertThat(dto.getCustomersId()).hasSize(1);
-        assertThat(dto.getCustomersId().iterator().next()).isEqualTo(99L);
         assertThat(dto.getTransactions()).hasSize(1);
         assertThat(dto.getTransactions().iterator().next()).usingRecursiveComparison().isEqualTo(transaction);
         assertThat(dto.getHistory()).hasSize(1);

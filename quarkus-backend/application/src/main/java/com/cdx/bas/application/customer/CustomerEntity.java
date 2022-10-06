@@ -2,7 +2,6 @@ package com.cdx.bas.application.customer;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,16 +23,15 @@ import javax.persistence.UniqueConstraint;
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
-import io.quarkiverse.hibernate.types.json.JsonBinaryType;
-import io.quarkiverse.hibernate.types.json.JsonTypes;
-
 @Entity
 @Table(schema = "basapp", name = "customers", uniqueConstraints = @UniqueConstraint(columnNames = "customer_id"))
-@TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
+@TypeDef(name = "jsonb", typeClass = JsonType.class)
 public class CustomerEntity {
     
     @Id
@@ -73,12 +72,13 @@ public class CustomerEntity {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
     
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(name = "bank_accounts_customers", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
     private Set<BankAccountEntity> accounts = new HashSet<>();
     
-    @Type(type = JsonTypes.JSON_BIN)
-    @Column(name = "metadatas", columnDefinition = JsonTypes.JSON_BIN, nullable = true)
+    @Type(type = "jsonb")
+    @Column(name = "metadatas", columnDefinition = "jsonb",  nullable = true)
     private String metadatas;
 
     public long getId() {
@@ -152,7 +152,7 @@ public class CustomerEntity {
     public void setCity(String city) {
         this.city = city;
     }
-
+    
     public String getEmail() {
         return email;
     }
@@ -183,27 +183,5 @@ public class CustomerEntity {
 
     public void setMetadatas(String metadatas) {
         this.metadatas = metadatas;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(accounts, address, birthdate, city, email, firstName, gender, id, lastName, maritalStatus,
-                metadatas, country, phoneNumber);
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CustomerEntity other = (CustomerEntity) obj;
-        return Objects.equals(accounts, other.accounts) && Objects.equals(address, other.address)
-                && Objects.equals(birthdate, other.birthdate) && Objects.equals(city, other.city)
-                && Objects.equals(email, other.email) && Objects.equals(firstName, other.firstName)
-                && gender == other.gender && Objects.equals(id, other.id) && Objects.equals(lastName, other.lastName)
-                && maritalStatus == other.maritalStatus && Objects.equals(metadatas, other.metadatas)
-                && Objects.equals(country, other.country) && Objects.equals(phoneNumber, other.phoneNumber);
     }
 }

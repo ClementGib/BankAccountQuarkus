@@ -35,19 +35,25 @@ public class CustomerRepository implements CustomerPersistencePort, PanacheRepos
 
 	@Override
 	public Customer create(Customer customer) {
-		return null;
+        persistAndFlush(customerMapper.toEntity(customer));
+        return customer;
 	}
 
 	@Override
 	public Customer update(Customer customer) {
-		// TODO Auto-generated method stub
-		return null;
+        persistAndFlush(customerMapper.toEntity(customer));
+        return customer;
 	}
 
 	@Override
 	public Optional<Customer> deleteById(long id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+        Optional<CustomerEntity> entityOptional = findByIdOptional(id);
+        if (entityOptional.isPresent()) {
+            CustomerEntity entity = entityOptional.get();
+            delete(entity);
+            return Optional.of(customerMapper.toDto(entity));
+        }
+        return Optional.empty();
 	}
 
 }

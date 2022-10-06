@@ -24,17 +24,15 @@ import javax.persistence.UniqueConstraint;
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
-import io.quarkiverse.hibernate.types.json.JsonBinaryType;
-import io.quarkiverse.hibernate.types.json.JsonTypes;
-
 @Entity
 @Table(schema = "basapp", name = "transactions", uniqueConstraints = @UniqueConstraint(columnNames = "transaction_id"))
 @NamedQueries(@NamedQuery(name = "TransactionEntity.findUnprocessed", query = "SELECT t FROM TransactionEntity t WHERE t.status = :status ORDER BY t.date ASC"))
-@TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
+@TypeDef(name = "jsonb", typeClass = JsonType.class)
 public class TransactionEntity {
     
     @Id
@@ -64,8 +62,8 @@ public class TransactionEntity {
     @Column(name = "label", nullable = false)
     private String label;
     
-    @Type(type = JsonTypes.JSON_BIN)
-    @Column(name = "metadatas", columnDefinition = JsonTypes.JSON_BIN, nullable = true)
+    @Type(type = "jsonb")
+    @Column(name = "metadatas", columnDefinition = "jsonb",  nullable = true)
     private String metadatas;
 
     public long getId() {

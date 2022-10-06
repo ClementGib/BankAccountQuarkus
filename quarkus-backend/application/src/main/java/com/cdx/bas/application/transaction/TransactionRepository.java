@@ -47,20 +47,26 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
 
     @Override
     public Transaction create(Transaction transaction) {
-        // TODO Auto-generated method stub
-        return null;
+        persistAndFlush(transactionMapper.toEntity(transaction));
+        return transaction;
     }
 
     @Override
     public Transaction update(Transaction transaction) {
-        // TODO Auto-generated method stub
-        return null;
+        persistAndFlush(transactionMapper.toEntity(transaction));
+        return transaction;
     }
 
     @Override
-    public void remove(Transaction transaction) {
-        // TODO Auto-generated method stub
-        
+    public Optional<Transaction> deleteById(long id) {
+        Optional<TransactionEntity> entityOptional = findByIdOptional(id);
+        if (entityOptional.isPresent()) {
+            TransactionEntity entity = entityOptional.get();
+            delete(entity);
+            return Optional.of(transactionMapper.toDto(entity));
+        }
+        return Optional.empty();
     }
-    //extends TransactionPersistencePort , <TransactionEntity>
+
+
 }

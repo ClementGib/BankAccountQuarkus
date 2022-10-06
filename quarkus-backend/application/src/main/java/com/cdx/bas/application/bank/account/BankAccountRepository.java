@@ -25,19 +25,24 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     
     @Override
     public BankAccount create(BankAccount bankAccount) throws BankAccountException {
-        // TODO Auto-generated method stub
-        return null;
+        persistAndFlush(bankAccountMapper.toEntity(bankAccount));
+        return bankAccount;
     }
 
     @Override
     public BankAccount update(BankAccount bankAccount) throws BankAccountException {
-        persist(bankAccountMapper.toEntity(bankAccount));
+        persistAndFlush(bankAccountMapper.toEntity(bankAccount));
         return bankAccount;
     }
 
     @Override
     public Optional<BankAccount> deleteById(long id) {
-        // TODO Auto-generated method stub
+        Optional<BankAccountEntity> entityOptional = findByIdOptional(id);
+        if (entityOptional.isPresent()) {
+            BankAccountEntity entity = entityOptional.get();
+            delete(entity);
+            return Optional.of(bankAccountMapper.toDto(entity));
+        }
         return Optional.empty();
     }
 }
