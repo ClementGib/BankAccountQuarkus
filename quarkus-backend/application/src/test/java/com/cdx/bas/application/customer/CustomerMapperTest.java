@@ -1,8 +1,6 @@
 package com.cdx.bas.application.customer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -34,9 +32,7 @@ import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 
@@ -52,9 +48,6 @@ public class CustomerMapperTest {
     @InjectMock
     private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
     
-    @InjectMock
-    private ObjectMapper objectMapper;
-    
     @Test
     public void toDto_should_returnNullDto_when_entityIsNull() {
         CustomerEntity entity = null;
@@ -63,7 +56,7 @@ public class CustomerMapperTest {
         
         assertThat(dto).isNull();
         
-        verifyNoInteractions(bankAccountMapper, objectMapper);
+        verifyNoInteractions(bankAccountMapper);
     }
 
     @Test
@@ -74,7 +67,7 @@ public class CustomerMapperTest {
         
         assertThat(entity).isNull();
         
-        verifyNoInteractions(bankAccountMapper, objectMapper);
+        verifyNoInteractions(bankAccountMapper);
     }
     
 	@Test
@@ -96,7 +89,7 @@ public class CustomerMapperTest {
         assertThat(dto.getAccounts()).isEmpty();
         assertThat(dto.getMetadatas()).isEmpty();
 
-        verifyNoInteractions(bankAccountMapper, objectMapper);
+        verifyNoInteractions(bankAccountMapper);
     }
     
     @Test
@@ -118,12 +111,11 @@ public class CustomerMapperTest {
         assertThat(entity.getAccounts()).isEmpty();
         assertThat(entity.getMetadatas()).isNull();
 
-        verifyNoInteractions(bankAccountMapper, objectMapper);
+        verifyNoInteractions(bankAccountMapper);
     }
     
 	@Test
-	@SuppressWarnings("unchecked")
-	public void toDto_should_mapDtoValues_when_entityHasValues() throws JsonMappingException, JsonProcessingException {
+	public void toDto_should_mapDtoValues_when_entityHasValues() {
         CustomerEntity entity = new CustomerEntity();
         entity.setId(1L);
         entity.setFirstName("Paul");
@@ -155,7 +147,6 @@ public class CustomerMapperTest {
         HashMap<String, String> metadatas = new HashMap<String, String>();
         metadatas.put("contact_preferences", "email");
         metadatas.put("annual_salary", "52000");
-        when(objectMapper.readValue(eq(strMetadatas), any(TypeReference.class))).thenReturn(metadatas);
         
         Customer dto = customerMapper.toDto(entity);
         
@@ -179,12 +170,11 @@ public class CustomerMapperTest {
         
         verify(bankAccountMapper).toDto(accountEntity1);
         verify(bankAccountMapper).toDto(accountEntity2);
-        verify(objectMapper).readValue(eq(strMetadatas), any(TypeReference.class));
-        verifyNoMoreInteractions(bankAccountMapper, objectMapper);
+        verifyNoMoreInteractions(bankAccountMapper);
     }
     
     @Test
-    public void toEntity_should_mapEntityValues_when_dtoHasValues() throws JsonProcessingException {
+    public void toEntity_should_mapEntityValues_when_dtoHasValues() {
         Customer model = new Customer();
         model.setId(1L);
         model.setFirstName("Paul");
@@ -215,7 +205,6 @@ public class CustomerMapperTest {
         BankAccountEntity accountEntity2 = createBankAccountEntity(11L, instantDate);
         when(bankAccountMapper.toEntity(account1)).thenReturn(accountEntity1);
         when(bankAccountMapper.toEntity(account2)).thenReturn(accountEntity2);
-        when(objectMapper.writeValueAsString(metadatas)).thenReturn("{\"contact_preferences\" : \"email\", \"annual_salary\" : \"52000\"}");
         
         CustomerEntity entity = customerMapper.toEntity(model);
         
@@ -234,12 +223,11 @@ public class CustomerMapperTest {
         assertThat(entity.getAccounts()).hasSize(2);
         Set<BankAccountEntity> accoutsToCompar = Stream.of(accountEntity1, accountEntity2).collect(Collectors.toSet());
         assertThat(entity.getAccounts()).containsExactlyInAnyOrderElementsOf(accoutsToCompar);
-        assertThat(entity.getMetadatas()).hasToString("{\"contact_preferences\" : \"email\", \"annual_salary\" : \"52000\"}");
+        assertThat(entity.getMetadatas()).hasToString("{\"contact_preferences\":\"email\",\"annual_salary\":\"48000\"}");
         
         verify(bankAccountMapper).toEntity(account1);
         verify(bankAccountMapper).toEntity(account2);
-        verify(objectMapper).writeValueAsString(metadatas);
-        verifyNoMoreInteractions(bankAccountMapper, objectMapper);
+        verifyNoMoreInteractions(bankAccountMapper);
     }
     
     private BankAccount createBankAccount(long accountId, Instant instantDate) {

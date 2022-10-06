@@ -23,5 +23,16 @@ public class CheckingBankAccount extends BankAccount {
     public CheckingBankAccount(Long id, Money balance, Set<Long> customersId, Set<Transaction> transactions, Set<Transaction> history) {
         super(id, AccountType.CHECKING, balance, customersId, transactions, history);
         this.balance = balance;
+        System.out.println(super.balance);
+        System.out.println(this.balance);
+    }
+
+    public Money getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Money balance) {
+        super.balance = balance;
+        this.balance = balance;
     }
 }

@@ -24,4 +24,13 @@ public class MMABankAccount extends BankAccount {
         super(id, AccountType.MMA, balance, customersId, transactions, history);
         this.balance = balance;
     }
+    
+    public Money getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Money balance) {
+        super.balance = balance;
+        this.balance = balance;
+    }
 }

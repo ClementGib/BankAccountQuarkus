@@ -37,7 +37,7 @@ public class Transaction implements Comparable<Transaction> {
 		super();
 	}
     
-    public Transaction(Transaction transaction, TransactionStatus status) {
+    public Transaction(Transaction transaction, TransactionStatus status, Map<String, String> metadatas) {
     	this.id = transaction.id;
     	this.accountId = transaction.accountId;
     	this.amount = transaction.amount;
@@ -45,6 +45,7 @@ public class Transaction implements Comparable<Transaction> {
     	this.status = status;
     	this.date = transaction.date;
     	this.label = transaction.label;
+    	this.metadatas.putAll(metadatas);
     }
     
 	public long getId() {
