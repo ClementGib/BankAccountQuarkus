@@ -14,6 +14,7 @@ import com.cdx.bas.domain.customer.Customer;
 import com.cdx.bas.domain.customer.CustomerPersistencePort;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.utils.BankAccountFactory;
 
 @RequestScoped
 public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccountEntity> {

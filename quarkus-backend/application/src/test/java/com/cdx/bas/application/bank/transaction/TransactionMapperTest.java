@@ -2,10 +2,6 @@ package com.cdx.bas.application.bank.transaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -15,7 +11,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -24,16 +19,9 @@ import com.cdx.bas.application.bank.account.BankAccountRepository;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.application.transaction.TransactionMapper;
 import com.cdx.bas.domain.bank.account.AccountType;
-import com.cdx.bas.domain.bank.account.BankAccount;
-import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
-import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 
@@ -48,9 +36,6 @@ public class TransactionMapperTest {
     
     @InjectMock
     private BankAccountRepository bankAccountRepository;
-    
-    @InjectMock
-    private ObjectMapper objectMapper;
 
     @Test
     public void toDto_should_returnNullDto_when_entityIsNull() {
@@ -98,16 +83,12 @@ public class TransactionMapperTest {
     }
     
     @Test
-    @SuppressWarnings("unchecked")
-    public void toDto_should_mapEntityValues_when_entityHasValues() throws JsonMappingException, JsonProcessingException {
+    public void toDto_should_mapEntityValues_when_entityHasValues() {
         Instant date = Instant.now();
-        String strMetadatas = "{\"amount_after\" : \"100\", \"amount_before\" : \"0\"}";
         Map<String, String> metadatas = new HashMap<>();
         metadatas.put("amount_after", "100");
         metadatas.put("amount_before", "0");
         TransactionEntity transactionEntity = createTransactionEntity(10L, 99L, date);
-        
-        when(objectMapper.readValue(eq(strMetadatas), any(TypeReference.class))).thenReturn(metadatas);
         
         Transaction dto = transactionMapper.toDto(transactionEntity);
 
@@ -119,15 +100,12 @@ public class TransactionMapperTest {
         assertThat(dto.getDate()).isEqualTo(date);
         assertThat(dto.getLabel()).hasToString("transaction test");
         assertThat(dto.getMetadatas()).usingRecursiveComparison().isEqualTo(metadatas);
-
-        verify(objectMapper).readValue(eq(strMetadatas), any(TypeReference.class));
-        verifyNoMoreInteractions(objectMapper);
     }
     
     @Test
-    public void toEntity_should_mapEntityValues_when_dtoHasValues() throws JsonProcessingException {
+    public void toEntity_should_mapEntityValues_when_dtoHasValues() {
         Instant date = Instant.now();
-        String strMetadatas = "{\"amount_after\" : \"100\", \"amount_before\" : \"0\"}";
+        String strMetadatas = "{\"amount_after\":\"100\",\"amount_before\":\"0\"}";
         Map<String, String> metadatas = new HashMap<>();
         metadatas.put("amount_after", "100");
         metadatas.put("amount_before", "0");
@@ -135,7 +113,6 @@ public class TransactionMapperTest {
         Transaction transaction = createTransaction(10L, 99L, date);
         
         when(bankAccountRepository.findByIdOptional(99L)).thenReturn(Optional.of(bankAccountEntity));
-        when(objectMapper.writeValueAsString(transaction.getMetadatas())).thenReturn(strMetadatas);
         
         TransactionEntity entity = transactionMapper.toEntity(transaction);
         
@@ -147,9 +124,6 @@ public class TransactionMapperTest {
         assertThat(entity.getDate()).isEqualTo(date);
         assertThat(entity.getLabel()).hasToString("transaction test");
         assertThat(entity.getMetadatas()).isEqualTo(strMetadatas);
-        
-        verify(objectMapper).writeValueAsString(metadatas);
-        verifyNoMoreInteractions(objectMapper);
     }
     
     private Transaction createTransaction(long id, long accountId, Instant instantDate) {

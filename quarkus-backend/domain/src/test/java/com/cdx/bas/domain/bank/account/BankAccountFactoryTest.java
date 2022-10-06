@@ -1,12 +1,11 @@
-package com.cdx.bas.application.bank.account;
+package com.cdx.bas.domain.bank.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.cdx.bas.domain.bank.account.AccountType;
-import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.bank.account.mma.MMABankAccount;
 import com.cdx.bas.domain.bank.account.saving.SavingBankAccount;
+import com.cdx.bas.domain.utils.BankAccountFactory;
 
 import org.junit.jupiter.api.Test;
 

@@ -6,7 +6,6 @@ import static com.cdx.bas.domain.transaction.TransactionStatus.REFUSED;
 import static com.cdx.bas.domain.transaction.TransactionStatus.WAITING;
 import static com.cdx.bas.domain.transaction.TransactionType.CREDIT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -15,7 +14,9 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountException;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
+import com.cdx.bas.domain.bank.account.BankAccountValidator;
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
@@ -45,19 +47,24 @@ public class BankAccountServiceImplTest {
     
     @InjectMock
     BankAccountPersistencePort bankAccountPersistence;
+    
+    @Inject
+    BankAccountValidator bankAccountValidator;
 
     @Test
     public void deposit_should_throwNoSuchElementException_when_accountIsFound() {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date);
-        when(bankAccountPersistence.findById(accountId)).thenThrow(new NoSuchElementException("bank account 99L is not found."));
+        Map<String, String> metadatas = new HashMap<>();
+        metadatas.put("error", "bank account 99 is not found.");
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadatas);
+        when(bankAccountPersistence.findById(accountId)).thenThrow(new NoSuchElementException("bank account 99 is not found."));
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, ERROR, date));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, ERROR, date, metadatas));
         verify(bankAccountPersistence).findById(eq(accountId));
         verifyNoMoreInteractions(bankAccountPersistence);
     }
@@ -67,38 +74,50 @@ public class BankAccountServiceImplTest {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date);
+        Map<String, String> metadatas = new HashMap<>();
+        metadatas.put("amount_before", "100");
+        metadatas.put("amount_after", "1100");
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadatas);
         BankAccount bankAccount = createBankAccount(accountId);
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
-        BankAccount bankAccountAfterDeposit = bankAccount;
+        BankAccount bankAccountAfterDeposit = createBankAccount(accountId);
         bankAccountAfterDeposit.getBalance().plus(amountOfMoney);
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, COMPLETED, date));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, COMPLETED, date, metadatas));
         verify(bankAccountPersistence).findById(eq(accountId));
-        verify(bankAccountPersistence).update(eq(bankAccountAfterDeposit));
+        verify(bankAccountPersistence).update(eq(bankAccount));
     }
     
     @Test
-    public void deposit_should_returnErroredTransaction_when_bankAccountPersistenceUpdateThrowsException() {
+    public void deposit_should_returnErroredTransaction_when_bankAccountValidatorThrowsException() {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date);
+  
+        Money moneyBefore = new Money(new BigDecimal("100000"));
         BankAccount bankAccount = createBankAccount(accountId);
+        bankAccount.setBalance(moneyBefore); 
+        BankAccount bankAccountAfterDeposit = createBankAccount(accountId);
+        bankAccountAfterDeposit.setBalance(moneyBefore); 
+        BankAccountException violationException = new BankAccountException("balance amount must be between -600 and 100000\n");
+        Map<String, String> metadatasBefore = new HashMap<>();
+        metadatasBefore.put("amount_before", "100000");
+        metadatasBefore.put("error", violationException.getMessage());
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadatasBefore);
+        
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
-        BankAccount bankAccountAfterDeposit = bankAccount;
-        bankAccountAfterDeposit.getBalance().plus(amountOfMoney);
-        when(bankAccountPersistence.update(any())).thenThrow(new BankAccountException("Bank account amount is already at the maximum."));
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
+        Map<String, String> metadatasAfter = new HashMap<>();
+        metadatasAfter.put("amount_before", "100000");
+        metadatasAfter.put("error", violationException.getMessage());
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, REFUSED, date));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, REFUSED, date, metadatasAfter));
         verify(bankAccountPersistence).findById(eq(accountId));
-        verify(bankAccountPersistence).update(eq(bankAccountAfterDeposit));
     }
     
     private static BankAccount createBankAccount(long accountId) {
@@ -112,12 +131,13 @@ public class BankAccountServiceImplTest {
         bankAccount.setTransactions(new HashSet<>());
         Instant firstTransactionDate = Instant.now();
         HashSet<Transaction> history = new HashSet<>();
-        history.add(createTransaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate));
+        history.add(createTransaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, new HashMap<>()));
         bankAccount.setHistory(history);
         return bankAccount;
     }
     
-    private static Transaction createTransaction(long accountId, long amount, TransactionType type, TransactionStatus status, Instant date) {
+    private static Transaction createTransaction(long accountId, long amount, TransactionType type, 
+            TransactionStatus status, Instant date, Map<String, String> metadatas) {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);
 		transaction.setAmount(amount);
@@ -126,6 +146,7 @@ public class BankAccountServiceImplTest {
 		transaction.setStatus(status);
 		transaction.setDate(date);
 		transaction.setLabel("transaction of " + amount);
+		transaction.setMetadatas(metadatas);
 		return transaction;
     }
 }

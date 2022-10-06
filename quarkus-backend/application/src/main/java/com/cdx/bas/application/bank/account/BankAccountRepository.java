@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
+import com.cdx.bas.domain.bank.account.BankAccountException;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -23,15 +24,15 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     }
     
     @Override
-    public BankAccount create(BankAccount bankAccount) {
+    public BankAccount create(BankAccount bankAccount) throws BankAccountException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public BankAccount update(BankAccount bankAccount) {
-        // TODO Auto-generated method stub
-        return null;
+    public BankAccount update(BankAccount bankAccount) throws BankAccountException {
+        persist(bankAccountMapper.toEntity(bankAccount));
+        return bankAccount;
     }
 
     @Override
