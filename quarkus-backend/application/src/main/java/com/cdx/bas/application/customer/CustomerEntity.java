@@ -23,16 +23,18 @@ import javax.persistence.UniqueConstraint;
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @Entity
 @Table(schema = "basapp", name = "customers", uniqueConstraints = @UniqueConstraint(columnNames = "customer_id"))
 @TypeDef(name = "jsonb", typeClass = JsonType.class)
-public class CustomerEntity {
+public class CustomerEntity extends PanacheEntityBase {
     
     @Id
     @Column(name = "customer_id", nullable = false)

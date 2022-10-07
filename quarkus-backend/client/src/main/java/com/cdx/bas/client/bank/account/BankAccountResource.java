@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -32,7 +32,7 @@ public class BankAccountResource implements BankAccountControllerPort{
         return bankAccountOptional.get();
     }
 
-    @PUT
+    @POST
     @Path("/{id}")
     @Override
     public BankAccount deposite(@PathParam("id") Long id, Long amount) {
@@ -40,7 +40,7 @@ public class BankAccountResource implements BankAccountControllerPort{
         Optional<BankAccount> bankAccountOptional = bankAccountRepository.findById(id);
         if(bankAccountOptional.isPresent()) {
             currentAccount = bankAccountOptional.get();
-            Transaction transaction = transactionService.createNewTransaction(id, amount, TransactionType.CREDIT);
+            Transaction transaction = new Transaction(id, amount, TransactionType.CREDIT);
             currentAccount.getTransactions().add(transaction);
             bankAccountRepository.update(currentAccount);
         }

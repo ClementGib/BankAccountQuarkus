@@ -26,15 +26,17 @@ import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.AccountType;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+
 @Entity
 @Table(schema = "basapp", name = "bank_accounts", uniqueConstraints = @UniqueConstraint(columnNames = "account_id"))
-public class BankAccountEntity {
+public class BankAccountEntity extends PanacheEntityBase {
 
     @Id
     @Column(name = "account_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_accounts_account_id_seq_gen")
     @SequenceGenerator(name = "bank_accounts_account_id_seq_gen", sequenceName = "bank_accounts_account_id_seq", allocationSize = 1, initialValue = 1)
-    private long id;
+    private Long id;
     
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -42,7 +44,7 @@ public class BankAccountEntity {
     
     @Column(name = "balance", nullable = false)
     private BigDecimal balance;
-
+    
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
     private Set<CustomerEntity> customers = new HashSet<>();
     

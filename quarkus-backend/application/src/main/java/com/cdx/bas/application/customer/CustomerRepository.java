@@ -12,7 +12,7 @@ import com.cdx.bas.domain.customer.CustomerPersistencePort;
 
 import org.jboss.logging.Logger;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 
 /***
  * specific dao interface for customers entities
@@ -21,7 +21,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
  *
  */
 @ApplicationScoped
-public class CustomerRepository implements CustomerPersistencePort, PanacheRepository<CustomerEntity>  {
+public class CustomerRepository implements CustomerPersistencePort, PanacheRepositoryBase<CustomerEntity, Long>  {
 	
     private static final Logger logger = Logger.getLogger(CustomerRepository.class);
     
@@ -36,12 +36,14 @@ public class CustomerRepository implements CustomerPersistencePort, PanacheRepos
 	@Override
 	public Customer create(Customer customer) {
         persistAndFlush(customerMapper.toEntity(customer));
+        logger.info("Customer " + customer.getId() + " created");
         return customer;
 	}
 
 	@Override
 	public Customer update(Customer customer) {
         persistAndFlush(customerMapper.toEntity(customer));
+        logger.info("Customer " + customer.getId() + " updated");
         return customer;
 	}
 
@@ -51,6 +53,7 @@ public class CustomerRepository implements CustomerPersistencePort, PanacheRepos
         if (entityOptional.isPresent()) {
             CustomerEntity entity = entityOptional.get();
             delete(entity);
+            logger.info("Customer " + entity.getId() + " deleted");
             return Optional.of(customerMapper.toDto(entity));
         }
         return Optional.empty();

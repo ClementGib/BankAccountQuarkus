@@ -9,102 +9,110 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Transaction implements Comparable<Transaction> {
-	
-	@Min(value=1, message="id must be positive and greater than 0.")
+
+    @Min(value = 1, message = "id must be positive and greater than 0.")
     private long id;
-    
-	@NotNull(message="gender must not be null.")
+
+    @NotNull(message = "gender must not be null.")
     private long accountId;
-    
-	@Min(value=1, message="amount must be positive and greater than 0.")
+
+    @Min(value = 1, message = "amount must be positive and greater than 0.")
     private long amount;
-    
-	@NotNull(message="type must not be null.")
-    private TransactionType type; 
-    
-	@NotNull(message="status must not be null.")
+
+    @NotNull(message = "type must not be null.")
+    private TransactionType type;
+
+    @NotNull(message = "status must not be null.")
     private TransactionStatus status;
 
-	@NotNull(message="date must not be null.")
+    @NotNull(message = "date must not be null.")
     private Instant date;
-    
-	@NotNull(message="label must not be null.")
+
+    @NotNull(message = "label must not be null.")
     private String label;
-	
-	private Map<String, String> metadatas = new HashMap<>();
+
+    private Map<String, String> metadatas = new HashMap<>();
 
     public Transaction() {
-		super();
-	}
-    
-    public Transaction(Transaction transaction, TransactionStatus status, Map<String, String> metadatas) {
-    	this.id = transaction.id;
-    	this.accountId = transaction.accountId;
-    	this.amount = transaction.amount;
-    	this.type = transaction.type;
-    	this.status = status;
-    	this.date = transaction.date;
-    	this.label = transaction.label;
-    	this.metadatas.putAll(metadatas);
+        super();
     }
-    
-	public long getId() {
-		return id;
-	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public Transaction(long accountId, long amount, TransactionType type) {
+        this.id = accountId;
+        this.amount = amount;
+        this.type = type;
+        this.status = TransactionStatus.WAITING;
+        this.date = Instant.now();
+    }
 
-	public long getAccountId() {
-		return accountId;
-	}
+    public Transaction(Transaction transaction, TransactionStatus status, Map<String, String> metadatas) {
+        this.id = transaction.id;
+        this.accountId = transaction.accountId;
+        this.amount = transaction.amount;
+        this.type = transaction.type;
+        this.status = status;
+        this.date = transaction.date;
+        this.label = transaction.label;
+        this.metadatas.putAll(metadatas);
+    }
 
-	public void setAccountId(long accountId) {
-		this.accountId = accountId;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public long getAmount() {
-		return amount;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setAmount(long amount) {
-		this.amount = amount;
-	}
+    public long getAccountId() {
+        return accountId;
+    }
 
-	public TransactionType getType() {
-		return type;
-	}
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
+    }
 
-	public void setType(TransactionType type) {
-		this.type = type;
-	}
+    public long getAmount() {
+        return amount;
+    }
 
-	public TransactionStatus getStatus() {
-		return status;
-	}
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
 
-	public void setStatus(TransactionStatus status) {
-		this.status = status;
-	}
+    public TransactionType getType() {
+        return type;
+    }
 
-	public Instant getDate() {
-		return date;
-	}
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
 
-	public void setDate(Instant date) {
-		this.date = date;
-	}
+    public TransactionStatus getStatus() {
+        return status;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
-	
-	public Map<String, String> getMetadatas() {
+    public Instant getDate() {
+        return date;
+    }
+
+    public void setDate(Instant date) {
+        this.date = date;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Map<String, String> getMetadatas() {
         return metadatas;
     }
 
@@ -117,7 +125,7 @@ public class Transaction implements Comparable<Transaction> {
         return this.getDate().compareTo(transactionToCompar.getDate());
     }
 
-	@Override
+    @Override
     public int hashCode() {
         return Objects.hash(accountId, amount, date, id, label, metadatas, status, type);
     }
@@ -134,8 +142,10 @@ public class Transaction implements Comparable<Transaction> {
             return false;
         }
         Transaction other = (Transaction) obj;
-        return accountId == other.accountId && amount == other.amount && Objects.equals(date, other.date)
-                && id == other.id && Objects.equals(label, other.label) && Objects.equals(metadatas, other.metadatas)
+        return accountId == other.accountId && amount == other.amount 
+                && Objects.equals(date, other.date)
+                && id == other.id && Objects.equals(label, other.label) 
+                && Objects.equals(metadatas, other.metadatas)
                 && status == other.status && type == other.type;
     }
 }

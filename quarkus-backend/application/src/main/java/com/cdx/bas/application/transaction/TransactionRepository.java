@@ -15,7 +15,7 @@ import com.cdx.bas.domain.transaction.TransactionStatus;
 
 import org.jboss.logging.Logger;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Parameters;
 
 /***
@@ -25,7 +25,7 @@ import io.quarkus.panache.common.Parameters;
  *
  */
 @ApplicationScoped
-public class TransactionRepository implements TransactionPersistencePort, PanacheRepository<TransactionEntity> {
+public class TransactionRepository implements TransactionPersistencePort, PanacheRepositoryBase<TransactionEntity, Long> {
     
     private static final Logger logger = Logger.getLogger(TransactionRepository.class);
     
@@ -47,13 +47,15 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
 
     @Override
     public Transaction create(Transaction transaction) {
-        persistAndFlush(transactionMapper.toEntity(transaction));
+        persist(transactionMapper.toEntity(transaction));
+        logger.info("Transaction " + transaction.getId() + " created");
         return transaction;
     }
 
     @Override
     public Transaction update(Transaction transaction) {
-        persistAndFlush(transactionMapper.toEntity(transaction));
+        persist(transactionMapper.toEntity(transaction));
+        logger.info("Transaction " + transaction.getId() + " updated");
         return transaction;
     }
 
@@ -63,6 +65,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
         if (entityOptional.isPresent()) {
             TransactionEntity entity = entityOptional.get();
             delete(entity);
+            logger.info("Transaction " + entity.getId() + " deleted");
             return Optional.of(transactionMapper.toDto(entity));
         }
         return Optional.empty();

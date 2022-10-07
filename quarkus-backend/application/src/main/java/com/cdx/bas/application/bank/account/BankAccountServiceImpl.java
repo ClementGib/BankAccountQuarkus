@@ -36,7 +36,7 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
         try {
             BankAccount currentBankAccount = BankAccountRepository.findById(transaction.getAccountId())
                     .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() +" not found."));
-            logger.info("Deposit for bank account id " +  transaction.getAccountId() + " transaction " + transaction.getId() + " of "+ transaction.getAmount());
+            logger.info("BankAccount " + transaction.getAccountId() + " transaction deposit " + transaction.getId() + " for amount "+ transaction.getAmount());
             
             metadatas.put("amount_before", currentBankAccount.getBalance().getAmount().toString());
             currentBankAccount.getBalance().plus(Money.of(transaction.getAmount()));
@@ -49,12 +49,12 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
             return completedTransaction;
             
         } catch (NoSuchElementException exception) {
-            logger.error("Deposit error for " +  transaction.getAccountId() + " of " + transaction.getAmount());
+            logger.error("Transaction " + transaction.getId() + " deposit error for amount "+ transaction.getAmount() + ": " + exception.getMessage());
             metadatas.put("error", exception.getMessage());
             return new Transaction(transaction, TransactionStatus.ERROR, metadatas);
         } catch (BankAccountException exception) {
             metadatas.put("error", exception.getMessage());
-            logger.error("Deposit error for " +  transaction.getAccountId() + " of " + transaction.getAmount());
+            logger.error("Transaction " + transaction.getId() + " deposit refused for amount "+ transaction.getAmount() + ": " + exception.getMessage());
             return new Transaction(transaction, TransactionStatus.REFUSED, metadatas);
         }
     }
