@@ -19,7 +19,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Parameters;
 
 /***
- * specific dao interface for transaction entities
+ * persistence implementation for Transaction entities
  * 
  * @author Clément Gibert
  *

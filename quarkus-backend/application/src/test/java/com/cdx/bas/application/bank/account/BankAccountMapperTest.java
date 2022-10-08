@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -20,13 +22,13 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import com.cdx.bas.application.customer.CustomerEntity;
+import com.cdx.bas.application.customer.CustomerRepository;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.customer.Customer;
-import com.cdx.bas.domain.customer.CustomerPersistencePort;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
 import com.cdx.bas.domain.money.Money;
@@ -52,8 +54,8 @@ public class BankAccountMapperTest {
     private DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
 
     @InjectMock
-    private CustomerPersistencePort customerRepository;
-
+    private CustomerRepository customerRepository;
+    
     @Test
     public void toDto_should_returnNullDto_when_entityIsNull() {
         BankAccountEntity entity = null;
@@ -92,12 +94,11 @@ public class BankAccountMapperTest {
 
         BankAccount dto = bankAccountMapper.toDto(entity);
 
-        assertThat(dto.getId()).isZero();
+        assertThat(dto.getId()).isNull();
         assertThat(dto.getType()).isEqualTo(AccountType.CHECKING);
         assertThat(dto.getBalance()).usingRecursiveComparison().isEqualTo(new Money(null));
         assertThat(dto.getCustomersId()).isEmpty();
         assertThat(dto.getTransactions()).isEmpty();
-        assertThat(dto.getHistory()).isEmpty();
 
         verifyNoInteractions(customerMapper);
     }
@@ -106,12 +107,11 @@ public class BankAccountMapperTest {
     public void toEntity_should_mapNullValues_when_dtoHasNullValuesButHasType() {
         BankAccountEntity entity = bankAccountMapper.toEntity(new CheckingBankAccount());
 
-        assertThat(entity.getId()).isZero();
+        assertThat(entity.getId()).isNull();
         assertThat(entity.getType()).isEqualTo(AccountType.CHECKING);
         assertThat(entity.getBalance()).isNull();
         assertThat(entity.getCustomers()).isEmpty();
         assertThat(entity.getTransactions()).isEmpty();
-        assertThat(entity.getHistory()).isEmpty();
 
         verifyNoInteractions(customerMapper);
     }
@@ -123,23 +123,21 @@ public class BankAccountMapperTest {
         entity.setId(10L);
         entity.setType(AccountType.CHECKING);
         entity.setBalance(new BigDecimal("1000"));
-        Set<CustomerEntity> customers = new HashSet<>();
+        List<CustomerEntity> customers = new ArrayList<>();
         CustomerEntity customerEntity = createCustomerEntity();
         customers.add(customerEntity);
         entity.setCustomers(customers);
         Set<TransactionEntity> transactionEntities = new HashSet<>();
-        TransactionEntity transactionEntity = createTransactionEntity(5000L, 10L, date);
-        transactionEntities.add(transactionEntity);
+        TransactionEntity transactionEntity1 = createTransactionEntity(2000L, 10L, date);
+        transactionEntities.add(transactionEntity1);
+        TransactionEntity transactionEntity2 = createTransactionEntity(5000L, 10L, date);
+        transactionEntities.add(transactionEntity2);
         entity.setTransactions(transactionEntities);
-        Set<TransactionEntity> historyEntities = new HashSet<>();
-        TransactionEntity historyEntity = createTransactionEntity(2000L, 10L, date);
-        historyEntities.add(historyEntity);
-        entity.setHistory(historyEntities);
 
-        Transaction transaction = createTransaction(5000L, 10L, date);
-        when(transactionMapper.toDto(transactionEntity)).thenReturn(transaction);
-        Transaction history = createTransaction(2000L, 10L, date);
-        when(transactionMapper.toDto(historyEntity)).thenReturn(history);
+        Transaction transaction1 = createTransaction(2000L, 10L, date);
+        Transaction transaction2 = createTransaction(5000L, 10L, date);
+        when(transactionMapper.toDto(transactionEntity1)).thenReturn(transaction1);
+        when(transactionMapper.toDto(transactionEntity2)).thenReturn(transaction2);
         BankAccount dto = bankAccountMapper.toDto(entity);
 
         assertThat(dto.getId()).isEqualTo(10L);
@@ -147,13 +145,12 @@ public class BankAccountMapperTest {
         assertThat(dto.getBalance()).usingRecursiveComparison().isEqualTo(new Money(new BigDecimal("1000")));
         assertThat(dto.getCustomersId()).hasSize(1);
         assertThat(dto.getCustomersId().iterator().next()).isEqualTo(99L);
-        assertThat(dto.getTransactions()).hasSize(1);
-        assertThat(dto.getTransactions().iterator().next()).usingRecursiveComparison().isEqualTo(transaction);
-        assertThat(dto.getHistory()).hasSize(1);
-        assertThat(dto.getHistory().iterator().next()).usingRecursiveComparison().isEqualTo(history);
+        assertThat(dto.getTransactions()).hasSize(2);
+        assertThat(dto.getTransactions()).contains(transaction1);
+        assertThat(dto.getTransactions()).contains(transaction2);
 
-        verify(transactionMapper).toDto(transactionEntity);
-        verify(transactionMapper).toDto(historyEntity);
+        verify(transactionMapper).toDto(transactionEntity1);
+        verify(transactionMapper).toDto(transactionEntity2);
         verifyNoMoreInteractions(customerMapper, transactionMapper);
     }
 
@@ -164,18 +161,16 @@ public class BankAccountMapperTest {
         dto.setId(10L);
         dto.setType(AccountType.CHECKING);
         dto.setBalance(new Money(new BigDecimal("1000")));
-        Set<Long> customers = new HashSet<>();
+        List<Long> customers = new ArrayList<>();
         Customer customer = createCustomer();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
         Set<Transaction> transactions = new HashSet<>();
-        Transaction transaction = createTransaction(5000L, 10L, date);
-        transactions.add(transaction);
+        Transaction transaction1 = createTransaction(2000L, 10L, date);
+        transactions.add(transaction1);
+        Transaction transaction2 = createTransaction(5000L, 10L, date);
+        transactions.add(transaction2);
         dto.setTransactions(transactions);
-        Set<Transaction> histories = new HashSet<>();
-        Transaction history = createTransaction(2000L, 10L, date);
-        histories.add(history);
-        dto.setHistory(histories);
 
         when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -186,7 +181,7 @@ public class BankAccountMapperTest {
             assertThat(exception.getMessage()).hasToString("Customer entity not found for id: 99");
         }
 
-        verify(customerRepository).findById(customer.getId());
+        verify(customerRepository).findByIdOptional(customer.getId());
         verifyNoInteractions(customerMapper, transactionMapper);
         verifyNoMoreInteractions(customerRepository);
     }
@@ -198,26 +193,25 @@ public class BankAccountMapperTest {
         dto.setId(10L);
         dto.setType(AccountType.CHECKING);
         dto.setBalance(new Money(new BigDecimal("1000")));
-        Set<Long> customers = new HashSet<>();
+        List<Long> customers = new ArrayList<>();
         Customer customer = createCustomer();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
         Set<Transaction> transactions = new HashSet<>();
-        Transaction transaction = createTransaction(5000L, 10L, date);
-        transactions.add(transaction);
+        Transaction transaction1 = createTransaction(2000L, 10L, date);
+        transactions.add(transaction1);
+        Transaction transaction2 = createTransaction(5000L, 10L, date);
+        transactions.add(transaction2);
         dto.setTransactions(transactions);
-        Set<Transaction> histories = new HashSet<>();
-        Transaction history = createTransaction(2000L, 10L, date);
-        histories.add(history);
-        dto.setHistory(histories);
 
         CustomerEntity customerEntity = createCustomerEntity();
-        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+        when(customerRepository.findByIdOptional(anyLong())).thenReturn(Optional.of(customerEntity));
         when(customerMapper.toEntity(customer)).thenReturn(customerEntity);
-        TransactionEntity transactionEntity = createTransactionEntity(5000L, 10L, date);
-        when(transactionMapper.toEntity(transaction)).thenReturn(transactionEntity);
-        TransactionEntity historyEntity = createTransactionEntity(2000L, 10L, date);
-        when(transactionMapper.toEntity(history)).thenReturn(historyEntity);
+        TransactionEntity transactionEntity1 = createTransactionEntity(2000L, 10L, date);
+        when(transactionMapper.toEntity(transaction1)).thenReturn(transactionEntity1);
+        TransactionEntity transactionEntity2 = createTransactionEntity(5000L, 10L, date);
+        when(transactionMapper.toEntity(transaction2)).thenReturn(transactionEntity2);
+
         BankAccountEntity entity = bankAccountMapper.toEntity(dto);
 
         assertThat(entity.getId()).isEqualTo(10L);
@@ -225,15 +219,13 @@ public class BankAccountMapperTest {
         assertThat(entity.getBalance()).usingRecursiveComparison().isEqualTo(new BigDecimal("1000"));
         assertThat(entity.getCustomers()).hasSize(1);
         assertThat(entity.getCustomers().iterator().next()).isEqualTo(customerEntity);
-        assertThat(entity.getTransactions()).hasSize(1);
-        assertThat(entity.getTransactions().iterator().next()).usingRecursiveComparison().isEqualTo(transactionEntity);
-        assertThat(entity.getHistory()).hasSize(1);
-        assertThat(entity.getHistory().iterator().next()).usingRecursiveComparison().isEqualTo(historyEntity);
+        assertThat(entity.getTransactions()).hasSize(2);
+        assertThat(entity.getTransactions()).contains(transactionEntity1);
+        assertThat(entity.getTransactions()).contains(transactionEntity2);
 
-        verify(customerRepository).findById(customer.getId());
-        verify(transactionMapper).toEntity(history);
-        verify(transactionMapper).toEntity(transaction);
-        verify(customerMapper).toEntity(customer);
+        verify(customerRepository).findByIdOptional(customer.getId());
+        verify(transactionMapper).toEntity(transaction1);
+        verify(transactionMapper).toEntity(transaction2);
         verifyNoMoreInteractions(customerMapper, transactionMapper, customerRepository);
     }
 

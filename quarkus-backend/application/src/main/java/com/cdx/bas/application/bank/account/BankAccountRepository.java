@@ -2,7 +2,7 @@ package com.cdx.bas.application.bank.account;
 
 import java.util.Optional;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.cdx.bas.application.mapper.DtoEntityMapper;
@@ -14,7 +14,13 @@ import org.slf4j.LoggerFactory;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 
-@RequestScoped
+/***
+ * persistence implementation for BankAccount entities
+ * 
+ * @author Clément Gibert
+ *
+ */
+@ApplicationScoped
 public class BankAccountRepository implements BankAccountPersistencePort, PanacheRepositoryBase<BankAccountEntity, Long> {
     
     private static final Logger logger = LoggerFactory.getLogger(BankAccountRepository.class);
@@ -36,7 +42,8 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
 
     @Override
     public BankAccount update(BankAccount bankAccount) {
-        persist(bankAccountMapper.toEntity(bankAccount));
+        BankAccountEntity test = bankAccountMapper.toEntity(bankAccount);
+        persist(test);
         logger.info("BankAccount " + bankAccount.getId() + " updated");
         return bankAccount;
     }

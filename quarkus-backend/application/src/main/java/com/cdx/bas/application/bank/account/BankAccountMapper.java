@@ -37,11 +37,8 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
 
         dto.setCustomersId(entity.getCustomers().stream()
                 .map(CustomerEntity::getId)
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toList()));
         dto.setTransactions(entity.getTransactions().stream()
-                .map(transactionMapper::toDto)
-                .collect(Collectors.toSet()));
-        dto.setHistory(entity.getHistory().stream()
                 .map(transactionMapper::toDto)
                 .collect(Collectors.toSet()));
         return dto;
@@ -67,12 +64,9 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
         entity.setCustomers(dto.getCustomersId().stream()
                 .map(customerId -> customerRepository.findByIdOptional(customerId)
                         .orElseThrow(() -> new NoSuchElementException("Customer entity not found for id: " + customerId)))
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toList()));
 
         entity.setTransactions(dto.getTransactions().stream()
-                .map(transactionMapper::toEntity)
-                .collect(Collectors.toSet()));
-        entity.setHistory(dto.getHistory().stream()
                 .map(transactionMapper::toEntity)
                 .collect(Collectors.toSet()));
         return entity;

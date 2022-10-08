@@ -9,11 +9,12 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -67,13 +68,12 @@ public class BankAccountRepositoryTest {
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("300")));
-        Set<Long> customersId = new HashSet<>();
+        List<Long> customersId = new ArrayList<>();
         customersId.add(1L);
         bankAccount.setCustomersId(customersId);
-        bankAccount.setTransactions(new HashSet<>());
-        HashSet<Transaction> history = new HashSet<>();
-        history.add(createTransaction(2L, accountId, instantDate));
-        bankAccount.setHistory(history);
+        HashSet<Transaction> transactionHistory = new HashSet<>();
+        transactionHistory.add(createTransaction(2L, accountId, instantDate));
+        bankAccount.setTransactions(transactionHistory);
         return bankAccount;
     }
     

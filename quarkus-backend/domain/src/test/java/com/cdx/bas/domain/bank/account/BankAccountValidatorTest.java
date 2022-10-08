@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -35,7 +35,7 @@ public class BankAccountValidatorTest {
         dto.setId(10L);
         dto.setType(AccountType.CHECKING);
         dto.setBalance(new Money(new BigDecimal("1000")));
-        Set<Long> customers = new HashSet<>();
+        List<Long> customers = new ArrayList<>();
         Customer customer = createCustomer();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
@@ -49,7 +49,7 @@ public class BankAccountValidatorTest {
         dto.setId(10L);
         dto.setType(AccountType.SAVING);
         dto.setBalance(new Money(new BigDecimal("1000")));
-        Set<Long> customers = new HashSet<>();
+        List<Long> customers = new ArrayList<>();
         Customer customer = createCustomer();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
@@ -63,7 +63,7 @@ public class BankAccountValidatorTest {
         dto.setId(10L);
         dto.setType(AccountType.MMA);
         dto.setBalance(new Money(new BigDecimal("1000")));
-        Set<Long> customers = new HashSet<>();
+        List<Long> customers = new ArrayList<>();
         Customer customer = createCustomer();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
@@ -72,12 +72,29 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_CheckingBankAccountIsInvalid(){
+    public void validateBankAccount_should_throwBankAccountException_when_CheckingBankAccountFieldsAreInvalid(){
+        BankAccount dto = new CheckingBankAccount();
+        dto.setId(null);
+        dto.setType(null);
+        dto.setBalance(null);
+        dto.setCustomersId( null);
+        dto.setTransactions(null);
+        
+        try {
+            bankAccountValidator.validateBankAccount(dto);
+            fail();
+        } catch (BankAccountException exception) {
+            assertThat(exception.getMessage().split("\n")).hasSize(7);
+        }
+    }
+    
+    @Test
+    public void validateBankAccount_should_throwBankAccountException_when_CheckingBankAccountAmountIsInvalid(){
         BankAccount dto = new CheckingBankAccount();
         dto.setId(10L);
         dto.setType(AccountType.CHECKING);
         dto.setBalance(new Money(new BigDecimal("100001")));
-        Set<Long> customers = new HashSet<>();
+        List<Long> customers = new ArrayList<>();
         Customer customer = createCustomer();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
@@ -86,17 +103,34 @@ public class BankAccountValidatorTest {
             bankAccountValidator.validateBankAccount(dto);
             fail();
         } catch (BankAccountException exception) {
-            assertThat(exception.getMessage()).hasToString("balance amount must be between -600 and 100000\n");
+            assertThat(exception.getMessage()).hasToString("balance amount must be between -600 and 100000.\n");
         }
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_SavingBankAccountIsInvalid(){
+    public void validateBankAccount_should_throwBankAccountException_when_SavingBankAccountFieldsAreInvalid(){
+        BankAccount dto = new SavingBankAccount();
+        dto.setId(null);
+        dto.setType(null);
+        dto.setBalance(null);
+        dto.setCustomersId( null);
+        dto.setTransactions(null);
+        
+        try {
+            bankAccountValidator.validateBankAccount(dto);
+            fail();
+        } catch (BankAccountException exception) {
+            assertThat(exception.getMessage().split("\n")).hasSize(7);
+        }
+    }
+    
+    @Test
+    public void validateBankAccount_should_throwBankAccountException_when_SavingBankAccountAmountIsInvalid(){
         BankAccount dto = new SavingBankAccount();
         dto.setId(10L);
         dto.setType(AccountType.SAVING);
         dto.setBalance(new Money(new BigDecimal("22951")));
-        Set<Long> customers = new HashSet<>();
+        List<Long> customers = new ArrayList<>();
         Customer customer = createCustomer();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
@@ -105,17 +139,34 @@ public class BankAccountValidatorTest {
             bankAccountValidator.validateBankAccount(dto);
             fail();
         } catch (BankAccountException exception) {
-            assertThat(exception.getMessage()).hasToString("balance amount must be between 1 and 22950\n");
+            assertThat(exception.getMessage()).hasToString("balance amount must be between 1 and 22950.\n");
         }
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_MMABankAccountIsInvalid(){
+    public void validateBankAccount_should_throwBankAccountException_when_MMABankAccountFieldsAreInvalid(){
+        BankAccount dto = new MMABankAccount();
+        dto.setId(null);
+        dto.setType(null);
+        dto.setBalance(null);
+        dto.setCustomersId( null);
+        dto.setTransactions(null);
+        
+        try {
+            bankAccountValidator.validateBankAccount(dto);
+            fail();
+        } catch (BankAccountException exception) {
+            assertThat(exception.getMessage().split("\n")).hasSize(7);
+        }
+    }
+    
+    @Test
+    public void validateBankAccount_should_throwBankAccountException_when_MMABankAccountAmountIsInvalid(){
         BankAccount dto = new MMABankAccount();
         dto.setId(10L);
         dto.setType(AccountType.MMA);
         dto.setBalance(new Money(new BigDecimal("250001")));
-        Set<Long> customers = new HashSet<>();
+        List<Long> customers = new ArrayList<>();
         Customer customer = createCustomer();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
@@ -124,7 +175,7 @@ public class BankAccountValidatorTest {
             bankAccountValidator.validateBankAccount(dto);
             fail();
         } catch (BankAccountException exception) {
-            assertThat(exception.getMessage()).hasToString("balance amount must be between 1000 and 250000\n");
+            assertThat(exception.getMessage()).hasToString("balance amount must be between 1000 and 250000.\n");
         }
     }
     

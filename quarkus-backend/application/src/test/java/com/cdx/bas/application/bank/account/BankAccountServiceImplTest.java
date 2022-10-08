@@ -14,8 +14,10 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -102,7 +104,7 @@ public class BankAccountServiceImplTest {
         bankAccount.setBalance(moneyBefore); 
         BankAccount bankAccountAfterDeposit = createBankAccount(accountId);
         bankAccountAfterDeposit.setBalance(moneyBefore); 
-        BankAccountException violationException = new BankAccountException("balance amount must be between -600 and 100000\n");
+        BankAccountException violationException = new BankAccountException("balance amount must be between -600 and 100000.\n");
         Map<String, String> metadatasBefore = new HashMap<>();
         metadatasBefore.put("amount_before", "100000");
         metadatasBefore.put("error", violationException.getMessage());
@@ -125,14 +127,13 @@ public class BankAccountServiceImplTest {
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
-        HashSet<Long> customersId = new HashSet<>();
+        List<Long> customersId = new ArrayList<>();
         customersId.add(99L);
         bankAccount.setCustomersId(customersId);
-        bankAccount.setTransactions(new HashSet<>());
         Instant firstTransactionDate = Instant.now();
-        HashSet<Transaction> history = new HashSet<>();
-        history.add(createTransaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, new HashMap<>()));
-        bankAccount.setHistory(history);
+        HashSet<Transaction> transactionHistory = new HashSet<>();
+        transactionHistory.add(createTransaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, new HashMap<>()));
+        bankAccount.setTransactions(transactionHistory);
         return bankAccount;
     }
     

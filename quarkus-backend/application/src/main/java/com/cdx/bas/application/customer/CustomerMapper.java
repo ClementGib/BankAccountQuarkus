@@ -46,7 +46,7 @@ public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity>
         dto.setEmail(entity.getEmail());
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setAccounts(entity.getAccounts().stream()
-        		.map(bankAccountMapper::toDto).collect(Collectors.toSet()));
+        		.map(bankAccountMapper::toDto).collect(Collectors.toList()));
         
         try {
             if (entity.getMetadatas() != null) {
@@ -80,7 +80,7 @@ public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity>
         entity.setEmail(dto.getEmail());
         entity.setPhoneNumber(dto.getPhoneNumber());
         entity.setAccounts(dto.getAccounts().stream()
-        		.map(bankAccountMapper::toEntity).collect(Collectors.toSet()));
+        		.map(bankAccountMapper::toEntity).collect(Collectors.toList()));
         
         try {
             if (!dto.getMetadatas().isEmpty()) {

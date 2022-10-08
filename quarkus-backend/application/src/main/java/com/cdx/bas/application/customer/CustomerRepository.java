@@ -15,7 +15,7 @@ import org.jboss.logging.Logger;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 
 /***
- * specific dao interface for customers entities
+ * persistence implementation for Customer entities
  * 
  * @author Clément Gibert
  *
@@ -35,14 +35,14 @@ public class CustomerRepository implements CustomerPersistencePort, PanacheRepos
 
 	@Override
 	public Customer create(Customer customer) {
-        persistAndFlush(customerMapper.toEntity(customer));
+        persist(customerMapper.toEntity(customer));
         logger.info("Customer " + customer.getId() + " created");
         return customer;
 	}
 
 	@Override
 	public Customer update(Customer customer) {
-        persistAndFlush(customerMapper.toEntity(customer));
+	    persist(customerMapper.toEntity(customer));
         logger.info("Customer " + customer.getId() + " updated");
         return customer;
 	}

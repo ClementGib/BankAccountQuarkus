@@ -59,8 +59,8 @@ public class TransactionMapperTest {
     public void toDto_should_mapNullValues_when_entityHasNullValues() {
         Transaction dto = transactionMapper.toDto(new TransactionEntity());
 
-        assertThat(dto.getId()).isZero();
-        assertThat(dto.getAccountId()).isEqualTo(0L);
+        assertThat(dto.getId()).isNull();
+        assertThat(dto.getAccountId()).isNull();
         assertThat(dto.getAmount()).isEqualTo(0L);
         assertThat(dto.getType()).isNull();
         assertThat(dto.getStatus()).isNull();
@@ -76,7 +76,7 @@ public class TransactionMapperTest {
             transactionMapper.toEntity(new Transaction());
             fail();
         } catch (NoSuchElementException exception) {
-            assertThat(exception.getMessage()).hasToString("Bank Account entity not found for id: 0");
+            assertThat(exception.getMessage()).hasToString("Bank Account entity not found for id: null");
             
         }
 

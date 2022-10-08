@@ -1,8 +1,8 @@
 package com.cdx.bas.application.customer;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,7 +40,7 @@ public class CustomerEntity extends PanacheEntityBase {
     @Column(name = "customer_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customers_customer_id_seq_gen")
     @SequenceGenerator(name = "customers_customer_id_seq_gen", sequenceName = "customers_customer_id_seq", allocationSize = 1, initialValue = 1)
-    private long id;
+    private Long id;
     
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -77,17 +77,17 @@ public class CustomerEntity extends PanacheEntityBase {
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(name = "bank_accounts_customers", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
-    private Set<BankAccountEntity> accounts = new HashSet<>();
+    private List<BankAccountEntity> accounts = new ArrayList<>();
     
     @Type(type = "jsonb")
     @Column(name = "metadatas", columnDefinition = "jsonb",  nullable = true)
     private String metadatas;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -171,11 +171,11 @@ public class CustomerEntity extends PanacheEntityBase {
         this.phoneNumber = phoneNumber;
     }
 
-    public Set<BankAccountEntity> getAccounts() {
+    public List<BankAccountEntity> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(Set<BankAccountEntity> accounts) {
+    public void setAccounts(List<BankAccountEntity> accounts) {
         this.accounts = accounts;
     }
 

@@ -1,7 +1,9 @@
 package com.cdx.bas.application.bank.account;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -26,11 +28,9 @@ import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.AccountType;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-
 @Entity
 @Table(schema = "basapp", name = "bank_accounts", uniqueConstraints = @UniqueConstraint(columnNames = "account_id"))
-public class BankAccountEntity extends PanacheEntityBase {
+public class BankAccountEntity {
 
     @Id
     @Column(name = "account_id", nullable = false)
@@ -46,17 +46,12 @@ public class BankAccountEntity extends PanacheEntityBase {
     private BigDecimal balance;
     
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
-    private Set<CustomerEntity> customers = new HashSet<>();
+    private List<CustomerEntity> customers = new ArrayList<>();
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
     @OrderBy("date")
     private Set<TransactionEntity> transactions = new HashSet<>();
-    
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "bank_accounts_history", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
-    @OrderBy("date")
-    private Set<TransactionEntity> history = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -82,11 +77,11 @@ public class BankAccountEntity extends PanacheEntityBase {
         this.balance = balance;
     }
 
-    public Set<CustomerEntity> getCustomers() {
+    public List<CustomerEntity> getCustomers() {
         return customers;
     }
 
-    public void setCustomers(Set<CustomerEntity> customers) {
+    public void setCustomers(List<CustomerEntity> customers) {
         this.customers = customers;
     }
 
@@ -96,13 +91,5 @@ public class BankAccountEntity extends PanacheEntityBase {
 
     public void setTransactions(Set<TransactionEntity> transactions) {
         this.transactions = transactions;
-    }
-
-    public Set<TransactionEntity> getHistory() {
-        return history;
-    }
-
-    public void setHistory(Set<TransactionEntity> history) {
-        this.history = history;
     }
 }

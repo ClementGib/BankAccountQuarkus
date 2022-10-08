@@ -72,16 +72,6 @@ SET search_path TO basapp;
 	CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
 	);
 
--- CREATE bank_account_history TABLE --
-	CREATE TABLE basapp.bank_accounts_history
-	(
-	account_id bigint NOT NULL,
-	transaction_id bigint NOT NULL,
-	PRIMARY KEY (account_id, transaction_id),
-	CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
-	CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
-	);
-
 -- GRANT basadm -- 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA basapp TO basadm;	
 GRANT SELECT, UPDATE, USAGE ON ALL SEQUENCES IN SCHEMA basapp to basadm;

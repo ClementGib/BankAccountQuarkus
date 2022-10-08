@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionPersistencePort;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
 import com.cdx.bas.domain.transaction.TransactionType;
 
@@ -20,7 +21,7 @@ public class TransactionServiceImpl implements TransactionServicePort {
     private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
     
     @Inject
-    TransactionRepository transactionRepository;
+    TransactionPersistencePort transactionRepository;
     
     @Inject
     BankAccountServicePort bankAccountService;

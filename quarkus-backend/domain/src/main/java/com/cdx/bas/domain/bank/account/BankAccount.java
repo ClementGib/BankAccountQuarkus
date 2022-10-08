@@ -1,9 +1,12 @@
 package com.cdx.bas.domain.bank.account;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,44 +16,42 @@ import com.cdx.bas.domain.transaction.Transaction;
 
 public abstract class BankAccount {
 
+    @NotNull(message="id must not be null.")
 	@Min(value=1, message="id must be positive and greater than 0.")
-    protected long id;
+    protected Long id;
     
 	@NotNull(message="type must not be null.")
 	protected AccountType type;
     
 	@NotNull(message="balance must not be null.")
+	@Valid
 	protected Money balance;
     
 	@NotNull(message="customersId must not be null.")
 	@Size(min=1, message="customersId must contains at least 1 customer id.")
-	protected Set<Long> customersId = new HashSet<>();
+	protected List<Long> customersId = new ArrayList<>();
     
 	@NotNull(message="transactions must not be null.")
 	protected Set<Transaction> transactions = new HashSet<>();
-
-	@NotNull(message="history must not be null.")
-	protected Set<Transaction> history = new HashSet<>();
     
     public BankAccount(AccountType type) {
         this.type = type;
     }
 
-    public BankAccount(Long id, AccountType type, Money balance, Set<Long> customersId, Set<Transaction> transactions, Set<Transaction> history) {
+    public BankAccount(Long id, AccountType type, Money balance, List<Long> customersId, Set<Transaction> transactions) {
       this.id = id;
       this.type = type;
       this.balance = balance;
       this.customersId = customersId;
       this.transactions = transactions;
-      this.history = history;
       this.balance = balance;
     }
     
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,11 +71,11 @@ public abstract class BankAccount {
         this.balance = balance;
     }
 
-    public Set<Long> getCustomersId() {
+    public List<Long> getCustomersId() {
 		return customersId;
 	}
 
-	public void setCustomersId(Set<Long> customerId) {
+	public void setCustomersId(List<Long> customerId) {
 		this.customersId = customerId;
 	}
 
@@ -86,17 +87,9 @@ public abstract class BankAccount {
         this.transactions = transactions;
     }
 
-    public Set<Transaction> getHistory() {
-        return history;
-    }
-
-    public void setHistory(Set<Transaction> history) {
-        this.history = history;
-    }
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(balance, customersId, history, id, transactions, type);
+		return Objects.hash(balance, customersId, id, transactions, type);
 	}
 
 	@Override
@@ -108,8 +101,10 @@ public abstract class BankAccount {
 		if (getClass() != obj.getClass())
 			return false;
 		BankAccount other = (BankAccount) obj;
-		return Objects.equals(balance, other.balance) && Objects.equals(customersId, other.customersId)
-				&& Objects.equals(history, other.history) && Objects.equals(id, other.id)
-				&& Objects.equals(transactions, other.transactions) && type == other.type;
+		return Objects.equals(balance, other.balance) 
+		        && Objects.equals(customersId, other.customersId)
+		        && Objects.equals(id, other.id)
+				&& Objects.equals(transactions, other.transactions) 
+				&& type == other.type;
 	}
 }

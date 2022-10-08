@@ -35,7 +35,7 @@ INSERT INTO basapp.transactions (transaction_id, type, amount, status, date, lab
 	(12, 'DEBIT', 300, 'WAITING', '2022-12-06 :19:00:00', 'transaction 12', null),
 	(13, 'DEBIT', 1200, 'WAITING', '2022-12-06 :19:00:10', 'transaction 13', null);
 	
-INSERT INTO basapp.bank_accounts_history(
+	INSERT INTO basapp.bank_accounts_transactions(
 	account_id, transaction_id)
 	VALUES (2, 1),
 	(1, 2),
@@ -44,11 +44,8 @@ INSERT INTO basapp.bank_accounts_history(
 	(4, 5),
 	(3, 6),
 	(1, 7),
-	(3, 8);
-	
-	INSERT INTO basapp.bank_accounts_transactions(
-	account_id, transaction_id)
-	VALUES (2, 9),
+	(3, 8),
+	(2, 9),
 	(1, 10),
 	(3, 11),
 	(1, 12),

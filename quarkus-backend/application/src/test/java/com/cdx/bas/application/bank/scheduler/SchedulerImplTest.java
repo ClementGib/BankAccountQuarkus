@@ -36,7 +36,6 @@ import io.quarkus.test.junit.mockito.InjectMock;
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)
 public class SchedulerImplTest {
-
     @Inject
     Scheduler scheduler;
 
@@ -108,5 +107,4 @@ public class SchedulerImplTest {
 		transaction.setLabel(label);
 		return transaction;
     }
-
 }

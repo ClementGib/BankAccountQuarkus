@@ -1,11 +1,11 @@
 package com.cdx.bas.domain.customer;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
@@ -23,8 +23,9 @@ public class Customer {
 			+ "MW|MY|MV|ML|MT|MH|MQ|MR|MU|YT|MX|FM|MD|MC|MN|ME|MS|MA|MZ|MM|NA|NR|NP|NL|NC|NZ|NI|NE|NG|NU|NF|MP|NO|OM|PK|PW|PS|PA|PG|PY|PE|PH|PN|PL|PT|PR|QA|RE|RO|RU|RW|BL|SH|KN|LC|MF|PM|VC|WS|SM|ST|SA|SN|RS|SC|SL|SG|SX|SK|SI|SB|SO|ZA|"
 			+ "GS|SS|ES|LK|SD|SR|SJ|SZ|SE|CH|SY|TW|TJ|TZ|TH|TL|TG|TK|TO|TT|TN|TR|TM|TC|TV|UG|UA|AE|GB|US|UM|UY|UZ|VU|VE|VN|VG|VI|WF|EH|YE|ZM|ZW)$";
 
+	@NotNull(message="id must not be null.")
 	@Min(value=1, message="id must be positive and greater than 0.")
-	private long id;
+	private Long id;
 	
 	@NotNull(message="firstName must not be null.")
 	@Size(min = 1, max = 750, message="firstName must contain at least 1 character and must not have more than 750 characters.")
@@ -66,7 +67,7 @@ public class Customer {
 	private String phoneNumber;
 	
 	@NotNull(message="accounts must not be null.")
-	private Set<BankAccount> accounts = new HashSet<>();
+	private List<BankAccount> accounts = new ArrayList<>();
 	
 	private Map<String, String> metadatas = new HashMap<>();
 	
@@ -76,7 +77,7 @@ public class Customer {
 
 	public Customer(Long id, String firstName, String lastName, Gender gender, MaritalStatus maritalStatus,
 	        LocalDateTime birthdate, String country, String address, String city, String email, String phoneNumber,
-	        Set<BankAccount> accounts, Map<String, String> metadatas) {
+	        List<BankAccount> accounts, Map<String, String> metadatas) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -93,11 +94,11 @@ public class Customer {
 		this.metadatas = metadatas;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -181,11 +182,11 @@ public class Customer {
 		this.phoneNumber = phoneNumber;
 	}
 	
-	public Set<BankAccount> getAccounts() {
+	public List<BankAccount> getAccounts() {
 		return accounts;
 	}
 	
-	public void setAccounts(Set<BankAccount> accounts) {
+	public void setAccounts(List<BankAccount> accounts) {
 		this.accounts = accounts;
 	}
 	

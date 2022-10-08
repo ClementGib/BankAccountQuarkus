@@ -10,11 +10,12 @@ import javax.validation.constraints.NotNull;
 
 public class Transaction implements Comparable<Transaction> {
 
+    @NotNull(message="id must not be null.")
     @Min(value = 1, message = "id must be positive and greater than 0.")
-    private long id;
+    private Long id;
 
     @NotNull(message = "gender must not be null.")
-    private long accountId;
+    private Long accountId;
 
     @Min(value = 1, message = "amount must be positive and greater than 0.")
     private long amount;
@@ -56,19 +57,19 @@ public class Transaction implements Comparable<Transaction> {
         this.metadatas.putAll(metadatas);
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(long accountId) {
+    public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
 

@@ -4,8 +4,6 @@ import java.util.PriorityQueue;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
 
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionPersistencePort;
@@ -18,7 +16,6 @@ import io.quarkus.scheduler.Scheduled;
 
 @Startup
 @Singleton
-@Transactional(value = TxType.NEVER)
 public class SchedulerImpl implements Scheduler {
 
     private static final Logger logger = Logger.getLogger(SchedulerImpl.class);
@@ -29,7 +26,7 @@ public class SchedulerImpl implements Scheduler {
     TransactionServicePort transactionService;
 
     @Inject
-    TransactionPersistencePort transactionPersistence;
+    TransactionPersistencePort transactionRepository;
 
     public PriorityQueue<Transaction> getCurrentQueue() {
         return currentQueue;
@@ -39,7 +36,7 @@ public class SchedulerImpl implements Scheduler {
     public void processQueue() {
         logger.info("Scheduler start");
         if (getCurrentQueue().isEmpty()) {
-            getCurrentQueue().addAll(transactionPersistence.findUnprocessedTransactions());
+            getCurrentQueue().addAll(transactionRepository.findUnprocessedTransactions());
             logger.info("Queue size: " + currentQueue.size());
             getCurrentQueue().forEach(transaction -> {
                 transactionService.processTransaction(transaction);

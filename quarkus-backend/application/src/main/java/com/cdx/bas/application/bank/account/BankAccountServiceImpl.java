@@ -44,7 +44,7 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
             metadatas.put("amount_after", currentBankAccount.getBalance().getAmount().toString());
             
             Transaction completedTransaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadatas);
-            currentBankAccount.getHistory().add(completedTransaction);
+            currentBankAccount.getTransactions().add(completedTransaction);
             BankAccountRepository.update(currentBankAccount);
             return completedTransaction;
             

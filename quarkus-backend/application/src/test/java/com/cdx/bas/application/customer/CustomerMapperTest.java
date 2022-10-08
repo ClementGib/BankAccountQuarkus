@@ -10,8 +10,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,7 +76,7 @@ public class CustomerMapperTest {
 	public void toDto_should_mapNullValues_when_entityValuesNotDefined() throws JsonMappingException, JsonProcessingException {
         Customer dto = customerMapper.toDto(new CustomerEntity());
         
-        assertThat(dto.getId()).isZero();
+        assertThat(dto.getId()).isNull();
         assertThat(dto.getFirstName()).isNull();
         assertThat(dto.getLastName()).isNull();
         assertThat(dto.getGender()).isNull();
@@ -96,7 +98,7 @@ public class CustomerMapperTest {
     public void toEntity_should_mapNullValues_when_dtoValuesNotDefined() throws JsonProcessingException {
         CustomerEntity entity = customerMapper.toEntity(new Customer());
         
-        assertThat(entity.getId()).isZero();
+        assertThat(entity.getId()).isNull();
         assertThat(entity.getFirstName()).isNull();
         assertThat(entity.getLastName()).isNull();
         assertThat(entity.getGender()).isNull();
@@ -132,7 +134,7 @@ public class CustomerMapperTest {
         Instant instantDate = Instant.now();
         BankAccountEntity accountEntity1 = createBankAccountEntity(10L, instantDate);
         BankAccountEntity accountEntity2 = createBankAccountEntity(11L, instantDate);
-        HashSet<BankAccountEntity> accounts = new HashSet<BankAccountEntity>();
+        List<BankAccountEntity> accounts = new ArrayList<BankAccountEntity>();
         accounts.add(accountEntity1);
         accounts.add(accountEntity2);
         entity.setAccounts(accounts);
@@ -191,7 +193,7 @@ public class CustomerMapperTest {
         Instant instantDate = Instant.now();
         BankAccount account1 = createBankAccount(10L, instantDate);
         BankAccount account2 = createBankAccount(11L, instantDate);
-        HashSet<BankAccount> accounts = new HashSet<BankAccount>();
+        List<BankAccount> accounts = new ArrayList<BankAccount>();
         accounts.add(account1);
         accounts.add(account2);
         model.setAccounts(accounts);
@@ -235,16 +237,14 @@ public class CustomerMapperTest {
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
         bankAccount.setBalance(new Money(new BigDecimal("100")));
-        Set<Long> customersId = new HashSet<>();
+        List<Long> customersId = new ArrayList<>();
         customersId.add(99L);
         bankAccount.setCustomersId(customersId);
         Set<Transaction> transactions = new HashSet<>();
+        transactions.add(createTransaction(99L, accountId, instantDate));
+        transactions.add(createTransaction(100L, accountId, instantDate));
         transactions.add(createTransaction(100L, accountId, instantDate));
         bankAccount.setTransactions(transactions);
-        HashSet<Transaction> history = new HashSet<>();
-        history.add(createTransaction(99L, accountId, instantDate));
-        history.add(createTransaction(100L, accountId, instantDate));
-        bankAccount.setHistory(history);
         return bankAccount;
     }
     
@@ -253,15 +253,13 @@ public class CustomerMapperTest {
         bankAccountEntity.setId(id);
         bankAccountEntity.setType(AccountType.CHECKING);
         bankAccountEntity.setBalance(new BigDecimal("100"));
-        HashSet<Long> customersId = new HashSet<>();
-        customersId.add(99L);
-        bankAccountEntity.setCustomers(new HashSet<>());
+        List<CustomerEntity> customersId = new ArrayList<>();
+        customersId.add(new CustomerEntity());
+        bankAccountEntity.setCustomers(customersId);
         HashSet<TransactionEntity> transactionEntities = new HashSet<>();
+        transactionEntities.add(createTransactionEntity(99L, id, instantDate));
         transactionEntities.add(createTransactionEntity(100L, id, instantDate));
         bankAccountEntity.setTransactions(transactionEntities);
-        HashSet<TransactionEntity> historyEntities = new HashSet<>();
-        historyEntities.add(createTransactionEntity(99L, id, instantDate));
-        bankAccountEntity.setHistory(historyEntities);
         return bankAccountEntity;
     }
     
