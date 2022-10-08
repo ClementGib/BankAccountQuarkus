@@ -3,8 +3,6 @@ package com.cdx.bas.domain.transaction;
 import java.util.Optional;
 import java.util.Queue;
 
-import com.cdx.bas.domain.bank.account.BankAccount;
-
 public interface TransactionPersistencePort {
     
     /**

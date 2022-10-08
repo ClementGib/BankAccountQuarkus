@@ -45,7 +45,7 @@ public class BankAccountEntity {
     @Column(name = "balance", nullable = false)
     private BigDecimal balance;
     
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
+    @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<CustomerEntity> customers = new ArrayList<>();
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -2,14 +2,20 @@ package com.cdx.bas.application.transaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionException;
 import com.cdx.bas.domain.transaction.TransactionPersistencePort;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
+import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
 
 import org.slf4j.Logger;
@@ -32,10 +38,26 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
     
     @Override
-    public void processTransaction(Transaction transaction) throws IllegalStateException {
+    @Transactional(value = TxType.REQUIRES_NEW)
+    public void processTransaction(Transaction transaction) {
         if (TransactionType.CREDIT.equals(transaction.getType())) {
             logger.info("Transaction " +  transaction.getAccountId() + " processing...");
             bankAccountService.deposit(transaction);
         }
     }
+
+	@Override
+	public Transaction extractTransactionFromCollection(Long transactionId, Set<Transaction> transactions) {
+		Transaction extractedTransaction = transactions.stream()
+		.filter(transaction -> transaction.getId().equals(transactionId))
+		.findFirst().orElseThrow(() -> new TransactionException("Transaction " + transactionId + " not found in the bank account."));
+		transactions.remove(extractedTransaction);
+		return extractedTransaction;
+	}
+	
+	@Override
+	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadatas) {
+		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadatas);
+		return transaction;
+	}
 }

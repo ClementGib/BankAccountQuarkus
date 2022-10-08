@@ -75,7 +75,7 @@ public class CustomerEntity extends PanacheEntityBase {
     private String phoneNumber;
     
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "bank_accounts_customers", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
     private List<BankAccountEntity> accounts = new ArrayList<>();
     

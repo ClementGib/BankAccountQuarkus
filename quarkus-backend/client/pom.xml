@@ -78,7 +78,6 @@
 			<plugin>
 				<groupId>org.jboss.jandex</groupId>
 				<artifactId>jandex-maven-plugin</artifactId>
-				<version>${jandex.maven.version}</version>
 			</plugin>
 		</plugins>
 	</build>

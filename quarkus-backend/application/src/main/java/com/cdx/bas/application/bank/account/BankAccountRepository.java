@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
@@ -40,6 +41,7 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
         return bankAccount;
     }
 
+    @Transactional
     @Override
     public BankAccount update(BankAccount bankAccount) {
         BankAccountEntity test = bankAccountMapper.toEntity(bankAccount);

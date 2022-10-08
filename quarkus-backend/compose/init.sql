@@ -71,8 +71,11 @@ SET search_path TO basapp;
 	CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
 	CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
 	);
+	
 
 -- GRANT basadm -- 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA basapp TO basadm;	
 GRANT SELECT, UPDATE, USAGE ON ALL SEQUENCES IN SCHEMA basapp to basadm;
+
+CREATE SEQUENCE basapp.hibernate_sequence
 

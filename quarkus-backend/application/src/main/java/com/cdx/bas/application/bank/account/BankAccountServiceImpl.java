@@ -14,6 +14,7 @@ import com.cdx.bas.domain.bank.account.BankAccountServicePort;
 import com.cdx.bas.domain.bank.account.BankAccountValidator;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionServicePort;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 
 import org.slf4j.Logger;
@@ -29,13 +30,16 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     
     @Inject
     BankAccountValidator bankAccountValidator;
+    
+    @Inject
+    TransactionServicePort transactionService;
 
     @Override
     public Transaction deposit(Transaction transaction) {
         Map<String, String> metadatas = new HashMap<>();
         try {
             BankAccount currentBankAccount = BankAccountRepository.findById(transaction.getAccountId())
-                    .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() +" not found."));
+                    .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() + " not found."));
             logger.info("BankAccount " + transaction.getAccountId() + " transaction deposit " + transaction.getId() + " for amount "+ transaction.getAmount());
             
             metadatas.put("amount_before", currentBankAccount.getBalance().getAmount().toString());
@@ -43,10 +47,10 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
             bankAccountValidator.validateBankAccount(currentBankAccount);
             metadatas.put("amount_after", currentBankAccount.getBalance().getAmount().toString());
             
-            Transaction completedTransaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadatas);
-            currentBankAccount.getTransactions().add(completedTransaction);
+            Transaction currentTransaction = transactionService.extractTransactionFromCollection(transaction.getId(), currentBankAccount.getTransactions());
+            currentBankAccount.getTransactions().add(transactionService.completeTransaction(currentTransaction, metadatas));
             BankAccountRepository.update(currentBankAccount);
-            return completedTransaction;
+            return currentTransaction;
             
         } catch (NoSuchElementException exception) {
             logger.error("Transaction " + transaction.getId() + " deposit error for amount "+ transaction.getAmount() + ": " + exception.getMessage());
