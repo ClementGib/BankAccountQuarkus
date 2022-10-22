@@ -10,7 +10,7 @@ public interface CustomerPersistencePort {
      * @param id of Customer
      * @return <Optional>Customer if id corresponding or not to a Customer
      */
-    public Optional<Customer> findById(long id);
+	Optional<Customer> findById(long id);
     
     /**
      * create the current Customer
@@ -18,7 +18,7 @@ public interface CustomerPersistencePort {
      * @param Customer to create
      * @return created Customer
      */
-    public Customer create(Customer customer);
+	Customer create(Customer customer);
     
     /**
      * update the current Customer
@@ -26,7 +26,7 @@ public interface CustomerPersistencePort {
      * @param Customer to update
      * @return updated Customer
      */
-    public Customer update(Customer customer);
+	Customer update(Customer customer);
     
     /**
      * delete Customer from its id
@@ -34,5 +34,5 @@ public interface CustomerPersistencePort {
      * @param id of Customer
      * @return Customer if id corresponding or not to a Customer
      */
-    public Optional<Customer> deleteById(long id);
+	Optional<Customer> deleteById(long id);
 }

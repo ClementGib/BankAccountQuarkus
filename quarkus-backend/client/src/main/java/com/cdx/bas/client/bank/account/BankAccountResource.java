@@ -29,6 +29,9 @@ public class BankAccountResource implements BankAccountControllerPort{
     @Override
     public BankAccount findById(long id) {
         Optional<BankAccount> bankAccountOptional = bankAccountRepository.findById(id);
+        if(!bankAccountOptional.isPresent()) {
+        	Optional.empty();
+        }
         return bankAccountOptional.get();
     }
 

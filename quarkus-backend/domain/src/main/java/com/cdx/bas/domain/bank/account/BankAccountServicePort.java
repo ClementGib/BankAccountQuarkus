@@ -9,5 +9,5 @@ import com.cdx.bas.domain.transaction.Transaction;
  * @return transaction processing status
  */
 public interface BankAccountServicePort {
-    public Transaction deposit(Transaction transaction);
+	Transaction deposit(Transaction transaction);
 }

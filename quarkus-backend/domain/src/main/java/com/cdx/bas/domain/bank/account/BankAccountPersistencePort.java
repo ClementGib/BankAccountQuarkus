@@ -10,7 +10,7 @@ public interface BankAccountPersistencePort {
      * @param id of BankAccount
      * @return <Optional>BankAccount if id corresponding or not to a BankAccount
      */
-    public Optional<BankAccount> findById(long id);
+	Optional<BankAccount> findById(long id);
     
     /**
      * create the current BankAccount
@@ -18,7 +18,7 @@ public interface BankAccountPersistencePort {
      * @param BankAccount to create
      * @return created BankAccount
      */
-    public BankAccount create(BankAccount bankAccount);
+	BankAccount create(BankAccount bankAccount);
     
     /**
      * update the current BankAccount
@@ -26,7 +26,7 @@ public interface BankAccountPersistencePort {
      * @param BankAccount to update
      * @return updated BankAccount
      */
-    public BankAccount update(BankAccount bankAccount);
+	BankAccount update(BankAccount bankAccount);
     
     /**
      * delete BankAccount from its id
@@ -34,5 +34,5 @@ public interface BankAccountPersistencePort {
      * @param id of BankAccount
      * @return BankAccount if id corresponding or not to a BankAccount
      */
-    public Optional<BankAccount> deleteById(long id);
+	Optional<BankAccount> deleteById(long id);
 }

@@ -25,6 +25,7 @@ import com.cdx.bas.domain.transaction.TransactionServicePort;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
 
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,6 @@ public class SchedulerImplTest {
     TransactionPersistencePort transactionRepository;
 
     @Test
-    @Order(1)
     public void processQueue_should_tryToFillTheQueue_when_QueueWasEmpty() {
         when(transactionRepository.findUnprocessedTransactions()).thenReturn(new PriorityQueue<>());
         scheduler.processQueue();
@@ -57,14 +57,14 @@ public class SchedulerImplTest {
     }
 
     @Test
-    @Order(2)
     public void processQueue_should_runScheduleProcessOrderedQueues_when_WaitingForSchedulerAndQueuehasBeenFilled() throws InterruptedException {
         Queue<Transaction> queue = createDepositTransactions();
-        when(transactionRepository.findUnprocessedTransactions()).thenReturn(queue);
+//        when(transactionRepository.findUnprocessedTransactions()).thenReturn(queue);
         Clock clock;
-        Thread.sleep(5000);
-
-        verify(transactionRepository).findUnprocessedTransactions();
+//        Awaitility.await().atMost(6, TimeUnit.SECONDS);
+        Awaitility.await().untilAsserted(() -> assertThat(queue.size()).isEqualTo(5));
+        
+//        verify(transactionRepository).findUnprocessedTransactions();
         assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(createTransaction(5L, 59L, 99L, CREDIT, WAITING, Instant.MIN, "Fifth transaction"));
         verify(transactionService).processTransaction(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-06T10:14:00Z"), ZoneId.of("UTC"));

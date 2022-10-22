@@ -11,7 +11,7 @@ public interface TransactionPersistencePort {
      * @param id of Transaction
      * @return <Optional>Transaction if id corresponding or not to a Transaction
      */
-    public Optional<Transaction> findById(long id);
+	Optional<Transaction> findById(long id);
     
     /**
      * find all unprocessed transactions in a queue
@@ -26,7 +26,7 @@ public interface TransactionPersistencePort {
      * @param Transaction to create
      * @return created Transaction
      */
-    public Transaction create(Transaction transaction);
+	Transaction create(Transaction transaction);
     
     /**
      * update the current Transaction
@@ -34,12 +34,12 @@ public interface TransactionPersistencePort {
      * @param Transaction to update
      * @return updated Transaction
      */
-    public Transaction update(Transaction transaction);
+	Transaction update(Transaction transaction);
     
     /**
      * delete the current Transaction
      * 
      * @param Transaction id to remove
      */
-    public Optional<Transaction> deleteById(long id);
+	Optional<Transaction> deleteById(long id);
 }
