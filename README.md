@@ -100,7 +100,7 @@ I want to see the history (operation, date, amount, balance) of my operations
     - JUnit 5 et tests d'intégration
 - **OpenJDK** 17.0.3 et les fonctionnalités Java 8+ (stream, constructeur compact, record, bean validation...)
 - **Docker** et docker-compose
-    - postgresql (Script de création,Script d'insertion, requetage JSON...)
+    - postgresql `15` (Script de création,Script d'insertion, requetage JSON...)
     - pgAdmin (Auto connexion)
     - KeyClock
 
