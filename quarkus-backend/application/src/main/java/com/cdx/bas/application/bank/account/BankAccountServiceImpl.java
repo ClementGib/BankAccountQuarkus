@@ -3,6 +3,7 @@ package com.cdx.bas.application.bank.account;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import com.cdx.bas.domain.bank.account.BankAccountServicePort;
 import com.cdx.bas.domain.bank.account.BankAccountValidator;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionException;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 
@@ -47,8 +49,9 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
             bankAccountValidator.validateBankAccount(currentBankAccount);
             metadatas.put("amount_after", currentBankAccount.getBalance().getAmount().toString());
             
-            Transaction currentTransaction = transactionService.extractTransactionFromCollection(transaction.getId(), currentBankAccount.getTransactions());
-            currentBankAccount.getTransactions().add(transactionService.completeTransaction(currentTransaction, metadatas));
+            Transaction currentTransaction = currentBankAccount.getTransaction(transaction.getId());
+            Transaction completedTransaction = transactionService.completeTransaction(currentTransaction, metadatas);
+            currentBankAccount.addTransaction(completedTransaction);
             BankAccountRepository.update(currentBankAccount);
             return currentTransaction;
             

@@ -13,14 +13,6 @@ public interface TransactionServicePort {
     void processTransaction(Transaction transaction);
     
     /**
-     * find transaction into a Set collection
-     * 
-     * @param transactionId id of the transaction to find
-     * @param transactions Set where find the transaction
-     */
-    Transaction extractTransactionFromCollection(Long transactionId, Set<Transaction> transactions);
-    
-    /**
      * Complete processed transaction 
      * 
      * @param transaction to complete

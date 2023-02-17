@@ -47,15 +47,6 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
 
 	@Override
-	public Transaction extractTransactionFromCollection(Long transactionId, Set<Transaction> transactions) {
-		Transaction extractedTransaction = transactions.stream()
-		.filter(transaction -> transaction.getId().equals(transactionId))
-		.findFirst().orElseThrow(() -> new TransactionException("Transaction " + transactionId + " not found in the bank account."));
-		transactions.remove(extractedTransaction);
-		return extractedTransaction;
-	}
-	
-	@Override
 	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadatas) {
 		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadatas);
 		return transaction;

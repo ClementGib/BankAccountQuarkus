@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionException;
 
 public abstract class BankAccount {
 
@@ -86,6 +87,24 @@ public abstract class BankAccount {
     public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
     }
+    
+    public Transaction getTransaction(Long transactionId) {
+        return transactions.stream()
+                .filter(transaction -> transaction.getId().equals(transactionId))
+                .findFirst().orElseThrow(() -> new TransactionException("Transaction " + transactionId + " not found in the bank account."));
+        }
+
+    public void addTransaction(Transaction newTransaction) {
+        this.transactions.stream()
+        .filter(transaction -> transaction.getId().equals(newTransaction.getId()))
+        .findFirst()
+        .ifPresentOrElse(
+                transaction -> {
+                    transactions.remove(transaction);
+                    transactions.add(newTransaction);
+                }, () -> transactions.add(newTransaction));
+    }
+    
 
 	@Override
 	public int hashCode() {

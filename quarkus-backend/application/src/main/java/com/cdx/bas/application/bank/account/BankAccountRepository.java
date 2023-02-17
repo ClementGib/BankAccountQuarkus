@@ -1,5 +1,6 @@
 package com.cdx.bas.application.bank.account;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -44,12 +45,13 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     @Transactional
     @Override
     public BankAccount update(BankAccount bankAccount) {
-        BankAccountEntity test = bankAccountMapper.toEntity(bankAccount);
-        persist(test);
+        BankAccountEntity entity = bankAccountMapper.toEntity(bankAccount);
+        BankAccountEntity mergedEntity = getEntityManager().merge(entity);
+        persistAndFlush(mergedEntity);
         logger.info("BankAccount " + bankAccount.getId() + " updated");
         return bankAccount;
     }
-
+    
     @Override
     public Optional<BankAccount> deleteById(long id) {
         Optional<BankAccountEntity> entityOptional = findByIdOptional(id);
