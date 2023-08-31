@@ -1,6 +1,6 @@
 package com.cdx.bas.application.bank.transaction;
 
-import static com.cdx.bas.domain.transaction.TransactionStatus.WAITING;
+import static com.cdx.bas.domain.transaction.TransactionStatus.UNPROCESSED;
 import static com.cdx.bas.domain.transaction.TransactionType.CREDIT;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -33,7 +33,7 @@ public class TransactionServiceImplTest {
 		transaction.setAmount(100L);
 		transaction.setAccountId(100L);
 		transaction.setType(CREDIT);
-		transaction.setStatus(WAITING);
+		transaction.setStatus(UNPROCESSED);
 		transaction.setDate(Instant.now());
 		transaction.setLabel("deposit of 100 euros");
 		transactionService.processTransaction(transaction);
@@ -49,7 +49,7 @@ public class TransactionServiceImplTest {
 		transaction.setAmount(-100L);
 		transaction.setAccountId(991L);
 		transaction.setType(CREDIT);
-		transaction.setStatus(WAITING);
+		transaction.setStatus(UNPROCESSED);
 		transaction.setDate(Instant.now());
 		transaction.setLabel("deposit of -100 euros");
 		transactionService.processTransaction(transaction);

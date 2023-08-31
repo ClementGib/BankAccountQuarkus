@@ -3,7 +3,7 @@ package com.cdx.bas.application.bank.account;
 import static com.cdx.bas.domain.transaction.TransactionStatus.COMPLETED;
 import static com.cdx.bas.domain.transaction.TransactionStatus.ERROR;
 import static com.cdx.bas.domain.transaction.TransactionStatus.REFUSED;
-import static com.cdx.bas.domain.transaction.TransactionStatus.WAITING;
+import static com.cdx.bas.domain.transaction.TransactionStatus.UNPROCESSED;
 import static com.cdx.bas.domain.transaction.TransactionType.CREDIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -59,7 +59,7 @@ public class BankAccountServiceImplTest {
         Instant date = Instant.now();
         Map<String, String> metadata = new HashMap<>();
         metadata.put("error", "bank account 99 is not found.");
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadata);
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, UNPROCESSED, date, metadata);
         when(bankAccountPersistence.findById(accountId)).thenThrow(new NoSuchElementException("bank account 99 is not found."));
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
@@ -75,19 +75,20 @@ public class BankAccountServiceImplTest {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("amount_before", "100");
-        metadata.put("amount_after", "1100");
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadata);
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, UNPROCESSED, date, new HashMap<>());
         BankAccount bankAccount = createBankAccount(accountId);
+
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
         BankAccount bankAccountAfterDeposit = createBankAccount(accountId);
         bankAccountAfterDeposit.getBalance().plus(amountOfMoney);
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
-        
+
+        Map<String, String> metadataAfter = new HashMap<>();
+        metadataAfter.put("amount_before", "100");
+        metadataAfter.put("amount_after", "1100");
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, COMPLETED, date, metadata));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, COMPLETED, date, metadataAfter));
         verify(bankAccountPersistence).findById(eq(accountId));
         verify(bankAccountPersistence).update(eq(bankAccount));
     }
@@ -107,7 +108,7 @@ public class BankAccountServiceImplTest {
         Map<String, String> metadataBefore = new HashMap<>();
         metadataBefore.put("amount_before", "100000");
         metadataBefore.put("error", violationException.getMessage());
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadataBefore);
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, UNPROCESSED, date, metadataBefore);
         
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
         
@@ -131,7 +132,7 @@ public class BankAccountServiceImplTest {
         bankAccount.setCustomersId(customersId);
         Instant firstTransactionDate = Instant.now();
         HashSet<Transaction> transactionHistory = new HashSet<>();
-        transactionHistory.add(createTransaction(accountId, 500L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, new HashMap<>()));
+        transactionHistory.add(createTransaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, new HashMap<>()));
         bankAccount.setTransactions(transactionHistory);
         return bankAccount;
     }

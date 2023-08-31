@@ -29,11 +29,11 @@ INSERT INTO basapp.transactions (transaction_id, type, amount, currency, status,
 	(6, 'CREDIT', 9200, 'EUR', 'COMPLETED', '2022-07-10 :15:00:00', 'transaction 6', '{"amount_before" : "10000", "amount_after" : "19200"}'),
 	(7, 'DEBIT', 1000, 'EUR', 'REFUSED', '2022-10-06 :18:00:00', 'transaction 7', '{"amount_before" : "300", "error" : "balance amount must be between -600 and 100000"}'),
 	(8, 'CREDIT', 4000, 'EUR', 'REFUSED', '2022-10-06 :18:10:00', 'transaction 8', '{"amount_before" : "19200", "error" : "balance amount must be between 1 and 22950"}'),
-	(9, 'CREDIT', 600, 'EUR', 'WAITING', '2022-11-06 :18:00:00', 'transaction 9', null),
-	(10, 'DEBIT', 200, 'EUR', 'WAITING', '2022-11-06 :18:30:00', 'transaction 10', null),
-	(11, 'CREDIT', 800, 'EUR', 'WAITING', '2022-12-06 :18:00:00', 'transaction 11', null),
-	(12, 'DEBIT', 300, 'EUR', 'WAITING', '2022-12-06 :19:00:00', 'transaction 12', null),
-	(13, 'DEBIT', 1200, 'EUR', 'WAITING', '2022-12-06 :19:00:10', 'transaction 13', null);
+	(9, 'CREDIT', 600, 'EUR', 'UNPROCESSED', '2022-11-06 :18:00:00', 'transaction 9', null),
+	(10, 'DEBIT', 200, 'EUR', 'UNPROCESSED', '2022-11-06 :18:30:00', 'transaction 10', null),
+	(11, 'CREDIT', 800, 'EUR', 'UNPROCESSED', '2022-12-06 :18:00:00', 'transaction 11', null),
+	(12, 'DEBIT', 300, 'EUR', 'UNPROCESSED', '2022-12-06 :19:00:00', 'transaction 12', null),
+	(13, 'DEBIT', 1200, 'EUR', 'UNPROCESSED', '2022-12-06 :19:00:10', 'transaction 13', null);
 
 	INSERT INTO basapp.bank_accounts_transactions(
 	account_id, transaction_id)

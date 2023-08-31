@@ -20,7 +20,7 @@ public class SchedulerImpl implements Scheduler {
 
     private static final Logger logger = Logger.getLogger(SchedulerImpl.class);
 
-    private static PriorityQueue<Transaction> currentQueue = new PriorityQueue<>();
+    private static final PriorityQueue<Transaction> transactionQueue = new PriorityQueue<>();
 
     @Inject
     TransactionServicePort transactionService;
@@ -28,19 +28,22 @@ public class SchedulerImpl implements Scheduler {
     @Inject
     TransactionPersistencePort transactionRepository;
 
-    public PriorityQueue<Transaction> getCurrentQueue() {
-        return currentQueue;
+    public PriorityQueue<Transaction> getTransactionQueue() {
+        return transactionQueue;
     }
 
     @Scheduled(every = "5s")
     public void processQueue() {
         logger.info("Scheduler start");
-        if (getCurrentQueue().isEmpty()) {
-            getCurrentQueue().addAll(transactionRepository.findUnprocessedTransactions());
-            logger.info("Queue size: " + currentQueue.size());
-            getCurrentQueue().forEach(transaction -> {
-                transactionService.processTransaction(transaction);
-            });
+        if (getTransactionQueue().isEmpty()) {
+            getTransactionQueue().addAll(transactionRepository.findUnprocessedTransactions());
+            logger.info("Queue size: " + transactionQueue.size());
+            Transaction transactionTest = transactionQueue.peek();
+            logger.info(transactionTest.getAccountId() + " : " + transactionTest.getId() + " for " + transactionTest.getAmount());
+            transactionService.processTransaction(transactionTest);
+//            getTransactionQueue().forEach(transaction -> {
+//                transactionService.processTransaction(transaction);
+//            });
         }
         logger.info("Scheduler end");
     }

@@ -39,7 +39,8 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
 
     @Override
     public Queue<Transaction> findUnprocessedTransactions() {
-        return find("#TransactionEntity.findUnprocessed", Parameters.with("status", TransactionStatus.WAITING).map())
+        return find("#TransactionEntity.findUnprocessed",
+                Parameters.with("status", TransactionStatus.UNPROCESSED).map())
                 .list()
                 .stream().map(transactionMapper::toDto)
                 .collect(Collectors.toCollection(PriorityQueue::new));

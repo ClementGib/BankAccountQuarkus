@@ -6,11 +6,19 @@ import java.util.Set;
 public interface TransactionServicePort {
     
     /**
-     * process the transaction according to its values
+     * Process the transaction according to its values
      * 
      * @param transaction to process
      */
     void processTransaction(Transaction transaction);
+
+    /**
+     * Lock transaction to avoid multiple process
+     *
+     * @param transaction
+     * @return transaction outstanding locked
+     */
+    Transaction lockTransaction(Transaction transaction);
     
     /**
      * Complete processed transaction 

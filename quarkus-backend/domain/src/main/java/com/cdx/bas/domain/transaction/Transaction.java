@@ -49,7 +49,7 @@ public class Transaction implements Comparable<Transaction> {
         this.amount = amount;
         this.currency = currency;
         this.type = type;
-        this.status = TransactionStatus.WAITING;
+        this.status = TransactionStatus.UNPROCESSED;
         this.date = Instant.now();
     }
 

@@ -1,25 +1,20 @@
 package com.cdx.bas.application.transaction;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.cdx.bas.domain.bank.account.BankAccountServicePort;
+import com.cdx.bas.domain.transaction.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
-
-import com.cdx.bas.domain.bank.account.BankAccountServicePort;
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionException;
-import com.cdx.bas.domain.transaction.TransactionPersistencePort;
-import com.cdx.bas.domain.transaction.TransactionServicePort;
-import com.cdx.bas.domain.transaction.TransactionStatus;
-import com.cdx.bas.domain.transaction.TransactionType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.cdx.bas.domain.transaction.TransactionStatus.OUTSTANDING;
+import static com.cdx.bas.domain.transaction.TransactionStatus.UNPROCESSED;
 
 @RequestScoped
 public class TransactionServiceImpl implements TransactionServicePort {
@@ -38,7 +33,7 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
     
     @Override
-    @Transactional(value = TxType.REQUIRES_NEW)
+    @Transactional(value = TxType.MANDATORY)
     public void processTransaction(Transaction transaction) {
         if (TransactionType.CREDIT.equals(transaction.getType())) {
             logger.info("Transaction " +  transaction.getAccountId() + " processing...");
@@ -46,7 +41,18 @@ public class TransactionServiceImpl implements TransactionServicePort {
         }
     }
 
-	@Override
+    @Override
+    @Transactional(value = TxType.REQUIRES_NEW)
+    public Transaction lockTransaction(Transaction transaction) {
+        if (UNPROCESSED.equals(transaction.getStatus())) {
+            transaction.setStatus(OUTSTANDING);
+        } else {
+            throw new TransactionException("Transaction is not longer unprocessed.");
+        }
+        return transactionRepository.update(transaction);
+    }
+
+    @Override
 	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadata) {
 		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadata);
 		return transaction;

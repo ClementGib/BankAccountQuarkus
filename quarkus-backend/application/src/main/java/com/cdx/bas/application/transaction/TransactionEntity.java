@@ -1,19 +1,16 @@
 package com.cdx.bas.application.transaction;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Objects;
-
-import jakarta.persistence.*;
-
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
-
-import org.hibernate.annotations.JdbcTypeCode;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(schema = "basapp", name = "transactions", uniqueConstraints = @UniqueConstraint(columnNames = "transaction_id"))
