@@ -34,33 +34,36 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 @NamedQueries(@NamedQuery(name = "TransactionEntity.findUnprocessed", query = "SELECT t FROM TransactionEntity t WHERE t.status = :status ORDER BY t.date ASC"))
 @TypeDef(name = "jsonb", typeClass = JsonType.class)
 public class TransactionEntity extends PanacheEntityBase {
-    
+
     @Id
     @Column(name = "transaction_id", nullable = false)
     @GeneratedValue
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "transaction_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
     private BankAccountEntity account;
-    
+
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
-    
+
+    @Column(name = "currency", nullable = false)
+    private String currency;
+
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType type;
-    
+
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
-    
+
     @Column(name = "date", nullable = false)
     private Instant date;
-    
+
     @Column(name = "label", nullable = false)
     private String label;
-    
+
     @Type(type = "jsonb")
     @Column(name = "metadatas", columnDefinition = "jsonb",  nullable = true)
     private String metadatas;
@@ -87,6 +90,14 @@ public class TransactionEntity extends PanacheEntityBase {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public TransactionType getType() {

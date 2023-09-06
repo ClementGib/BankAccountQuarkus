@@ -45,6 +45,7 @@ SET search_path TO basapp;
 	transaction_id BIGSERIAL UNIQUE NOT NULL,
 	type varchar(25) NOT NULL,
 	amount DECIMAL NOT NULL,
+    currency varchar(3) NOT NULL,
     status varchar(25) NOT NULL,
 	date timestamp without time zone NOT NULL,
 	label text NOT NULL,

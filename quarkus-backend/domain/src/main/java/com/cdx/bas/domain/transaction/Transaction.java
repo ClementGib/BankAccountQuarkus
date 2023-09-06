@@ -1,5 +1,7 @@
 package com.cdx.bas.domain.transaction;
 
+import com.cdx.bas.domain.validator.ValidCurrency;
+
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,10 @@ public class Transaction implements Comparable<Transaction> {
     @Min(value = 1, message = "amount must be positive and greater than 0.")
     private long amount;
 
+    @NotNull(message = "currency must not be null.")
+    @ValidCurrency
+    private String currency;
+
     @NotNull(message = "type must not be null.")
     private TransactionType type;
 
@@ -38,9 +44,10 @@ public class Transaction implements Comparable<Transaction> {
         super();
     }
 
-    public Transaction(long accountId, long amount, TransactionType type) {
+    public Transaction(long accountId, String currency, long amount, TransactionType type) {
         this.id = accountId;
         this.amount = amount;
+        this.currency = currency;
         this.type = type;
         this.status = TransactionStatus.WAITING;
         this.date = Instant.now();
@@ -50,6 +57,7 @@ public class Transaction implements Comparable<Transaction> {
         this.id = transaction.id;
         this.accountId = transaction.accountId;
         this.amount = transaction.amount;
+        this.currency = transaction.currency;
         this.type = transaction.type;
         this.status = status;
         this.date = transaction.date;
@@ -79,6 +87,14 @@ public class Transaction implements Comparable<Transaction> {
 
     public void setAmount(long amount) {
         this.amount = amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public TransactionType getType() {
@@ -143,9 +159,9 @@ public class Transaction implements Comparable<Transaction> {
             return false;
         }
         Transaction other = (Transaction) obj;
-        return accountId == other.accountId && amount == other.amount 
+        return Objects.equals(accountId, other.accountId) && amount == other.amount
                 && Objects.equals(date, other.date)
-                && id == other.id && Objects.equals(label, other.label) 
+                && Objects.equals(id, other.id) && Objects.equals(label, other.label)
                 && Objects.equals(metadatas, other.metadatas)
                 && status == other.status && type == other.type;
     }
