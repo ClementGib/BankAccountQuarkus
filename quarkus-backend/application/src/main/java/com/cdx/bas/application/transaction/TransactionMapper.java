@@ -23,10 +23,10 @@ import org.hibernate.MappingException;
 public class TransactionMapper implements DtoEntityMapper<Transaction, TransactionEntity> {
 
     @Inject
-    private BankAccountRepository bankAccountRepository;
+    BankAccountRepository bankAccountRepository;
 
     @Inject
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     public Transaction toDto(TransactionEntity entity) {
         
@@ -45,7 +45,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         if (entity.getAmount() != null) {
             dto.setAmount(entity.getAmount().longValue());
         }
-        
+        dto.setCurrency(entity.getCurrency());
         dto.setType(entity.getType());
         dto.setStatus(entity.getStatus());
         dto.setDate(entity.getDate());
@@ -81,6 +81,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         }
 
         entity.setAmount(new BigDecimal(dto.getAmount()));
+        entity.setCurrency(dto.getCurrency());
         entity.setType(dto.getType());
         entity.setStatus(dto.getStatus());
         entity.setDate(dto.getDate());

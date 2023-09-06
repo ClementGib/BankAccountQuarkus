@@ -38,3 +38,12 @@ nb-configuration.xml
 
 # Local environment
 .env
+
+# Docker
+compose/data/keycloak.mv.db
+compose/data/keycloak.trace.db
+compose/data/timer-service-data
+compose/data/tx-object-store
+compose/data/kernel
+
+
