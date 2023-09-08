@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -98,7 +99,7 @@ public class SchedulerImplTest {
     private static Transaction createTransaction(long id, long amount, long accountId, TransactionType type, TransactionStatus status, Instant date, String label) {
 		Transaction transaction = new Transaction();
 		transaction.setId(id);
-		transaction.setAmount(amount);
+		transaction.setAmount(new BigDecimal(amount));
 		transaction.setAccountId(accountId);
 		transaction.setType(type);
 		transaction.setStatus(status);

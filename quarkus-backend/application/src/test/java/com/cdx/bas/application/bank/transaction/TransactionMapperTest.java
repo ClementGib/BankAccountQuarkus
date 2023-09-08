@@ -60,7 +60,7 @@ public class TransactionMapperTest {
 
         assertThat(dto.getId()).isNull();
         assertThat(dto.getAccountId()).isNull();
-        assertThat(dto.getAmount()).isEqualTo(0L);
+        assertThat(dto.getAmount()).isEqualTo(0);
         assertThat(dto.getType()).isNull();
         assertThat(dto.getStatus()).isNull();
         assertThat(dto.getDate()).isNull();
@@ -93,7 +93,7 @@ public class TransactionMapperTest {
 
         assertThat(dto.getId()).isEqualTo(10L);
         assertThat(dto.getAccountId()).isEqualTo(99L);
-        assertThat(dto.getAmount()).isEqualTo(100L);
+        assertThat(dto.getAmount()).isEqualTo(100);
         assertThat(dto.getType()).isEqualTo(TransactionType.CREDIT);
         assertThat(dto.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
         assertThat(dto.getDate()).isEqualTo(date);
@@ -129,7 +129,7 @@ public class TransactionMapperTest {
         Transaction transactionEntity = new Transaction();
         transactionEntity.setId(id);
         transactionEntity.setAccountId(accountId);
-        transactionEntity.setAmount(100L);
+        transactionEntity.setAmount(new BigDecimal(100));
         transactionEntity.setType(TransactionType.CREDIT);
         transactionEntity.setStatus(TransactionStatus.COMPLETED);
         transactionEntity.setDate(instantDate);

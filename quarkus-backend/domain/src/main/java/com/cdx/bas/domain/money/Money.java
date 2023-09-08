@@ -13,8 +13,8 @@ public class Money {
         this.amount = amount;
     }
     
-    public static Money of(long value) {
-        return new Money(BigDecimal.valueOf(value));
+    public static Money of(BigDecimal value) {
+        return new Money(value);
     }
     
     public BigDecimal getAmount() {

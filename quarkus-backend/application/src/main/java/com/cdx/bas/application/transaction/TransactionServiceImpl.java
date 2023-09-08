@@ -33,7 +33,6 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
     
     @Override
-    @Transactional(value = TxType.MANDATORY)
     public void processTransaction(Transaction transaction) {
         if (TransactionType.CREDIT.equals(transaction.getType())) {
             logger.info("Transaction " +  transaction.getAccountId() + " processing...");
@@ -42,7 +41,7 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
 
     @Override
-    @Transactional(value = TxType.REQUIRES_NEW)
+    @Transactional(value = TxType.MANDATORY)
     public Transaction lockTransaction(Transaction transaction) {
         if (UNPROCESSED.equals(transaction.getStatus())) {
             transaction.setStatus(OUTSTANDING);

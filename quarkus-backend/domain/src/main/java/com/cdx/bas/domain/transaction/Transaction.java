@@ -2,6 +2,7 @@ package com.cdx.bas.domain.transaction;
 
 import com.cdx.bas.domain.validator.ValidCurrency;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class Transaction implements Comparable<Transaction> {
     private Long accountId;
 
     @Min(value = 1, message = "amount must be positive and greater than 0.")
-    private long amount;
+    private BigDecimal amount;
 
     @NotNull(message = "currency must not be null.")
     @ValidCurrency
@@ -44,7 +45,7 @@ public class Transaction implements Comparable<Transaction> {
         super();
     }
 
-    public Transaction(long accountId, String currency, long amount, TransactionType type) {
+    public Transaction(long accountId, String currency, BigDecimal amount, TransactionType type) {
         this.id = accountId;
         this.amount = amount;
         this.currency = currency;
@@ -81,11 +82,11 @@ public class Transaction implements Comparable<Transaction> {
         this.accountId = accountId;
     }
 
-    public long getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

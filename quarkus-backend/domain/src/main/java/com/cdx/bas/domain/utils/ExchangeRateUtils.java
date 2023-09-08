@@ -1,12 +1,14 @@
 package com.cdx.bas.domain.utils;
 
 import com.cdx.bas.domain.error.CurrencyException;
+import com.cdx.bas.domain.transaction.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ExchangeRateUtils {
-    public static String PIVOT_CURRENCY = "EUR";
+    public static final String PIVOT_CURRENCY = "EUR";
+    private static final Double NO_EXCHANGE_RATE_VALUE = 1.0;
 
     /**
      * Euro Exchange Rates for each currency
@@ -14,13 +16,28 @@ public class ExchangeRateUtils {
      * @param currency key to find rate
      * @return euro exchange rate corresponding to the currency
      */
-    public static Double getEuroExchangeRate(String currency) throws CurrencyException {
+    private static Double getEuroExchangeRate(String currency) throws CurrencyException {
         if (currencyEuroExchangeRates.containsKey(currency)) {
             return currencyEuroExchangeRates.get(currency);
+        } else if (PIVOT_CURRENCY.equals(currency)) {
+            return NO_EXCHANGE_RATE_VALUE;
         } else {
             throw new CurrencyException("No exchange rate found for currency: " + currency);
         }
     }
+
+    /**
+     *
+     * Extract amount from Transaction after exchange rate from Transaction currency applied
+     *
+     * @param currency of the amount
+     * @param amount to convert with the exchange rate
+     * @return euro amount
+     */
+    public double getEuroAmountFrom(String currency, double amount) {
+        return amount * getEuroExchangeRate(currency);
+    }
+
 
     public static boolean hasCurrency(String currency) {
         return ExchangeRateUtils.currencyEuroExchangeRates.containsKey(currency);

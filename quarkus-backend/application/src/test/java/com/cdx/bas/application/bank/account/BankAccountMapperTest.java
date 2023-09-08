@@ -264,7 +264,7 @@ public class BankAccountMapperTest {
         Transaction transactionEntity = new Transaction();
         transactionEntity.setId(id);
         transactionEntity.setAccountId(accountId);
-        transactionEntity.setAmount(100L);
+        transactionEntity.setAmount(new BigDecimal(100.00));
         transactionEntity.setType(TransactionType.CREDIT);
         transactionEntity.setStatus(TransactionStatus.ERROR);
         transactionEntity.setDate(instantDate);

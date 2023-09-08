@@ -266,7 +266,7 @@ public class CustomerMapperTest {
         Transaction transactionEntity = new Transaction();
         transactionEntity.setId(id);
         transactionEntity.setAccountId(accountId);
-        transactionEntity.setAmount(100L);
+        transactionEntity.setAmount(new BigDecimal(100));
         transactionEntity.setType(TransactionType.CREDIT);
         transactionEntity.setStatus(TransactionStatus.ERROR);
         transactionEntity.setDate(instantDate);

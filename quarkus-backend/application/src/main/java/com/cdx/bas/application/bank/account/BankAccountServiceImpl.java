@@ -6,10 +6,11 @@ import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -32,7 +33,7 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     TransactionServicePort transactionService;
 
     @Override
-    @Transactional
+    @Transactional(value = TxType.REQUIRES_NEW)
     public Transaction deposit(Transaction transaction) {
         Map<String, String> metadata = new HashMap<>();
         try {
@@ -42,7 +43,7 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
             logger.info("BankAccount " + transaction.getAccountId() + " transaction deposit " + transaction.getId() + " for amount "+ transaction.getAmount());
             
             metadata.put("amount_before", currentBankAccount.getBalance().getAmount().toString());
-            currentBankAccount.getBalance().plus(Money.of(transaction.getAmount()));
+            creditTransactionTo(currentBankAccount, transaction);
             bankAccountValidator.validateBankAccount(currentBankAccount);
             metadata.put("amount_after", currentBankAccount.getBalance().getAmount().toString());
 
@@ -62,5 +63,10 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
             logger.error("Transaction " + transaction.getId() + " deposit refused for amount "+ transaction.getAmount() + ": " + exception.getMessage());
             return new Transaction(transaction, REFUSED, metadata);
         }
+    }
+
+    private void creditTransactionTo(BankAccount currentBankAccount, Transaction transactionToCredit) {
+//        long euroAmount = ExchangeRateUtils.getEuroAmountFrom(Transaction);
+        currentBankAccount.getBalance().plus(Money.of(transactionToCredit.getAmount()));
     }
 }

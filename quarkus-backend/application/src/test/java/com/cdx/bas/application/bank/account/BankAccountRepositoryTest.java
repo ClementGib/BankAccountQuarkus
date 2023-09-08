@@ -80,7 +80,7 @@ public class BankAccountRepositoryTest {
         Transaction transaction = new Transaction();
         transaction.setId(id);
         transaction.setAccountId(accountId);
-        transaction.setAmount(100L);
+        transaction.setAmount(new BigDecimal(100));
         transaction.setType(TransactionType.CREDIT);
         transaction.setStatus(TransactionStatus.ERROR);
         transaction.setDate(instantDate);

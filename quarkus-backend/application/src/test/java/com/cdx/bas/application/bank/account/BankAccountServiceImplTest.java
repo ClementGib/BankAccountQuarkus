@@ -55,17 +55,17 @@ public class BankAccountServiceImplTest {
     @Test
     public void deposit_should_throwNoSuchElementException_when_accountIsFound() {
         long accountId = 99L;
-        Money amountOfMoney = Money.of(1000L);
+        Money amountOfMoney = Money.of(new BigDecimal(1000));
         Instant date = Instant.now();
         Map<String, String> metadata = new HashMap<>();
         metadata.put("error", "bank account 99 is not found.");
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, UNPROCESSED, date, metadata);
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, date, metadata);
         when(bankAccountPersistence.findById(accountId)).thenThrow(new NoSuchElementException("bank account 99 is not found."));
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, ERROR, date, metadata));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount(), CREDIT, ERROR, date, metadata));
         verify(bankAccountPersistence).findById(eq(accountId));
         verifyNoMoreInteractions(bankAccountPersistence);
     }
@@ -73,9 +73,9 @@ public class BankAccountServiceImplTest {
     @Test
     public void deposit_should_addToMoneyToTheSpecificAccount_when_accountIsFound() {
         long accountId = 99L;
-        Money amountOfMoney = Money.of(1000L);
+        Money amountOfMoney = Money.of(new BigDecimal(1000));
         Instant date = Instant.now();
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, UNPROCESSED, date, new HashMap<>());
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, date, new HashMap<>());
         BankAccount bankAccount = createBankAccount(accountId);
 
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
@@ -88,7 +88,7 @@ public class BankAccountServiceImplTest {
         metadataAfter.put("amount_before", "100");
         metadataAfter.put("amount_after", "1100");
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, COMPLETED, date, metadataAfter));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount(), CREDIT, COMPLETED, date, metadataAfter));
         verify(bankAccountPersistence).findById(eq(accountId));
         verify(bankAccountPersistence).update(eq(bankAccount));
     }
@@ -96,7 +96,7 @@ public class BankAccountServiceImplTest {
     @Test
     public void deposit_should_returnErroredTransaction_when_bankAccountValidatorThrowsException() {
         long accountId = 99L;
-        Money amountOfMoney = Money.of(1000L);
+        Money amountOfMoney = Money.of(new BigDecimal(1000));
         Instant date = Instant.now();
   
         Money moneyBefore = new Money(new BigDecimal("100000"));
@@ -108,7 +108,7 @@ public class BankAccountServiceImplTest {
         Map<String, String> metadataBefore = new HashMap<>();
         metadataBefore.put("amount_before", "100000");
         metadataBefore.put("error", violationException.getMessage());
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, UNPROCESSED, date, metadataBefore);
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, date, metadataBefore);
         
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
         
@@ -118,7 +118,7 @@ public class BankAccountServiceImplTest {
         metadataAfter.put("amount_before", "100000");
         metadataAfter.put("error", violationException.getMessage());
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, REFUSED, date, metadataAfter));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount(), CREDIT, REFUSED, date, metadataAfter));
         verify(bankAccountPersistence).findById(eq(accountId));
     }
     
@@ -132,12 +132,12 @@ public class BankAccountServiceImplTest {
         bankAccount.setCustomersId(customersId);
         Instant firstTransactionDate = Instant.now();
         HashSet<Transaction> transactionHistory = new HashSet<>();
-        transactionHistory.add(createTransaction(accountId, 100L, TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, new HashMap<>()));
+        transactionHistory.add(createTransaction(accountId, new BigDecimal(100), TransactionType.CREDIT, TransactionStatus.COMPLETED, firstTransactionDate, new HashMap<>()));
         bankAccount.setTransactions(transactionHistory);
         return bankAccount;
     }
     
-    private static Transaction createTransaction(long accountId, long amount, TransactionType type, 
+    private static Transaction createTransaction(long accountId, BigDecimal amount, TransactionType type,
             TransactionStatus status, Instant date, Map<String, String> metadata) {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);

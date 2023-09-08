@@ -5,6 +5,7 @@ import static com.cdx.bas.domain.transaction.TransactionType.CREDIT;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import io.quarkus.test.InjectMock;
 import jakarta.inject.Inject;
@@ -30,7 +31,7 @@ public class TransactionServiceImplTest {
 	public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithPositiveAmount() {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);
-		transaction.setAmount(100L);
+		transaction.setAmount(new BigDecimal(100));
 		transaction.setAccountId(100L);
 		transaction.setType(CREDIT);
 		transaction.setStatus(UNPROCESSED);
@@ -46,7 +47,7 @@ public class TransactionServiceImplTest {
 	public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithNegativeAmount() {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);
-		transaction.setAmount(-100L);
+		transaction.setAmount(new BigDecimal(-100));
 		transaction.setAccountId(991L);
 		transaction.setType(CREDIT);
 		transaction.setStatus(UNPROCESSED);

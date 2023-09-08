@@ -43,7 +43,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         }
 
         if (entity.getAmount() != null) {
-            dto.setAmount(entity.getAmount().longValue());
+            dto.setAmount(entity.getAmount());
         }
         dto.setCurrency(entity.getCurrency());
         dto.setType(entity.getType());
@@ -80,7 +80,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
             throw new NoSuchElementException("Bank Account entity not found for id: " + dto.getAccountId());
         }
 
-        entity.setAmount(new BigDecimal(dto.getAmount()));
+        entity.setAmount(dto.getAmount());
         entity.setCurrency(dto.getCurrency());
         entity.setType(dto.getType());
         entity.setStatus(dto.getStatus());

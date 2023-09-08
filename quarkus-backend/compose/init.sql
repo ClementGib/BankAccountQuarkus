@@ -16,16 +16,16 @@ SET search_path TO basapp;
 	CREATE TABLE basapp.customers
 	(
 	customer_id BIGSERIAL UNIQUE NOT NULL,
-	first_name varchar(750) NOT NULL,
-	last_name varchar(750) NOT NULL,
-	gender varchar(25) NOT NULL,
-	marital_status varchar(25) NOT NULL,
-	birthday timestamp without time zone NOT NULL,
-	country varchar(255) NOT NULL,
+	first_name VARCHAR(750) NOT NULL,
+	last_name VARCHAR(750) NOT NULL,
+	gender VARCHAR(25) NOT NULL,
+	marital_status VARCHAR(25) NOT NULL,
+	birthday TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+	country VARCHAR(255) NOT NULL,
 	address text NOT NULL,
-	city varchar(255) NOT NULL,
-	email varchar(255) UNIQUE NOT NULL,
-	phone_number varchar(20) NOT NULL,
+	city VARCHAR(255) NOT NULL,
+	email VARCHAR(255) UNIQUE NOT NULL,
+	phone_number VARCHAR(20) NOT NULL,
 	metadata jsonb,
 	CONSTRAINT pk_customer PRIMARY KEY (customer_id)
 	);
@@ -43,11 +43,11 @@ SET search_path TO basapp;
 	CREATE TABLE basapp.transactions
 	(
 	transaction_id BIGSERIAL UNIQUE NOT NULL,
-	type varchar(25) NOT NULL,
+	type VARCHAR(25) NOT NULL,
 	amount DECIMAL NOT NULL,
-    currency varchar(3) NOT NULL,
-    status varchar(25) NOT NULL,
-	date timestamp without time zone NOT NULL,
+    currency VARCHAR(3) NOT NULL,
+    status VARCHAR(25) NOT NULL,
+	date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 	label text NOT NULL,
 	metadata jsonb,
 	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id)
