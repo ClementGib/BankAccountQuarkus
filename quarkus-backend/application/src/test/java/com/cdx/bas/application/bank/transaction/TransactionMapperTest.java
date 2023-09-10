@@ -60,7 +60,8 @@ public class TransactionMapperTest {
 
         assertThat(dto.getId()).isNull();
         assertThat(dto.getAccountId()).isNull();
-        assertThat(dto.getAmount()).isEqualTo(0);
+        assertThat(dto.getAmount()).isNull();
+        assertThat(dto.getCurrency()).isNull();
         assertThat(dto.getType()).isNull();
         assertThat(dto.getStatus()).isNull();
         assertThat(dto.getDate()).isNull();
@@ -93,7 +94,8 @@ public class TransactionMapperTest {
 
         assertThat(dto.getId()).isEqualTo(10L);
         assertThat(dto.getAccountId()).isEqualTo(99L);
-        assertThat(dto.getAmount()).isEqualTo(100);
+        assertThat(dto.getAmount()).isEqualTo(new BigDecimal("100"));
+        assertThat(dto.getCurrency()).isEqualTo("EUR");
         assertThat(dto.getType()).isEqualTo(TransactionType.CREDIT);
         assertThat(dto.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
         assertThat(dto.getDate()).isEqualTo(date);
@@ -117,7 +119,8 @@ public class TransactionMapperTest {
         
         assertThat(entity.getId()).isEqualTo(10L);
         assertThat(entity.getAccount()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
-        assertThat(entity.getAmount()).usingRecursiveComparison().isEqualTo(new BigDecimal(100L));
+        assertThat(entity.getAmount()).usingRecursiveComparison().isEqualTo(new BigDecimal(100));
+        assertThat(entity.getCurrency()).isEqualTo("EUR");
         assertThat(entity.getType()).isEqualTo(TransactionType.CREDIT);
         assertThat(entity.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
         assertThat(entity.getDate()).isEqualTo(date);
@@ -126,19 +129,20 @@ public class TransactionMapperTest {
     }
     
     private Transaction createTransaction(long id, long accountId, Instant instantDate) {
-        Transaction transactionEntity = new Transaction();
-        transactionEntity.setId(id);
-        transactionEntity.setAccountId(accountId);
-        transactionEntity.setAmount(new BigDecimal(100));
-        transactionEntity.setType(TransactionType.CREDIT);
-        transactionEntity.setStatus(TransactionStatus.COMPLETED);
-        transactionEntity.setDate(instantDate);
-        transactionEntity.setLabel("transaction test");
+        Transaction transaction = new Transaction();
+        transaction.setId(id);
+        transaction.setAccountId(accountId);
+        transaction.setAmount(new BigDecimal(100));
+        transaction.setCurrency("EUR");
+        transaction.setType(TransactionType.CREDIT);
+        transaction.setStatus(TransactionStatus.COMPLETED);
+        transaction.setDate(instantDate);
+        transaction.setLabel("transaction test");
         Map<String, String> metadata = new HashMap<>();
         metadata.put("amount_after", "100");
         metadata.put("amount_before", "0");
-        transactionEntity.setMetadata(metadata);
-        return transactionEntity;
+        transaction.setMetadata(metadata);
+        return transaction;
     }
 
     private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {
@@ -146,6 +150,7 @@ public class TransactionMapperTest {
         transactionEntity.setId(id);
         transactionEntity.setAccount(createBankAccountEntity(accountId, instantDate));
         transactionEntity.setAmount(new BigDecimal("100"));
+        transactionEntity.setCurrency("EUR");
         transactionEntity.setType(TransactionType.CREDIT);
         transactionEntity.setStatus(TransactionStatus.COMPLETED);
         transactionEntity.setDate(instantDate);

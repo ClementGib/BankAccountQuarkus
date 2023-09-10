@@ -3,6 +3,7 @@ package com.cdx.bas.domain.utils;
 import com.cdx.bas.domain.error.CurrencyException;
 import com.cdx.bas.domain.transaction.Transaction;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,25 +23,30 @@ public class ExchangeRateUtils {
         } else if (PIVOT_CURRENCY.equals(currency)) {
             return NO_EXCHANGE_RATE_VALUE;
         } else {
-            throw new CurrencyException("No exchange rate found for currency: " + currency);
+                throw new CurrencyException("No exchange rate found for currency: " + currency);
         }
     }
 
     /**
-     *
      * Extract amount from Transaction after exchange rate from Transaction currency applied
      *
      * @param currency of the amount
      * @param amount to convert with the exchange rate
      * @return euro amount
      */
-    public double getEuroAmountFrom(String currency, double amount) {
-        return amount * getEuroExchangeRate(currency);
+    public static BigDecimal getEuroAmountFrom(String currency, BigDecimal amount) throws CurrencyException {
+        return new BigDecimal(amount.doubleValue() * getEuroExchangeRate(currency));
     }
 
 
+    /**
+     * check if the currency is present in exchange rate Map
+     *
+     * @param currency to check if present or not
+     * @return boolean of presence of the currency
+     */
     public static boolean hasCurrency(String currency) {
-        return ExchangeRateUtils.currencyEuroExchangeRates.containsKey(currency);
+        return PIVOT_CURRENCY.equals(currency) || ExchangeRateUtils.currencyEuroExchangeRates.containsKey(currency);
     }
 
     /**

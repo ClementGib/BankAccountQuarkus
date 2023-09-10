@@ -4,6 +4,7 @@ import com.cdx.bas.domain.bank.account.*;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
+import com.cdx.bas.domain.utils.ExchangeRateUtils;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -43,12 +45,11 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
             logger.info("BankAccount " + transaction.getAccountId() + " transaction deposit " + transaction.getId() + " for amount "+ transaction.getAmount());
             
             metadata.put("amount_before", currentBankAccount.getBalance().getAmount().toString());
-            creditTransactionTo(currentBankAccount, transaction);
+            creditBankAccountFromTransaction(currentBankAccount, transaction);
             bankAccountValidator.validateBankAccount(currentBankAccount);
             metadata.put("amount_after", currentBankAccount.getBalance().getAmount().toString());
 
             //TODO finish refactoring Transactional
-            //
             Transaction completedTransaction = transactionService.completeTransaction(transaction, metadata);
             currentBankAccount.addTransaction(completedTransaction);
             BankAccountRepository.update(currentBankAccount);
@@ -65,8 +66,8 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
         }
     }
 
-    private void creditTransactionTo(BankAccount currentBankAccount, Transaction transactionToCredit) {
-//        long euroAmount = ExchangeRateUtils.getEuroAmountFrom(Transaction);
-        currentBankAccount.getBalance().plus(Money.of(transactionToCredit.getAmount()));
+    private void creditBankAccountFromTransaction(BankAccount currentBankAccount, Transaction transactionToCredit) {
+        BigDecimal euroAmount = ExchangeRateUtils.getEuroAmountFrom(transactionToCredit.getCurrency(), transactionToCredit.getAmount());
+        currentBankAccount.getBalance().plus(Money.of(euroAmount));
     }
 }
