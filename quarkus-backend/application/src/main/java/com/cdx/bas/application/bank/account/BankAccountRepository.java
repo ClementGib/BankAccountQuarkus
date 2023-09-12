@@ -42,12 +42,10 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
         return bankAccount;
     }
 
-    @Transactional
     @Override
+    @Transactional(value = Transactional.TxType.MANDATORY)
     public BankAccount update(BankAccount bankAccount) {
-        BankAccountEntity entity = bankAccountMapper.toEntity(bankAccount);
-        BankAccountEntity mergedEntity = getEntityManager().merge(entity);
-        persistAndFlush(mergedEntity);
+        getEntityManager().merge(bankAccountMapper.toEntity(bankAccount));
         logger.info("BankAccount " + bankAccount.getId() + " updated");
         return bankAccount;
     }

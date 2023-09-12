@@ -17,9 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import static com.cdx.bas.domain.transaction.TransactionStatus.ERROR;
-import static com.cdx.bas.domain.transaction.TransactionStatus.REFUSED;
-
 @RequestScoped
 public class BankAccountServiceImpl implements BankAccountServicePort {
     
@@ -39,35 +36,45 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     public Transaction deposit(Transaction transaction) {
         Map<String, String> metadata = new HashMap<>();
         try {
-            transactionService.lockTransaction(transaction);
+            transactionService.setAsOutstanding(transaction);
             BankAccount currentBankAccount = BankAccountRepository.findById(transaction.getAccountId())
                     .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() + " not found."));
-            logger.info("BankAccount " + transaction.getAccountId() + " transaction deposit " + transaction.getId() + " for amount "+ transaction.getAmount());
-            
+
+            logger.info("BankAccount " + transaction.getAccountId() + " process transaction deposit " + transaction.getId() + " for amount "+ transaction.getAmount());
             metadata.put("amount_before", currentBankAccount.getBalance().getAmount().toString());
             creditBankAccountFromTransaction(currentBankAccount, transaction);
             bankAccountValidator.validateBankAccount(currentBankAccount);
             metadata.put("amount_after", currentBankAccount.getBalance().getAmount().toString());
 
-            //TODO finish refactoring Transactional
-            Transaction completedTransaction = transactionService.completeTransaction(transaction, metadata);
-            currentBankAccount.addTransaction(completedTransaction);
+            Transaction completedTransaction = transactionService.setAsCompleted(transaction, metadata);
+            addTransaction(currentBankAccount, completedTransaction);
             BankAccountRepository.update(currentBankAccount);
+            logger.info("BankAccount " + transaction.getAccountId() + " transaction deposit " + + transaction.getId() + " completed.");
             return completedTransaction;
-            
         } catch (NoSuchElementException exception) {
             logger.error("Transaction " + transaction.getId() + " deposit error for amount "+ transaction.getAmount() + ": " + exception.getMessage());
+            metadata = new HashMap<>();
             metadata.put("error", exception.getMessage());
-            return new Transaction(transaction, ERROR, metadata);
+            return transactionService.setAsError(transaction, metadata);
         } catch (BankAccountException exception) {
             metadata.put("error", exception.getMessage());
             logger.error("Transaction " + transaction.getId() + " deposit refused for amount "+ transaction.getAmount() + ": " + exception.getMessage());
-            return new Transaction(transaction, REFUSED, metadata);
+            return transactionService.setAsRefused(transaction, metadata);
         }
     }
 
     private void creditBankAccountFromTransaction(BankAccount currentBankAccount, Transaction transactionToCredit) {
         BigDecimal euroAmount = ExchangeRateUtils.getEuroAmountFrom(transactionToCredit.getCurrency(), transactionToCredit.getAmount());
         currentBankAccount.getBalance().plus(Money.of(euroAmount));
+    }
+
+    private void addTransaction(BankAccount currentBankAccount, Transaction newTransaction) {
+        currentBankAccount.getTransactions().stream()
+                .filter(transaction -> transaction.getId().equals(newTransaction.getId()))
+                .findFirst()
+                .ifPresentOrElse(
+                        transaction -> {
+                            transactionService.mergeTransactions(transaction, newTransaction);
+                        }, () -> currentBankAccount.getTransactions().add(newTransaction));
     }
 }

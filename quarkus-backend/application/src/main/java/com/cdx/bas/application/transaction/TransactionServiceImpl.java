@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.cdx.bas.domain.transaction.TransactionStatus.OUTSTANDING;
-import static com.cdx.bas.domain.transaction.TransactionStatus.UNPROCESSED;
+import static com.cdx.bas.domain.transaction.TransactionStatus.*;
 
 @RequestScoped
 public class TransactionServiceImpl implements TransactionServicePort {
@@ -33,16 +32,16 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
     
     @Override
-    public void processTransaction(Transaction transaction) {
+    public void process(Transaction transaction) {
         if (TransactionType.CREDIT.equals(transaction.getType())) {
-            logger.info("Transaction " +  transaction.getAccountId() + " processing...");
+            logger.info("Transaction " +  transaction.getId() + " processing...");
             bankAccountService.deposit(transaction);
         }
     }
 
     @Override
     @Transactional(value = TxType.MANDATORY)
-    public Transaction lockTransaction(Transaction transaction) {
+    public Transaction setAsOutstanding(Transaction transaction) {
         if (UNPROCESSED.equals(transaction.getStatus())) {
             transaction.setStatus(OUTSTANDING);
         } else {
@@ -52,8 +51,39 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
 
     @Override
-	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadata) {
-		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadata);
-		return transaction;
+	public Transaction setAsCompleted(Transaction completedTransaction, Map<String, String> metadata) {
+        setState(completedTransaction, metadata, COMPLETED);
+		return transactionRepository.update(completedTransaction);
 	}
+
+    @Override
+    public Transaction setAsError(Transaction erroredTransaction, Map<String, String> metadata) {
+        setState(erroredTransaction, metadata, ERROR);
+        return transactionRepository.update(erroredTransaction);
+    }
+
+    @Override
+    public Transaction setAsRefused(Transaction refusedTransaction, Map<String, String> metadata) {
+        setState(refusedTransaction, metadata, REFUSED);
+        return transactionRepository.update(refusedTransaction);
+    }
+
+    private void setState(Transaction refusedTransaction, Map<String, String> metadata, TransactionStatus status) {
+        refusedTransaction.setMetadata(metadata);
+        refusedTransaction.setStatus(status);
+    }
+    @Override
+    public Transaction mergeTransactions (Transaction oldTransaction, Transaction newTransaction){
+        oldTransaction.setId(newTransaction.getId());
+        oldTransaction.setAccountId(newTransaction.getAccountId()); //TODO
+        // oldTransaction.setReceivedAccountId(); //TODO
+        oldTransaction.setAmount(newTransaction.getAmount());
+        oldTransaction.setCurrency(newTransaction.getCurrency());
+        oldTransaction.setType(newTransaction.getType());
+        oldTransaction.setStatus(newTransaction.getStatus());
+        oldTransaction.setDate(newTransaction.getDate());
+        oldTransaction.setLabel(newTransaction.getLabel());
+        oldTransaction.setMetadata(newTransaction.getMetadata());
+        return oldTransaction;
+    }
 }

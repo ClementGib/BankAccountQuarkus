@@ -54,18 +54,6 @@ public class Transaction implements Comparable<Transaction> {
         this.date = Instant.now();
     }
 
-    public Transaction(Transaction transaction, TransactionStatus status, Map<String, String> metadata) {
-        this.id = transaction.id;
-        this.accountId = transaction.accountId;
-        this.amount = transaction.amount;
-        this.currency = transaction.currency;
-        this.type = transaction.type;
-        this.status = status;
-        this.date = transaction.date;
-        this.label = transaction.label;
-        this.metadata.putAll(metadata);
-    }
-
     public Long getId() {
         return id;
     }

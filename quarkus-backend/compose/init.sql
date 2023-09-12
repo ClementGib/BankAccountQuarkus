@@ -72,6 +72,18 @@ SET search_path TO basapp;
 	CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
 	CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
 	);
+
+-- TODO
+-- CREATE TABLE basapp.bank_accounts_transactions
+-- (
+--     sender_account_id bigint NOT NULL,
+--     receiver_account_id bigint NOT NULL,
+--     transaction_id bigint NOT NULL,
+--     PRIMARY KEY (sender_account_id, receiver_account_id, transaction_id),
+--     CONSTRAINT fk_account_id FOREIGN KEY(sender_account_id) REFERENCES basapp.bank_accounts(account_id),
+--     CONSTRAINT fk_account_id FOREIGN KEY(receiver_account_id) REFERENCES basapp.bank_accounts(account_id),
+--     CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
+-- );
 	
 
 -- GRANT basadm -- 

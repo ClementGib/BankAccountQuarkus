@@ -27,10 +27,11 @@ import jakarta.persistence.UniqueConstraint;
 import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.AccountType;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @Entity
 @Table(schema = "basapp", name = "bank_accounts", uniqueConstraints = @UniqueConstraint(columnNames = "account_id"))
-public class BankAccountEntity {
+public class BankAccountEntity extends PanacheEntityBase {
 
     @Id
     @Column(name = "account_id", nullable = false)
@@ -48,7 +49,7 @@ public class BankAccountEntity {
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<CustomerEntity> customers = new ArrayList<>();
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, orphanRemoval = true)
     @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
     @OrderBy("date")
     private Set<TransactionEntity> transactions = new HashSet<>();

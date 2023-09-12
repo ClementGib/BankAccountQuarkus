@@ -66,19 +66,19 @@ public class SchedulerImplTest {
 
         verify(transactionRepository).findUnprocessedTransactions();
         assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(createTransaction(5L, 59L, 99L, CREDIT, UNPROCESSED, Instant.MIN, "Fifth transaction"));
-        verify(transactionService).processTransaction(queue.poll());
+        verify(transactionService).process(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-06T10:14:00Z"), ZoneId.of("UTC"));
         assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(createTransaction(3L, 150, 99L, CREDIT, UNPROCESSED, Instant.now(clock), "Third transaction"));
-        verify(transactionService).processTransaction(queue.poll());
+        verify(transactionService).process(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-07T10:14:00Z"), ZoneId.of("UTC"));
         assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(createTransaction(2L, 399L, 99L, CREDIT, UNPROCESSED, Instant.now(clock), "Second transaction"));
-        verify(transactionService).processTransaction(queue.poll());
+        verify(transactionService).process(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-07T10:18:00Z"), ZoneId.of("UTC"));
         assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(createTransaction(4L, 1000L, 99L, CREDIT, UNPROCESSED, Instant.now(clock), "Fourth transaction"));
-        verify(transactionService).processTransaction(queue.poll());
+        verify(transactionService).process(queue.poll());
 
         verify(transactionRepository).findUnprocessedTransactions();
-        verify(transactionService, times(5)).processTransaction(any());
+        verify(transactionService, times(5)).process(any());
         verifyNoMoreInteractions(transactionRepository, transactionService);
     }
 

@@ -94,16 +94,7 @@ public abstract class BankAccount {
                 .findFirst().orElseThrow(() -> new TransactionException("Transaction " + transactionId + " not found in the bank account."));
         }
 
-    public void addTransaction(Transaction newTransaction) {
-        this.transactions.stream()
-        .filter(transaction -> transaction.getId().equals(newTransaction.getId()))
-        .findFirst()
-        .ifPresentOrElse(
-                transaction -> {
-                    transactions.remove(transaction);
-                    transactions.add(newTransaction);
-                }, () -> transactions.add(newTransaction));
-    }
+
     
 
 	@Override

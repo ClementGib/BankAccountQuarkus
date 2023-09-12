@@ -37,7 +37,7 @@ public class TransactionServiceImplTest {
 		transaction.setStatus(UNPROCESSED);
 		transaction.setDate(Instant.now());
 		transaction.setLabel("deposit of 100 euros");
-		transactionService.processTransaction(transaction);
+		transactionService.process(transaction);
 
 		verify(bankAccountService).deposit(transaction);
 		verifyNoMoreInteractions(bankAccountService);
@@ -53,7 +53,7 @@ public class TransactionServiceImplTest {
 		transaction.setStatus(UNPROCESSED);
 		transaction.setDate(Instant.now());
 		transaction.setLabel("deposit of -100 euros");
-		transactionService.processTransaction(transaction);
+		transactionService.process(transaction);
 
 		verify(bankAccountService).deposit(transaction);
 		verifyNoMoreInteractions(bankAccountService);

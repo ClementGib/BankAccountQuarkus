@@ -45,5 +45,5 @@ compose/data/keycloak.trace.db
 compose/data/timer-service-data
 compose/data/tx-object-store
 compose/data/kernel
-
+compose/data/keycloak.lock.db
 

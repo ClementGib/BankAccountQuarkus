@@ -40,7 +40,7 @@ public class SchedulerImpl implements Scheduler {
             logger.info("Queue size: " + transactionQueue.size());
             Transaction transactionTest = transactionQueue.peek();
             logger.info(transactionTest.getAccountId() + " : " + transactionTest.getId() + " for " + transactionTest.getAmount());
-            transactionService.processTransaction(transactionTest);
+            transactionService.process(transactionTest);
 //            getTransactionQueue().forEach(transaction -> {
 //                transactionService.processTransaction(transaction);
 //            });
