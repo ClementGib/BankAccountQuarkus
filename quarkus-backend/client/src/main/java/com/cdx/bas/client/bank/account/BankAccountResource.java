@@ -35,12 +35,12 @@ public class BankAccountResource implements BankAccountControllerPort{
     @POST
     @Path("/{id}")
     @Override
-    public BankAccount deposite(@PathParam("id") Long id, Long amount) {
+    public BankAccount deposite(@PathParam("id") Long id, Long amount, String currency) {
         BankAccount currentAccount = null;
         Optional<BankAccount> bankAccountOptional = bankAccountRepository.findById(id);
         if(bankAccountOptional.isPresent()) {
             currentAccount = bankAccountOptional.get();
-            Transaction transaction = new Transaction(id, amount, TransactionType.CREDIT);
+            Transaction transaction = new Transaction(id, currency, amount, TransactionType.CREDIT);
             currentAccount.getTransactions().add(transaction);
             bankAccountRepository.update(currentAccount);
         }
