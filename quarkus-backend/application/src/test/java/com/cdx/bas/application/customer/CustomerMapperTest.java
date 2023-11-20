@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.inject.Inject;
+import io.quarkus.test.InjectMock;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
@@ -39,7 +39,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class CustomerMapperTest {

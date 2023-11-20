@@ -6,8 +6,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.time.Instant;
-
-import javax.inject.Inject;
+import io.quarkus.test.InjectMock;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
 import com.cdx.bas.domain.transaction.Transaction;
@@ -16,7 +16,6 @@ import com.cdx.bas.domain.transaction.TransactionServicePort;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class TransactionServiceImplTest {

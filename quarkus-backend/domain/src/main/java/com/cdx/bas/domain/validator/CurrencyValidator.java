@@ -2,8 +2,8 @@ package com.cdx.bas.domain.validator;
 
 import com.cdx.bas.domain.utils.ExchangeRateUtils;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class CurrencyValidator implements ConstraintValidator<ValidCurrency, String> {
 

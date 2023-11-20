@@ -3,8 +3,8 @@ package com.cdx.bas.application.customer;
 
 import java.util.Optional;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.customer.Customer;

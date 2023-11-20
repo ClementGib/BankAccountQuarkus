@@ -2,10 +2,10 @@ package com.cdx.bas.domain.bank.account;
 
 import java.util.Set;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 @RequestScoped
 public class BankAccountValidator {

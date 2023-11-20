@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.bank.account.BankAccountRepository;

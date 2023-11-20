@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.inject.Inject;
+import io.quarkus.test.InjectMock;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.AccountType;
@@ -30,7 +30,6 @@ import com.cdx.bas.domain.transaction.TransactionType;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class BankAccountRepositoryTest {

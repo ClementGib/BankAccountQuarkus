@@ -3,7 +3,7 @@ package com.cdx.bas.domain.bank.account.checking;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.cdx.bas.domain.bank.account.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;

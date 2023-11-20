@@ -4,35 +4,23 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(schema = "basapp", name = "transactions", uniqueConstraints = @UniqueConstraint(columnNames = "transaction_id"))
 @NamedQueries(@NamedQuery(name = "TransactionEntity.findUnprocessed", query = "SELECT t FROM TransactionEntity t WHERE t.status = :status ORDER BY t.date ASC"))
-@TypeDef(name = "jsonb", typeClass = JsonType.class)
 public class TransactionEntity extends PanacheEntityBase {
 
     @Id
@@ -64,7 +52,7 @@ public class TransactionEntity extends PanacheEntityBase {
     @Column(name = "label", nullable = false)
     private String label;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "metadatas", columnDefinition = "jsonb",  nullable = true)
     private String metadatas;
 
