@@ -47,8 +47,8 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
 
 	@Override
-	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadatas) {
-		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadatas);
+	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadata) {
+		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadata);
 		return transaction;
 	}
 }

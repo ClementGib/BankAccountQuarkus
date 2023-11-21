@@ -1,37 +1,17 @@
 package com.cdx.bas.application.customer;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vladmihalcea.hibernate.type.json.JsonType;
-
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(schema = "basapp", name = "customers", uniqueConstraints = @UniqueConstraint(columnNames = "customer_id"))
@@ -81,8 +61,8 @@ public class CustomerEntity extends PanacheEntityBase {
     private List<BankAccountEntity> accounts = new ArrayList<>();
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "metadatas", columnDefinition = "jsonb",  nullable = true)
-    private String metadatas;
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
 
     public Long getId() {
         return id;
@@ -180,11 +160,11 @@ public class CustomerEntity extends PanacheEntityBase {
         this.accounts = accounts;
     }
 
-    public String getMetadatas() {
-        return metadatas;
+    public String getMetadata() {
+        return metadata;
     }
 
-    public void setMetadatas(String metadatas) {
-        this.metadatas = metadatas;
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 }

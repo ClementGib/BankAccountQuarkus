@@ -26,7 +26,7 @@ SET search_path TO basapp;
 	city varchar(255) NOT NULL,
 	email varchar(255) UNIQUE NOT NULL,
 	phone_number varchar(20) NOT NULL,
-	metadatas jsonb,
+	metadata jsonb,
 	CONSTRAINT pk_customer PRIMARY KEY (customer_id)
 	);
 
@@ -49,7 +49,7 @@ SET search_path TO basapp;
     status varchar(25) NOT NULL,
 	date timestamp without time zone NOT NULL,
 	label text NOT NULL,
-	metadatas jsonb,
+	metadata jsonb,
 	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id)
 	);
 	

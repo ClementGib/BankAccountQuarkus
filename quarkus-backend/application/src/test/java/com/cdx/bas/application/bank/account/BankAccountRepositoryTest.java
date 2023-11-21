@@ -85,9 +85,9 @@ public class BankAccountRepositoryTest {
         transaction.setStatus(TransactionStatus.ERROR);
         transaction.setDate(instantDate);
         transaction.setLabel("transaction test");
-        Map<String, String> metadatas = new HashMap<>();
-        metadatas.put("amount_after", "350");
-        metadatas.put("amount_before", "0");
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("amount_after", "350");
+        metadata.put("amount_before", "0");
         return transaction;
     }
 }

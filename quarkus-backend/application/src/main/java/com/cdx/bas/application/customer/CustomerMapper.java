@@ -49,10 +49,10 @@ public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity>
         		.map(bankAccountMapper::toDto).collect(Collectors.toList()));
         
         try {
-            if (entity.getMetadatas() != null) {
-                dto.setMetadatas(objectMapper.readValue(entity.getMetadatas(), new TypeReference<Map<String, String>>() {}));
+            if (entity.getMetadata() != null) {
+                dto.setMetadata(objectMapper.readValue(entity.getMetadata(), new TypeReference<Map<String, String>>() {}));
             } else {
-                dto.setMetadatas(new HashMap<>());
+                dto.setMetadata(new HashMap<>());
             }
         } catch (JsonProcessingException exception) {
             throw new MappingException("An error occured while parsing JSON String to Map<String, String>", exception);
@@ -83,10 +83,10 @@ public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity>
         		.map(bankAccountMapper::toEntity).collect(Collectors.toList()));
         
         try {
-            if (!dto.getMetadatas().isEmpty()) {
-                entity.setMetadatas(objectMapper.writeValueAsString(dto.getMetadatas()));
+            if (!dto.getMetadata().isEmpty()) {
+                entity.setMetadata(objectMapper.writeValueAsString(dto.getMetadata()));
             } else {
-                entity.setMetadatas(null);
+                entity.setMetadata(null);
             }
         } catch (JsonProcessingException exception) {
             throw new MappingException("An error occured while parsing Map<String, String> to JSON String", exception);
