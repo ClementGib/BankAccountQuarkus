@@ -105,7 +105,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler-plugin.version}</version>
                 <configuration>
-                    <parameters>${maven.compiler.parameters}</parameters>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
+                    <source>21</source>
+                    <target>21</target>
                     <annotationProcessorPaths>
                         <!-- Your existing annotation processor(s)... -->
                         <path>
@@ -118,6 +122,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-plugin.version}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>

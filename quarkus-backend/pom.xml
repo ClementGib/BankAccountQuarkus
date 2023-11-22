@@ -12,24 +12,21 @@
         <module>client</module>
     </modules>
     <properties>
-        <java.version>17</java.version>
-        <assertj.version>3.23.1</assertj.version>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <dv8tion.version>5.0.0-alpha.13</dv8tion.version>
-        <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
-        <jandex.maven.version>1.2.3</jandex.maven.version>
-        <junit5.version>2.11.2.Final</junit5.version>
-        <maven.compiler.release>17</maven.compiler.release>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.5.2</quarkus.platform.version>
-        <quarkus-plugin.version>3.5.2</quarkus-plugin.version>
         <skipITs>true</skipITs>
-        <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+
+        <jandex-maven-plugin.version>1.2.3</jandex-maven-plugin.version>
+        <compiler-plugin.version>3.11.0</compiler-plugin.version>
+        <surefire-plugin.version>3.2.2</surefire-plugin.version>
+
+        <jandex.maven.version>1.2.3</jandex.maven.version>
+        <assertj.version>3.24.2</assertj.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -64,24 +61,20 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-junit5</artifactId>
-                <version>${junit5.version}</version>
+                <version>${quarkus.platform.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
             </dependency>
-            <dependency>
-                <groupId>net.dv8tion</groupId>
-                <artifactId>JDA</artifactId>
-                <version>${dv8tion.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus.platform.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.jboss.jandex</groupId>
                 <artifactId>jandex-maven-plugin</artifactId>
@@ -123,7 +116,7 @@
                 <plugin>
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-maven-plugin</artifactId>
-                    <version>${quarkus-plugin.version}</version>
+                    <version>${quarkus.platform.version}</version>
                     <executions>
                         <execution>
                             <goals>

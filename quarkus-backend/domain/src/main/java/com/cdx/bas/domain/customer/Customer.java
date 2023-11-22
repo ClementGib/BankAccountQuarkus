@@ -1,20 +1,10 @@
 package com.cdx.bas.domain.customer;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
 import com.cdx.bas.domain.bank.account.BankAccount;
+import jakarta.validation.constraints.*;
+
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class Customer {
 
