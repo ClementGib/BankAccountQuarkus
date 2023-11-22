@@ -1,4 +1,4 @@
-INSERT INTO basapp.customers(customer_id, first_name, last_name, gender, marital_status, birthday, country, address, city, email, phone_number, metadatas)
+INSERT INTO basapp.customers(customer_id, first_name, last_name, gender, marital_status, birthday, country, address, city, email, phone_number, metadata)
 	VALUES (1, 'John', 'Doe', 'MALE', 'SINGLE', '1980-01-01 :12:00:00', 'US', '200 Central Park West, NY 10024', 'New York', 'johndoe@bas.com', '+1 212-769-5100', '{"contact_preferences" : "phone", "annual_salary" : "52000", "newsletter" : "false"}'),
 	(2, 'Anne', 'Jean', 'FEMALE', 'MARRIED', '1993-07-11 :12:00:00', 'FR', '2 rue du chateau', 'Marseille', 'annej@bas.com', '+36 6 50 44 12 05', '{"contact_preferences" : "phone", "annual_salary" : "52000", "newsletter" : "false"}'),
 	(3, 'Paul', 'Jean', 'MALE', 'MARRIED', '1992-04-11 :12:00:00', 'FR', '2 rue du chateau', 'Marseille', 'paulj@bas.com', '+36 6 50 44 12 05', '{"contact_preferences" : "email", "annual_salary" : "52000", "newsletter" : "false"}'),
@@ -20,7 +20,7 @@ INSERT INTO basapp.customers(customer_id, first_name, last_name, gender, marital
 	(3, 4),
 	(4, 3);
 	
-INSERT INTO basapp.transactions (transaction_id, type, amount, currency, status, date, label, metadatas)
+INSERT INTO basapp.transactions (transaction_id, type, amount, currency, status, date, label, metadata)
 	VALUES (1, 'CREDIT', 1600, 'EUR', 'COMPLETED', '2022-06-06 :12:00:00', 'transaction 1', '{"amount_before" : "0", "amount_after" : "1600"}'),
 	(2, 'CREDIT', 350, 'EUR', 'COMPLETED', '2022-06-06 :12:30:00', 'transaction 2', '{"amount_before" : "0", "amount_after" : "350"}'),
 	(3, 'DEBIT', 50, 'EUR', 'COMPLETED', '2022-07-06 :13:00:00', 'transaction 3', '{"amount_before" : "350", "amount_after" : "300"}'),

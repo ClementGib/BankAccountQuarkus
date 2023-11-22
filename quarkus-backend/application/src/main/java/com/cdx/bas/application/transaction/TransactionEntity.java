@@ -4,44 +4,32 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
-import com.vladmihalcea.hibernate.type.json.JsonType;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcTypeCode;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(schema = "basapp", name = "transactions", uniqueConstraints = @UniqueConstraint(columnNames = "transaction_id"))
-@NamedQueries(@NamedQuery(name = "TransactionEntity.findUnprocessed", query = "SELECT t FROM TransactionEntity t WHERE t.status = :status ORDER BY t.date ASC"))
-@TypeDef(name = "jsonb", typeClass = JsonType.class)
+@NamedQueries(@NamedQuery(
+        name = "TransactionEntity.findUnprocessed", query = "SELECT t FROM TransactionEntity t WHERE t.status = :status ORDER BY t.date ASC"))
 public class TransactionEntity extends PanacheEntityBase {
 
     @Id
     @Column(name = "transaction_id", nullable = false)
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transactions_transaction_id_seq_gen")
+    @SequenceGenerator(name = "transactions_transaction_id_seq_gen", sequenceName = "transactions_transaction_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "transaction_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
+    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "transaction_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id"))
     private BankAccountEntity account;
 
     @Column(name = "amount", nullable = false)
@@ -64,9 +52,9 @@ public class TransactionEntity extends PanacheEntityBase {
     @Column(name = "label", nullable = false)
     private String label;
 
-    @Type(type = "jsonb")
-    @Column(name = "metadatas", columnDefinition = "jsonb",  nullable = true)
-    private String metadatas;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb",  nullable = true)
+    private String metadata;
 
     public Long getId() {
         return id;
@@ -132,17 +120,17 @@ public class TransactionEntity extends PanacheEntityBase {
         this.label = label;
     }
 
-    public String getMetadatas() {
-        return metadatas;
+    public String getMetadata() {
+        return metadata;
     }
 
-    public void setMetadatas(String metadatas) {
-        this.metadatas = metadatas;
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(account, amount, date, id, label, metadatas, status, type);
+        return Objects.hash(account, amount, date, id, label, metadata, status, type);
     }
 
     @Override
@@ -159,6 +147,6 @@ public class TransactionEntity extends PanacheEntityBase {
         TransactionEntity other = (TransactionEntity) obj;
         return Objects.equals(account, other.account) && Objects.equals(amount, other.amount)
                 && Objects.equals(date, other.date) && id == other.id && Objects.equals(label, other.label)
-                && Objects.equals(metadatas, other.metadatas) && status == other.status && type == other.type;
+                && Objects.equals(metadata, other.metadata) && status == other.status && type == other.type;
     }
 }

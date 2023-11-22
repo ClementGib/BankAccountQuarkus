@@ -1,20 +1,10 @@
 package com.cdx.bas.domain.customer;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 import com.cdx.bas.domain.bank.account.BankAccount;
+import jakarta.validation.constraints.*;
+
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class Customer {
 
@@ -69,7 +59,7 @@ public class Customer {
 	@NotNull(message="accounts must not be null.")
 	private List<BankAccount> accounts = new ArrayList<>();
 	
-	private Map<String, String> metadatas = new HashMap<>();
+	private Map<String, String> metadata = new HashMap<>();
 	
 	public Customer() {
 		super();
@@ -77,7 +67,7 @@ public class Customer {
 
 	public Customer(Long id, String firstName, String lastName, Gender gender, MaritalStatus maritalStatus,
 	        LocalDateTime birthdate, String country, String address, String city, String email, String phoneNumber,
-	        List<BankAccount> accounts, Map<String, String> metadatas) {
+	        List<BankAccount> accounts, Map<String, String> metadata) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -91,7 +81,7 @@ public class Customer {
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.accounts = accounts;
-		this.metadatas = metadatas;
+		this.metadata = metadata;
 	}
 
 	public Long getId() {
@@ -190,18 +180,18 @@ public class Customer {
 		this.accounts = accounts;
 	}
 	
-	public Map<String, String> getMetadatas() {
-		return metadatas;
+	public Map<String, String> getMetadata() {
+		return metadata;
 	}
 
-	public void setMetadatas(Map<String, String> metadatas) {
-		this.metadatas = metadatas;
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 	
 	@Override
 	public int hashCode() {
 		return Objects.hash(accounts, address, birthdate, city, email, firstName, gender, id, lastName, maritalStatus,
-				metadatas, country, phoneNumber);
+				metadata, country, phoneNumber);
 	}
 
 	@Override
@@ -220,7 +210,7 @@ public class Customer {
 				&& Objects.equals(birthdate, other.birthdate) && Objects.equals(city, other.city)
 				&& Objects.equals(email, other.email) && Objects.equals(firstName, other.firstName)
 				&& gender == other.gender && id == other.id && Objects.equals(lastName, other.lastName)
-				&& maritalStatus == other.maritalStatus && Objects.equals(metadatas, other.metadatas)
+				&& maritalStatus == other.maritalStatus && Objects.equals(metadata, other.metadata)
 				&& Objects.equals(country, other.country) && Objects.equals(phoneNumber, other.phoneNumber);
 	}
 }

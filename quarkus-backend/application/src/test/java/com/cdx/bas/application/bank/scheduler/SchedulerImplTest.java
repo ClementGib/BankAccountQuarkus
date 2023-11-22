@@ -15,8 +15,8 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.PriorityQueue;
 import java.util.Queue;
-
-import javax.inject.Inject;
+import io.quarkus.test.InjectMock;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.scheduler.Scheduler;
 import com.cdx.bas.domain.transaction.Transaction;
@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)

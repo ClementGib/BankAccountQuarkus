@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.bank.account.BankAccountRepository;
@@ -52,11 +52,11 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         dto.setLabel(entity.getLabel());
 
         try {
-            if (entity.getMetadatas() != null) {
-                dto.setMetadatas(
-                        objectMapper.readValue(entity.getMetadatas(), new TypeReference<Map<String, String>>() {}));
+            if (entity.getMetadata() != null) {
+                dto.setMetadata(
+                        objectMapper.readValue(entity.getMetadata(), new TypeReference<Map<String, String>>() {}));
             } else {
-                dto.setMetadatas(new HashMap<>());
+                dto.setMetadata(new HashMap<>());
             }
         } catch (JsonProcessingException exception) {
             throw new MappingException("An error occured while parsing JSON String to Map<String, String>", exception);
@@ -88,10 +88,10 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         entity.setLabel(dto.getLabel());
 
         try {
-            if (!dto.getMetadatas().isEmpty()) {
-                entity.setMetadatas(objectMapper.writeValueAsString(dto.getMetadatas()));
+            if (!dto.getMetadata().isEmpty()) {
+                entity.setMetadata(objectMapper.writeValueAsString(dto.getMetadata()));
             } else {
-                entity.setMetadatas(null);
+                entity.setMetadata(null);
             }
         } catch (JsonProcessingException exception) {
             throw new MappingException("An error occured while parsing Map<String, String> to JSON String", exception);

@@ -1,39 +1,20 @@
 package com.cdx.bas.application.customer;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vladmihalcea.hibernate.type.json.JsonType;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(schema = "basapp", name = "customers", uniqueConstraints = @UniqueConstraint(columnNames = "customer_id"))
-@TypeDef(name = "jsonb", typeClass = JsonType.class)
 public class CustomerEntity extends PanacheEntityBase {
     
     @Id
@@ -78,10 +59,10 @@ public class CustomerEntity extends PanacheEntityBase {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "bank_accounts_customers", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
     private List<BankAccountEntity> accounts = new ArrayList<>();
-    
-    @Type(type = "jsonb")
-    @Column(name = "metadatas", columnDefinition = "jsonb",  nullable = true)
-    private String metadatas;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    private String metadata;
 
     public Long getId() {
         return id;
@@ -179,11 +160,11 @@ public class CustomerEntity extends PanacheEntityBase {
         this.accounts = accounts;
     }
 
-    public String getMetadatas() {
-        return metadatas;
+    public String getMetadata() {
+        return metadata;
     }
 
-    public void setMetadatas(String metadatas) {
-        this.metadatas = metadatas;
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 }

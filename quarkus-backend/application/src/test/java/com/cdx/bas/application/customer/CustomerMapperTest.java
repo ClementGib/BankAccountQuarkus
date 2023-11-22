@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.inject.Inject;
+import io.quarkus.test.InjectMock;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
@@ -39,7 +39,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class CustomerMapperTest {
@@ -89,7 +88,7 @@ public class CustomerMapperTest {
         assertThat(dto.getEmail()).isNull();
         assertThat(dto.getPhoneNumber()).isNull();
         assertThat(dto.getAccounts()).isEmpty();
-        assertThat(dto.getMetadatas()).isEmpty();
+        assertThat(dto.getMetadata()).isEmpty();
 
         verifyNoInteractions(bankAccountMapper);
     }
@@ -111,7 +110,7 @@ public class CustomerMapperTest {
         assertThat(entity.getEmail()).isNull();
         assertThat(entity.getPhoneNumber()).isNull();
         assertThat(entity.getAccounts()).isEmpty();
-        assertThat(entity.getMetadatas()).isNull();
+        assertThat(entity.getMetadata()).isNull();
 
         verifyNoInteractions(bankAccountMapper);
     }
@@ -139,16 +138,16 @@ public class CustomerMapperTest {
         accounts.add(accountEntity2);
         entity.setAccounts(accounts);
         
-        String strMetadatas = "{\"contact_preferences\" : \"email\", \"annual_salary\" : \"52000\"}";
-        entity.setMetadatas(strMetadatas);
+        String strMetadata = "{\"contact_preferences\" : \"email\", \"annual_salary\" : \"52000\"}";
+        entity.setMetadata(strMetadata);
         
         BankAccount account1 = createBankAccount(10L, instantDate);
         BankAccount account2 = createBankAccount(11L, instantDate);
         when(bankAccountMapper.toDto(accountEntity1)).thenReturn(account1);
         when(bankAccountMapper.toDto(accountEntity2)).thenReturn(account2);
-        HashMap<String, String> metadatas = new HashMap<String, String>();
-        metadatas.put("contact_preferences", "email");
-        metadatas.put("annual_salary", "52000");
+        HashMap<String, String> metadata = new HashMap<String, String>();
+        metadata.put("contact_preferences", "email");
+        metadata.put("annual_salary", "52000");
         
         Customer dto = customerMapper.toDto(entity);
         
@@ -167,8 +166,8 @@ public class CustomerMapperTest {
         assertThat(dto.getAccounts()).hasSize(2);
         Set<BankAccount> accoutsToCompar = Stream.of(account1, account2).collect(Collectors.toSet());
         assertThat(dto.getAccounts()).containsExactlyInAnyOrderElementsOf(accoutsToCompar);
-        assertThat(dto.getMetadatas().get("contact_preferences")).isEqualTo("email");
-        assertThat(dto.getMetadatas().get("annual_salary")).isEqualTo("52000");
+        assertThat(dto.getMetadata().get("contact_preferences")).isEqualTo("email");
+        assertThat(dto.getMetadata().get("annual_salary")).isEqualTo("52000");
         
         verify(bankAccountMapper).toDto(accountEntity1);
         verify(bankAccountMapper).toDto(accountEntity2);
@@ -198,10 +197,10 @@ public class CustomerMapperTest {
         accounts.add(account2);
         model.setAccounts(accounts);
         
-        HashMap<String, String> metadatas = new HashMap<String, String>();
-        metadatas.put("contact_preferences", "email");
-        metadatas.put("annual_salary", "48000");
-        model.setMetadatas(metadatas);
+        HashMap<String, String> metadata = new HashMap<String, String>();
+        metadata.put("contact_preferences", "email");
+        metadata.put("annual_salary", "48000");
+        model.setMetadata(metadata);
         
         BankAccountEntity accountEntity1 = createBankAccountEntity(10L, instantDate);
         BankAccountEntity accountEntity2 = createBankAccountEntity(11L, instantDate);
@@ -225,7 +224,7 @@ public class CustomerMapperTest {
         assertThat(entity.getAccounts()).hasSize(2);
         Set<BankAccountEntity> accoutsToCompar = Stream.of(accountEntity1, accountEntity2).collect(Collectors.toSet());
         assertThat(entity.getAccounts()).containsExactlyInAnyOrderElementsOf(accoutsToCompar);
-        assertThat(entity.getMetadatas()).hasToString("{\"contact_preferences\":\"email\",\"annual_salary\":\"48000\"}");
+        assertThat(entity.getMetadata()).hasToString("{\"contact_preferences\":\"email\",\"annual_salary\":\"48000\"}");
         
         verify(bankAccountMapper).toEntity(account1);
         verify(bankAccountMapper).toEntity(account2);

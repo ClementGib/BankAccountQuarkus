@@ -9,7 +9,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.bank.account.mma.MMABankAccount;

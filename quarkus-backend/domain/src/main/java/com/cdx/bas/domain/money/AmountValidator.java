@@ -2,8 +2,8 @@ package com.cdx.bas.domain.money;
 
 import java.math.BigDecimal;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Saving amount validator

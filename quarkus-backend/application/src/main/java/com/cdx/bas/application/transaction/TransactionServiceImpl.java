@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
 import com.cdx.bas.domain.transaction.Transaction;
@@ -47,8 +47,8 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
 
 	@Override
-	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadatas) {
-		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadatas);
+	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadata) {
+		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadata);
 		return transaction;
 	}
 }

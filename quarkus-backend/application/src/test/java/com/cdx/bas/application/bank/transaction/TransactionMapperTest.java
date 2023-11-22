@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import javax.inject.Inject;
+import io.quarkus.test.InjectMock;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.bank.account.BankAccountRepository;
@@ -26,7 +26,6 @@ import com.cdx.bas.domain.transaction.TransactionType;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class TransactionMapperTest {
@@ -66,7 +65,7 @@ public class TransactionMapperTest {
         assertThat(dto.getStatus()).isNull();
         assertThat(dto.getDate()).isNull();
         assertThat(dto.getLabel()).isNull();
-        assertThat(dto.getMetadatas()).isEmpty();
+        assertThat(dto.getMetadata()).isEmpty();
     }
 
     @Test
@@ -85,9 +84,9 @@ public class TransactionMapperTest {
     @Test
     public void toDto_should_mapEntityValues_when_entityHasValues() {
         Instant date = Instant.now();
-        Map<String, String> metadatas = new HashMap<>();
-        metadatas.put("amount_after", "100");
-        metadatas.put("amount_before", "0");
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("amount_after", "100");
+        metadata.put("amount_before", "0");
         TransactionEntity transactionEntity = createTransactionEntity(10L, 99L, date);
         
         Transaction dto = transactionMapper.toDto(transactionEntity);
@@ -99,16 +98,16 @@ public class TransactionMapperTest {
         assertThat(dto.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
         assertThat(dto.getDate()).isEqualTo(date);
         assertThat(dto.getLabel()).hasToString("transaction test");
-        assertThat(dto.getMetadatas()).usingRecursiveComparison().isEqualTo(metadatas);
+        assertThat(dto.getMetadata()).usingRecursiveComparison().isEqualTo(metadata);
     }
     
     @Test
     public void toEntity_should_mapEntityValues_when_dtoHasValues() {
         Instant date = Instant.now();
-        String strMetadatas = "{\"amount_after\":\"100\",\"amount_before\":\"0\"}";
-        Map<String, String> metadatas = new HashMap<>();
-        metadatas.put("amount_after", "100");
-        metadatas.put("amount_before", "0");
+        String strMetadata = "{\"amount_after\":\"100\",\"amount_before\":\"0\"}";
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("amount_after", "100");
+        metadata.put("amount_before", "0");
         BankAccountEntity bankAccountEntity = createBankAccountEntity(99L, date);
         Transaction transaction = createTransaction(10L, 99L, date);
         
@@ -123,7 +122,7 @@ public class TransactionMapperTest {
         assertThat(entity.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
         assertThat(entity.getDate()).isEqualTo(date);
         assertThat(entity.getLabel()).hasToString("transaction test");
-        assertThat(entity.getMetadatas()).isEqualTo(strMetadatas);
+        assertThat(entity.getMetadata()).isEqualTo(strMetadata);
     }
     
     private Transaction createTransaction(long id, long accountId, Instant instantDate) {
@@ -135,10 +134,10 @@ public class TransactionMapperTest {
         transactionEntity.setStatus(TransactionStatus.COMPLETED);
         transactionEntity.setDate(instantDate);
         transactionEntity.setLabel("transaction test");
-        Map<String, String> metadatas = new HashMap<>();
-        metadatas.put("amount_after", "100");
-        metadatas.put("amount_before", "0");
-        transactionEntity.setMetadatas(metadatas);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("amount_after", "100");
+        metadata.put("amount_before", "0");
+        transactionEntity.setMetadata(metadata);
         return transactionEntity;
     }
 
@@ -151,7 +150,7 @@ public class TransactionMapperTest {
         transactionEntity.setStatus(TransactionStatus.COMPLETED);
         transactionEntity.setDate(instantDate);
         transactionEntity.setLabel("transaction test");
-        transactionEntity.setMetadatas("{\"amount_after\" : \"100\", \"amount_before\" : \"0\"}");
+        transactionEntity.setMetadata("{\"amount_after\" : \"100\", \"amount_before\" : \"0\"}");
         return transactionEntity;
     }
     

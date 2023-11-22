@@ -16,8 +16,8 @@ public interface TransactionServicePort {
      * Complete processed transaction 
      * 
      * @param transaction to complete
-     * @param metadatas to set to the transaction
+     * @param metadata to set to the transaction
      */
-    Transaction completeTransaction(Transaction transaction, Map<String, String> metadatas);
+    Transaction completeTransaction(Transaction transaction, Map<String, String> metadata);
     
 }

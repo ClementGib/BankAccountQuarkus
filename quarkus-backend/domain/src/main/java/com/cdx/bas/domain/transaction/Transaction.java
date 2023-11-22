@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 public class Transaction implements Comparable<Transaction> {
 
@@ -38,7 +38,7 @@ public class Transaction implements Comparable<Transaction> {
     @NotNull(message = "label must not be null.")
     private String label;
 
-    private Map<String, String> metadatas = new HashMap<>();
+    private Map<String, String> metadata = new HashMap<>();
 
     public Transaction() {
         super();
@@ -53,7 +53,7 @@ public class Transaction implements Comparable<Transaction> {
         this.date = Instant.now();
     }
 
-    public Transaction(Transaction transaction, TransactionStatus status, Map<String, String> metadatas) {
+    public Transaction(Transaction transaction, TransactionStatus status, Map<String, String> metadata) {
         this.id = transaction.id;
         this.accountId = transaction.accountId;
         this.amount = transaction.amount;
@@ -62,7 +62,7 @@ public class Transaction implements Comparable<Transaction> {
         this.status = status;
         this.date = transaction.date;
         this.label = transaction.label;
-        this.metadatas.putAll(metadatas);
+        this.metadata.putAll(metadata);
     }
 
     public Long getId() {
@@ -129,12 +129,12 @@ public class Transaction implements Comparable<Transaction> {
         this.label = label;
     }
 
-    public Map<String, String> getMetadatas() {
-        return metadatas;
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 
-    public void setMetadatas(Map<String, String> metadatas) {
-        this.metadatas = metadatas;
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 
     @Override
@@ -144,7 +144,7 @@ public class Transaction implements Comparable<Transaction> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountId, amount, date, id, label, metadatas, status, type);
+        return Objects.hash(accountId, amount, date, id, label, metadata, status, type);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class Transaction implements Comparable<Transaction> {
         return Objects.equals(accountId, other.accountId) && amount == other.amount
                 && Objects.equals(date, other.date)
                 && Objects.equals(id, other.id) && Objects.equals(label, other.label)
-                && Objects.equals(metadatas, other.metadatas)
+                && Objects.equals(metadata, other.metadata)
                 && status == other.status && type == other.type;
     }
 }

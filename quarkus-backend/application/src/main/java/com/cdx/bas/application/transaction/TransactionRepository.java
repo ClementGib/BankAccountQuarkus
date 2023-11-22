@@ -5,8 +5,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.transaction.Transaction;

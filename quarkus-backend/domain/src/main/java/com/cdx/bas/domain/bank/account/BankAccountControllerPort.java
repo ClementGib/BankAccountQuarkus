@@ -16,5 +16,5 @@ public interface BankAccountControllerPort {
      * 
      * @return List<BankAccount> corresponding to all the bank account
      */
-    public BankAccount deposite(Long id, Long amount);
+    public BankAccount deposite(Long id, Long amount, String currency);
 }

@@ -3,8 +3,8 @@ package com.cdx.bas.application.bank.account;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.customer.CustomerRepository;

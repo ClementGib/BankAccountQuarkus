@@ -3,7 +3,7 @@ package com.cdx.bas.domain.money;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public class Money {
     @NotNull(message="amount must not be null.")

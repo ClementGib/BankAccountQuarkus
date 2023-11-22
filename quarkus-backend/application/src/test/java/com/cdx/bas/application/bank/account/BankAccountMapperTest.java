@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-
-import javax.inject.Inject;
+import io.quarkus.test.InjectMock;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.customer.CustomerRepository;
@@ -39,7 +39,6 @@ import com.cdx.bas.domain.transaction.TransactionType;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class BankAccountMapperTest {

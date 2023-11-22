@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import javax.inject.Inject;
+import io.quarkus.test.InjectMock;
+import jakarta.inject.Inject;
 
 import com.cdx.bas.domain.bank.account.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
@@ -39,7 +39,6 @@ import com.cdx.bas.domain.transaction.TransactionType;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 
 @QuarkusTest
 public class BankAccountServiceImplTest {
@@ -58,15 +57,15 @@ public class BankAccountServiceImplTest {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Map<String, String> metadatas = new HashMap<>();
-        metadatas.put("error", "bank account 99 is not found.");
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadatas);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("error", "bank account 99 is not found.");
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadata);
         when(bankAccountPersistence.findById(accountId)).thenThrow(new NoSuchElementException("bank account 99 is not found."));
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, ERROR, date, metadatas));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, ERROR, date, metadata));
         verify(bankAccountPersistence).findById(eq(accountId));
         verifyNoMoreInteractions(bankAccountPersistence);
     }
@@ -76,10 +75,10 @@ public class BankAccountServiceImplTest {
         long accountId = 99L;
         Money amountOfMoney = Money.of(1000L);
         Instant date = Instant.now();
-        Map<String, String> metadatas = new HashMap<>();
-        metadatas.put("amount_before", "100");
-        metadatas.put("amount_after", "1100");
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadatas);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("amount_before", "100");
+        metadata.put("amount_after", "1100");
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadata);
         BankAccount bankAccount = createBankAccount(accountId);
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
         BankAccount bankAccountAfterDeposit = createBankAccount(accountId);
@@ -88,7 +87,7 @@ public class BankAccountServiceImplTest {
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, COMPLETED, date, metadatas));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, COMPLETED, date, metadata));
         verify(bankAccountPersistence).findById(eq(accountId));
         verify(bankAccountPersistence).update(eq(bankAccount));
     }
@@ -105,20 +104,20 @@ public class BankAccountServiceImplTest {
         BankAccount bankAccountAfterDeposit = createBankAccount(accountId);
         bankAccountAfterDeposit.setBalance(moneyBefore); 
         BankAccountException violationException = new BankAccountException("balance amount must be between -600 and 100000.\n");
-        Map<String, String> metadatasBefore = new HashMap<>();
-        metadatasBefore.put("amount_before", "100000");
-        metadatasBefore.put("error", violationException.getMessage());
-        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadatasBefore);
+        Map<String, String> metadataBefore = new HashMap<>();
+        metadataBefore.put("amount_before", "100000");
+        metadataBefore.put("error", violationException.getMessage());
+        Transaction transaction = createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, WAITING, date, metadataBefore);
         
         when(bankAccountPersistence.findById(anyLong())).thenReturn(Optional.of(bankAccount));
         
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
         
-        Map<String, String> metadatasAfter = new HashMap<>();
-        metadatasAfter.put("amount_before", "100000");
-        metadatasAfter.put("error", violationException.getMessage());
+        Map<String, String> metadataAfter = new HashMap<>();
+        metadataAfter.put("amount_before", "100000");
+        metadataAfter.put("error", violationException.getMessage());
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, REFUSED, date, metadatasAfter));
+        .isEqualTo(createTransaction(accountId, amountOfMoney.getAmount().longValue(), CREDIT, REFUSED, date, metadataAfter));
         verify(bankAccountPersistence).findById(eq(accountId));
     }
     
@@ -138,7 +137,7 @@ public class BankAccountServiceImplTest {
     }
     
     private static Transaction createTransaction(long accountId, long amount, TransactionType type, 
-            TransactionStatus status, Instant date, Map<String, String> metadatas) {
+            TransactionStatus status, Instant date, Map<String, String> metadata) {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);
 		transaction.setAmount(amount);
@@ -147,7 +146,7 @@ public class BankAccountServiceImplTest {
 		transaction.setStatus(status);
 		transaction.setDate(date);
 		transaction.setLabel("transaction of " + amount);
-		transaction.setMetadatas(metadatas);
+		transaction.setMetadata(metadata);
 		return transaction;
     }
 }

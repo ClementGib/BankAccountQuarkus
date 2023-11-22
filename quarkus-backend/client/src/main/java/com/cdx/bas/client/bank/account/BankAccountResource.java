@@ -2,11 +2,11 @@ package com.cdx.bas.client.bank.account;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountControllerPort;
@@ -35,12 +35,12 @@ public class BankAccountResource implements BankAccountControllerPort{
     @POST
     @Path("/{id}")
     @Override
-    public BankAccount deposite(@PathParam("id") Long id, Long amount) {
+    public BankAccount deposite(@PathParam("id") Long id, Long amount, String currency) {
         BankAccount currentAccount = null;
         Optional<BankAccount> bankAccountOptional = bankAccountRepository.findById(id);
         if(bankAccountOptional.isPresent()) {
             currentAccount = bankAccountOptional.get();
-            Transaction transaction = new Transaction(id, amount, TransactionType.CREDIT);
+            Transaction transaction = new Transaction(id, currency, amount, TransactionType.CREDIT);
             currentAccount.getTransactions().add(transaction);
             bankAccountRepository.update(currentAccount);
         }

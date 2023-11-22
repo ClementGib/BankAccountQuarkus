@@ -2,8 +2,8 @@ package com.cdx.bas.application.scheduler;
 
 import java.util.PriorityQueue;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionPersistencePort;
