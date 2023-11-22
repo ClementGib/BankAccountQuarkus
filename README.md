@@ -100,7 +100,7 @@ I want to see the history (operation, date, amount, balance) of my operations
     - Occasion de l'essayer
     - Hibernate, Jackson, JEE (JAX-RS, CDI ...)
     - JUnit 5 et tests d'intégration
-- **OpenJDK** 17.0.3 et les fonctionnalités Java 8+ (stream, constructeur compact, record, bean validation...)
+- **OpenJDK** 21 et les fonctions Java avancées
 - **Docker** et docker-compose
     - postgresql (Script de création,Script d'insertion, requetage JSON...)
     - pgAdmin (Auto connexion)
@@ -114,7 +114,7 @@ I want to see the history (operation, date, amount, balance) of my operations
 - Reste-à-faire: Story 2 et 3 à compléter, implémentation des ports client avec les API REST et tests.
 
 ### Démo
-- Installer OpenJDK 17.0.3 (https://jdk.java.net/17/) 
+- Installer OpenJDK 21 (https://jdk.java.net/21/) 
 
 <br>
 
