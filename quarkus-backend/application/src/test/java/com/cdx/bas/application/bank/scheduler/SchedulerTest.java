@@ -35,7 +35,7 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)
-public class SchedulerImplTest {
+public class SchedulerTest {
     @Inject
     Scheduler scheduler;
 
