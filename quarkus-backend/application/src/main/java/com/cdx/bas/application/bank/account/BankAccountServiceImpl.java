@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RequestScoped
 public class BankAccountServiceImpl implements BankAccountServicePort {
@@ -23,7 +24,7 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     private static final Logger logger = LoggerFactory.getLogger(BankAccountServiceImpl.class);
     
     @Inject
-    BankAccountPersistencePort BankAccountRepository;
+    BankAccountPersistencePort bankAccountRepository;
     
     @Inject
     BankAccountValidator bankAccountValidator;
@@ -36,20 +37,20 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     public Transaction deposit(Transaction transaction) {
         Map<String, String> metadata = new HashMap<>();
         try {
-            transactionService.setAsOutstanding(transaction);
-            BankAccount currentBankAccount = BankAccountRepository.findById(transaction.getAccountId())
-                    .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() + " not found."));
+            BankAccount currentBankAccount = bankAccountRepository.findById(transaction.getAccountId())
+                    .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() + " is not found."));
+            Transaction currentTransaction = transactionService.setAsOutstanding(transaction);
 
-            logger.info("BankAccount " + transaction.getAccountId() + " process transaction deposit " + transaction.getId() + " for amount "+ transaction.getAmount());
+            logger.info("BankAccount " + currentTransaction.getAccountId() + " process currentTransaction deposit " + currentTransaction.getId() + " for amount "+ currentTransaction.getAmount());
             metadata.put("amount_before", currentBankAccount.getBalance().getAmount().toString());
-            creditBankAccountFromTransaction(currentBankAccount, transaction);
+            creditBankAccountFromTransaction(currentBankAccount, currentTransaction);
             bankAccountValidator.validateBankAccount(currentBankAccount);
             metadata.put("amount_after", currentBankAccount.getBalance().getAmount().toString());
 
-            Transaction completedTransaction = transactionService.setAsCompleted(transaction, metadata);
-            addTransaction(currentBankAccount, completedTransaction);
-            BankAccountRepository.update(currentBankAccount);
-            logger.info("BankAccount " + transaction.getAccountId() + " transaction deposit " + + transaction.getId() + " completed.");
+            Transaction completedTransaction = transactionService.setAsCompleted(currentTransaction, metadata);
+            BankAccount updatedBankAccount = addTransaction(currentBankAccount, completedTransaction);
+
+            logger.info("BankAccount " + updatedBankAccount.getId() + " currentTransaction deposit " + + currentTransaction.getId() + " completed.");
             return completedTransaction;
         } catch (NoSuchElementException exception) {
             logger.error("Transaction " + transaction.getId() + " deposit error for amount "+ transaction.getAmount() + ": " + exception.getMessage());
@@ -68,13 +69,18 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
         currentBankAccount.getBalance().plus(Money.of(euroAmount));
     }
 
-    private void addTransaction(BankAccount currentBankAccount, Transaction newTransaction) {
-        currentBankAccount.getTransactions().stream()
+    private BankAccount addTransaction(BankAccount currentBankAccount, Transaction newTransaction) {
+        Optional<Transaction> optionalStoredTransaction = currentBankAccount.getTransactions().stream()
                 .filter(transaction -> transaction.getId().equals(newTransaction.getId()))
-                .findFirst()
-                .ifPresentOrElse(
-                        transaction -> {
-                            transactionService.mergeTransactions(transaction, newTransaction);
-                        }, () -> currentBankAccount.getTransactions().add(newTransaction));
+                .findFirst();
+
+        if (optionalStoredTransaction.isPresent()) {
+            Transaction mergedTransaction = transactionService.mergeTransactions(optionalStoredTransaction.get(), newTransaction);
+            currentBankAccount.getTransactions().removeIf(existingTransaction -> existingTransaction.getId().equals(mergedTransaction.getId()));
+            currentBankAccount.getTransactions().add(mergedTransaction);
+        } else {
+            currentBankAccount.getTransactions().add(newTransaction);
+        }
+        return bankAccountRepository.update(currentBankAccount);
     }
 }

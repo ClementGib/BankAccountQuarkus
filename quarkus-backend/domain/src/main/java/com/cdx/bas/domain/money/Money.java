@@ -49,20 +49,16 @@ public class Money {
         return this.amount.compareTo(money.amount) >= 0;
     }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(amount);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Money money = (Money) o;
+        return Objects.equals(amount, money.amount);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Money other = (Money) obj;
-		return Objects.equals(amount, other.amount);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(amount);
+    }
 }
