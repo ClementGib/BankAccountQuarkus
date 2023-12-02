@@ -53,7 +53,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
 
     @Override
     @Transactional(value = Transactional.TxType.MANDATORY)
-    public Transaction update(Transaction transaction) {
+    public Transaction update(Transaction transaction) {;
         getEntityManager().merge(transactionMapper.toEntity(transaction));
         logger.info("Transaction " + transaction.getId() + " updated");
         return transaction;

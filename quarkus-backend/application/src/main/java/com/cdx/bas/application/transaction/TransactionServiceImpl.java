@@ -51,18 +51,21 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
 
     @Override
+    @Transactional(value = TxType.MANDATORY)
 	public Transaction setAsCompleted(Transaction completedTransaction, Map<String, String> metadata) {
         setState(completedTransaction, metadata, COMPLETED);
 		return transactionRepository.update(completedTransaction);
 	}
 
     @Override
+    @Transactional(value = TxType.MANDATORY)
     public Transaction setAsError(Transaction erroredTransaction, Map<String, String> metadata) {
         setState(erroredTransaction, metadata, ERROR);
         return transactionRepository.update(erroredTransaction);
     }
 
     @Override
+    @Transactional(value = TxType.MANDATORY)
     public Transaction setAsRefused(Transaction refusedTransaction, Map<String, String> metadata) {
         setState(refusedTransaction, metadata, REFUSED);
         return transactionRepository.update(refusedTransaction);

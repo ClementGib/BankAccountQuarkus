@@ -70,10 +70,12 @@ public class TransactionMapperTest {
     }
 
     @Test
-    public void toEntity_should_mapNullValues_when_dtoHasNullValues() {
+    public void toEntity_should_mapNullValues_when_dtoHasIdThatDoestMatchWithBankAccount() {
         
         try {
-            transactionMapper.toEntity(new Transaction());
+            Transaction transaction = new Transaction();
+            transaction.setId(666L);
+            transactionMapper.toEntity(transaction);
             fail();
         } catch (NoSuchElementException exception) {
             assertThat(exception.getMessage()).hasToString("Bank Account entity not found for id: null");

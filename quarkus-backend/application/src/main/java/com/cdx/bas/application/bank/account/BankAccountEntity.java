@@ -49,7 +49,7 @@ public class BankAccountEntity extends PanacheEntityBase {
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<CustomerEntity> customers = new ArrayList<>();
     
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
     @OrderBy("date")
     private Set<TransactionEntity> transactions = new HashSet<>();

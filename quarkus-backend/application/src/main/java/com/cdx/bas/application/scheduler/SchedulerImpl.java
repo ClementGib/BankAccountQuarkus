@@ -38,12 +38,9 @@ public class SchedulerImpl implements Scheduler {
         if (getTransactionQueue().isEmpty()) {
             getTransactionQueue().addAll(transactionRepository.findUnprocessedTransactions());
             logger.info("Queue size: " + transactionQueue.size());
-            Transaction transactionTest = transactionQueue.peek();
-            logger.info(transactionTest.getAccountId() + " : " + transactionTest.getId() + " for " + transactionTest.getAmount());
-            transactionService.process(transactionTest);
-//            getTransactionQueue().forEach(transaction -> {
-//                transactionService.processTransaction(transaction);
-//            });
+            getTransactionQueue().forEach(transaction -> {
+                transactionService.process(transaction);
+            });
         }
         logger.info("Scheduler end");
     }
