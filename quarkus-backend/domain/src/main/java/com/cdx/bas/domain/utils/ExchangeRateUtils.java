@@ -23,7 +23,7 @@ public class ExchangeRateUtils {
         } else if (PIVOT_CURRENCY.equals(currency)) {
             return NO_EXCHANGE_RATE_VALUE;
         } else {
-                throw new CurrencyException("No exchange rate found for currency: " + currency);
+            throw new CurrencyException("No exchange rate found for currency: " + currency);
         }
     }
 

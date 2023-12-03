@@ -87,9 +87,7 @@ public class TransactionMapperTest {
     @Test
     public void toDto_should_mapEntityValues_when_entityHasValues() {
         Instant date = Instant.now();
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("amount_after", "100");
-        metadata.put("amount_before", "0");
+        Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "100");
         TransactionEntity transactionEntity = createTransactionEntity(10L, 99L, date);
         
         Transaction dto = transactionMapper.toDto(transactionEntity);
@@ -109,9 +107,7 @@ public class TransactionMapperTest {
     public void toEntity_should_mapEntityValues_when_dtoHasValues() {
         Instant date = Instant.now();
         String strMetadata = "{\"amount_after\":\"100\",\"amount_before\":\"0\"}";
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("amount_after", "100");
-        metadata.put("amount_before", "0");
+        Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "100");
         BankAccountEntity bankAccountEntity = createBankAccountEntity(99L, date);
         Transaction transaction = createTransaction(10L, 99L, date);
         
@@ -140,9 +136,7 @@ public class TransactionMapperTest {
         transaction.setStatus(TransactionStatus.COMPLETED);
         transaction.setDate(instantDate);
         transaction.setLabel("transaction test");
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("amount_after", "100");
-        metadata.put("amount_before", "0");
+        Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "100");
         transaction.setMetadata(metadata);
         return transaction;
     }

@@ -43,9 +43,7 @@ public class BankAccountServiceTest {
         Money amountOfMoney = Money.of(new BigDecimal(0));
         Instant instantDate = Instant.now();
         Transaction transaction = createTransaction(1L, accountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("error", "bank account 99 is not found.");
+        Map<String, String> metadata = Map.of("error", "bank account 99 is not found.");
         Transaction erroredTransaction = createTransaction(1L, accountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadata);
 
         when(bankAccountRepository.findById(accountId)).thenThrow(new NoSuchElementException("bank account 99 is not found."));
@@ -72,9 +70,7 @@ public class BankAccountServiceTest {
         Transaction transaction = createTransaction(99L, accountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, instantDate, new HashMap<>());
         Transaction outstandingTransaction = createTransaction(99L, accountId, amountOfMoney.getAmount(), CREDIT, OUTSTANDING, instantDate, new HashMap<>());
 
-        Map<String, String> metadataAfter = new HashMap<>();
-        metadataAfter.put("amount_before", "0");
-        metadataAfter.put("amount_after", "1000");
+        Map<String, String> metadataAfter = Map.of("amount_before", "0", "amount_after", "1000");
         Transaction completedTransaction = createTransaction(99L, accountId, amountOfMoney.getAmount(), CREDIT, COMPLETED, instantDate, metadataAfter);
         BankAccount updatedBankAccount = createBankAccount(accountId, "1000", completedTransaction);
 
@@ -102,9 +98,8 @@ public class BankAccountServiceTest {
         long accountId = 99L;
         Money amountOfMoney = Money.of(new BigDecimal(1000));
         Instant instantDate = Instant.now();
-        Map<String, String> metadataBefore = new HashMap<>();
-        metadataBefore.put("amount_before", "0");
-        metadataBefore.put("amount_after", "100");
+        Map<String, String> metadataBefore = Map.of("amount_before", "0", "amount_after", "100");
+
         Transaction oldTransaction = createTransaction(99L, accountId, new BigDecimal(100), TransactionType.CREDIT, TransactionStatus.COMPLETED, instantDate, metadataBefore);
         BankAccount bankAccount = createBankAccount(accountId, "100", oldTransaction);
 

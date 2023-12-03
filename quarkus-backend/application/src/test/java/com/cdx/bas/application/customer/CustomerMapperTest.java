@@ -10,11 +10,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import io.quarkus.test.InjectMock;
@@ -145,9 +141,7 @@ public class CustomerMapperTest {
         BankAccount account2 = createBankAccount(11L, instantDate);
         when(bankAccountMapper.toDto(accountEntity1)).thenReturn(account1);
         when(bankAccountMapper.toDto(accountEntity2)).thenReturn(account2);
-        HashMap<String, String> metadata = new HashMap<String, String>();
-        metadata.put("contact_preferences", "email");
-        metadata.put("annual_salary", "52000");
+        Map<String, String> metadata = Map.of("contact_preferences", "email", "annual_salary", "52000");
         
         Customer dto = customerMapper.toDto(entity);
         
@@ -197,9 +191,7 @@ public class CustomerMapperTest {
         accounts.add(account2);
         model.setAccounts(accounts);
         
-        HashMap<String, String> metadata = new HashMap<String, String>();
-        metadata.put("contact_preferences", "email");
-        metadata.put("annual_salary", "48000");
+        Map<String, String> metadata = Map.of("contact_preferences", "email", "annual_salary", "48000");
         model.setMetadata(metadata);
         
         BankAccountEntity accountEntity1 = createBankAccountEntity(10L, instantDate);
