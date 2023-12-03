@@ -1,25 +1,19 @@
 package com.cdx.bas.application.transaction;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.cdx.bas.domain.bank.account.BankAccountServicePort;
+import com.cdx.bas.domain.transaction.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
-
-import com.cdx.bas.domain.bank.account.BankAccountServicePort;
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionException;
-import com.cdx.bas.domain.transaction.TransactionPersistencePort;
-import com.cdx.bas.domain.transaction.TransactionServicePort;
-import com.cdx.bas.domain.transaction.TransactionStatus;
-import com.cdx.bas.domain.transaction.TransactionType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.cdx.bas.domain.transaction.TransactionStatus.*;
 
 @RequestScoped
 public class TransactionServiceImpl implements TransactionServicePort {
@@ -38,17 +32,61 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
     
     @Override
-    @Transactional(value = TxType.REQUIRES_NEW)
-    public void processTransaction(Transaction transaction) {
+    public void process(Transaction transaction) {
         if (TransactionType.CREDIT.equals(transaction.getType())) {
-            logger.info("Transaction " +  transaction.getAccountId() + " processing...");
+            logger.info("Transaction " +  transaction.getId() + " processing...");
             bankAccountService.deposit(transaction);
         }
     }
 
-	@Override
-	public Transaction completeTransaction(Transaction transaction, Map<String, String> metadata) {
-		transaction = new Transaction(transaction, TransactionStatus.COMPLETED, metadata);
-		return transaction;
+    @Override
+    @Transactional(value = TxType.MANDATORY)
+    public Transaction setAsOutstanding(Transaction transaction) {
+        if (UNPROCESSED.equals(transaction.getStatus())) {
+            transaction.setStatus(OUTSTANDING);
+        } else {
+            throw new TransactionException("Transaction is not longer unprocessed.");
+        }
+        return transactionRepository.update(transaction);
+    }
+
+    @Override
+    @Transactional(value = TxType.MANDATORY)
+	public Transaction setAsCompleted(Transaction completedTransaction, Map<String, String> metadata) {
+        setState(completedTransaction, metadata, COMPLETED);
+		return transactionRepository.update(completedTransaction);
 	}
+
+    @Override
+    @Transactional(value = TxType.MANDATORY)
+    public Transaction setAsError(Transaction erroredTransaction, Map<String, String> metadata) {
+        setState(erroredTransaction, metadata, ERROR);
+        return transactionRepository.update(erroredTransaction);
+    }
+
+    @Override
+    @Transactional(value = TxType.MANDATORY)
+    public Transaction setAsRefused(Transaction refusedTransaction, Map<String, String> metadata) {
+        setState(refusedTransaction, metadata, REFUSED);
+        return transactionRepository.update(refusedTransaction);
+    }
+
+    private void setState(Transaction refusedTransaction, Map<String, String> metadata, TransactionStatus status) {
+        refusedTransaction.setMetadata(metadata);
+        refusedTransaction.setStatus(status);
+    }
+    @Override
+    public Transaction mergeTransactions (Transaction oldTransaction, Transaction newTransaction){
+        oldTransaction.setId(newTransaction.getId());
+        oldTransaction.setAccountId(newTransaction.getAccountId()); //TODO
+        // oldTransaction.setReceivedAccountId(); //TODO
+        oldTransaction.setAmount(newTransaction.getAmount());
+        oldTransaction.setCurrency(newTransaction.getCurrency());
+        oldTransaction.setType(newTransaction.getType());
+        oldTransaction.setStatus(newTransaction.getStatus());
+        oldTransaction.setDate(newTransaction.getDate());
+        oldTransaction.setLabel(newTransaction.getLabel());
+        oldTransaction.setMetadata(newTransaction.getMetadata());
+        return oldTransaction;
+    }
 }

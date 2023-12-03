@@ -2,6 +2,7 @@ package com.cdx.bas.domain.transaction;
 
 import com.cdx.bas.domain.validator.ValidCurrency;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,15 +13,15 @@ import jakarta.validation.constraints.NotNull;
 
 public class Transaction implements Comparable<Transaction> {
 
-    @NotNull(message="id must not be null.")
+    @NotNull(message = "id must not be null.")
     @Min(value = 1, message = "id must be positive and greater than 0.")
     private Long id;
 
-    @NotNull(message = "gender must not be null.")
+    @NotNull(message = "accountId must not be null.")
     private Long accountId;
 
     @Min(value = 1, message = "amount must be positive and greater than 0.")
-    private long amount;
+    private BigDecimal amount;
 
     @NotNull(message = "currency must not be null.")
     @ValidCurrency
@@ -44,25 +45,13 @@ public class Transaction implements Comparable<Transaction> {
         super();
     }
 
-    public Transaction(long accountId, String currency, long amount, TransactionType type) {
+    public Transaction(long accountId, String currency, BigDecimal amount, TransactionType type) {
         this.id = accountId;
         this.amount = amount;
         this.currency = currency;
         this.type = type;
-        this.status = TransactionStatus.WAITING;
+        this.status = TransactionStatus.UNPROCESSED;
         this.date = Instant.now();
-    }
-
-    public Transaction(Transaction transaction, TransactionStatus status, Map<String, String> metadata) {
-        this.id = transaction.id;
-        this.accountId = transaction.accountId;
-        this.amount = transaction.amount;
-        this.currency = transaction.currency;
-        this.type = transaction.type;
-        this.status = status;
-        this.date = transaction.date;
-        this.label = transaction.label;
-        this.metadata.putAll(metadata);
     }
 
     public Long getId() {
@@ -81,11 +70,11 @@ public class Transaction implements Comparable<Transaction> {
         this.accountId = accountId;
     }
 
-    public long getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -143,26 +132,15 @@ public class Transaction implements Comparable<Transaction> {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(accountId, amount, date, id, label, metadata, status, type);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Objects.equals(id, that.id) && Objects.equals(accountId, that.accountId) && Objects.equals(amount, that.amount) && Objects.equals(currency, that.currency) && type == that.type && status == that.status && Objects.equals(date, that.date) && Objects.equals(label, that.label) && Objects.equals(metadata, that.metadata);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Transaction other = (Transaction) obj;
-        return Objects.equals(accountId, other.accountId) && amount == other.amount
-                && Objects.equals(date, other.date)
-                && Objects.equals(id, other.id) && Objects.equals(label, other.label)
-                && Objects.equals(metadata, other.metadata)
-                && status == other.status && type == other.type;
+    public int hashCode() {
+        return Objects.hash(id, accountId, amount, currency, type, status, date, label, metadata);
     }
 }

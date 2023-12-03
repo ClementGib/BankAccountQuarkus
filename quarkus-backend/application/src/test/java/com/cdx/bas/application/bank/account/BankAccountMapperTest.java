@@ -103,10 +103,12 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toEntity_should_mapNullValues_when_dtoHasNullValuesButHasType() {
-        BankAccountEntity entity = bankAccountMapper.toEntity(new CheckingBankAccount());
+    public void toEntity_should_mapNullValues_when_dtoHasNullValuesButHasTypeAndId() {
+        BankAccount bankAccount = new CheckingBankAccount();
+        bankAccount.setId(1L);
+        BankAccountEntity entity = bankAccountMapper.toEntity(bankAccount);
 
-        assertThat(entity.getId()).isNull();
+        assertThat(entity.getId()).isEqualTo(1L);
         assertThat(entity.getType()).isEqualTo(AccountType.CHECKING);
         assertThat(entity.getBalance()).isNull();
         assertThat(entity.getCustomers()).isEmpty();
@@ -211,6 +213,7 @@ public class BankAccountMapperTest {
         TransactionEntity transactionEntity2 = createTransactionEntity(5000L, 10L, date);
         when(transactionMapper.toEntity(transaction2)).thenReturn(transactionEntity2);
 
+
         BankAccountEntity entity = bankAccountMapper.toEntity(dto);
 
         assertThat(entity.getId()).isEqualTo(10L);
@@ -264,7 +267,7 @@ public class BankAccountMapperTest {
         Transaction transactionEntity = new Transaction();
         transactionEntity.setId(id);
         transactionEntity.setAccountId(accountId);
-        transactionEntity.setAmount(100L);
+        transactionEntity.setAmount(new BigDecimal(100.00));
         transactionEntity.setType(TransactionType.CREDIT);
         transactionEntity.setStatus(TransactionStatus.ERROR);
         transactionEntity.setDate(instantDate);

@@ -23,7 +23,7 @@ public interface TransactionPersistencePort {
     /**
      * create the current Transaction
      * 
-     * @param Transaction to create
+     * @param transaction to create
      * @return created Transaction
      */
     public Transaction create(Transaction transaction);
@@ -31,7 +31,7 @@ public interface TransactionPersistencePort {
     /**
      * update the current Transaction
      * 
-     * @param Transaction to update
+     * @param transaction to update
      * @return updated Transaction
      */
     public Transaction update(Transaction transaction);
@@ -39,7 +39,7 @@ public interface TransactionPersistencePort {
     /**
      * delete the current Transaction
      * 
-     * @param Transaction id to remove
+     * @param id to remove
      */
     public Optional<Transaction> deleteById(long id);
 }

@@ -75,7 +75,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.jboss.jandex</groupId>
+                <groupId>io.smallrye</groupId>
                 <artifactId>jandex-maven-plugin</artifactId>
                 <executions>
                     <execution>
@@ -110,6 +110,7 @@
                     </compilerArgs>
                     <source>21</source>
                     <target>21</target>
+                    <release>21</release>
                     <annotationProcessorPaths>
                         <!-- Your existing annotation processor(s)... -->
                         <path>

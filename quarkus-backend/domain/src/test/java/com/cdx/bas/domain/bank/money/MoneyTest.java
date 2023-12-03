@@ -1,14 +1,12 @@
 package com.cdx.bas.domain.bank.money;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.cdx.bas.domain.money.Money;
+import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import com.cdx.bas.domain.money.Money;
-
-import org.junit.jupiter.api.Test;
-
-import io.quarkus.test.junit.QuarkusTest;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
 public class MoneyTest {
@@ -22,21 +20,28 @@ public class MoneyTest {
 
     @Test
     public void Money_should_instantiateMoneyWithAmountValue_when_amountValueIsANegativeNumber() {
-        Money money = new Money(new BigDecimal("-100"));
+        double amount = -100.00;
+        Money money = new Money(new BigDecimal(amount));
 
         assertThat(money.getAmount()).isEqualTo("-100");
     }
     
     @Test
     public void of_should_returnMoneyWithAmountOfValue_when_ValueIsAPositiveNumber() {
-        Money money = Money.of(100L);
+        double amount = 100.00;
+        BigDecimal value = new BigDecimal(amount);
+
+        Money money = Money.of(value);
 
         assertThat(money.getAmount()).isEqualTo(new BigDecimal("100"));
     }
     
     @Test
     public void of_should_returnMoneyWithAmountOfValue_when_ValueIsANegativeNumber() {
-        Money money = Money.of(-100L);
+        double amount = -100.00;
+        BigDecimal value = new BigDecimal(amount);
+
+        Money money = Money.of(value);
 
         assertThat(money.getAmount()).isEqualTo(new BigDecimal("-100"));
     }

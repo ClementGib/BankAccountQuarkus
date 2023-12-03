@@ -42,12 +42,11 @@ public abstract class BankAccount {
     public BankAccount(Long id, AccountType type, Money balance, List<Long> customersId, Set<Transaction> transactions) {
       this.id = id;
       this.type = type;
-      this.balance = balance;
       this.customersId = customersId;
       this.transactions = transactions;
       this.balance = balance;
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -73,57 +72,37 @@ public abstract class BankAccount {
     }
 
     public List<Long> getCustomersId() {
-		return customersId;
-	}
+        return customersId;
+    }
 
-	public void setCustomersId(List<Long> customerId) {
-		this.customersId = customerId;
-	}
+    public void setCustomersId(List<Long> customersId) {
+        this.customersId = customersId;
+    }
 
-	public Set<Transaction> getTransactions() {
+    public Set<Transaction> getTransactions() {
         return transactions;
     }
 
     public void setTransactions(Set<Transaction> transactions) {
         this.transactions = transactions;
     }
-    
+
     public Transaction getTransaction(Long transactionId) {
         return transactions.stream()
                 .filter(transaction -> transaction.getId().equals(transactionId))
                 .findFirst().orElseThrow(() -> new TransactionException("Transaction " + transactionId + " not found in the bank account."));
         }
 
-    public void addTransaction(Transaction newTransaction) {
-        this.transactions.stream()
-        .filter(transaction -> transaction.getId().equals(newTransaction.getId()))
-        .findFirst()
-        .ifPresentOrElse(
-                transaction -> {
-                    transactions.remove(transaction);
-                    transactions.add(newTransaction);
-                }, () -> transactions.add(newTransaction));
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BankAccount that = (BankAccount) o;
+        return Objects.equals(id, that.id) && type == that.type && Objects.equals(balance, that.balance) && Objects.equals(customersId, that.customersId) && Objects.equals(transactions, that.transactions);
     }
-    
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(balance, customersId, id, transactions, type);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BankAccount other = (BankAccount) obj;
-		return Objects.equals(balance, other.balance) 
-		        && Objects.equals(customersId, other.customersId)
-		        && Objects.equals(id, other.id)
-				&& Objects.equals(transactions, other.transactions) 
-				&& type == other.type;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, balance, customersId, transactions);
+    }
 }

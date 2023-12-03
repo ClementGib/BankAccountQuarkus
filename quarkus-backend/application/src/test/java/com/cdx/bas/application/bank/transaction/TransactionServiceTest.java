@@ -1,10 +1,11 @@
 package com.cdx.bas.application.bank.transaction;
 
-import static com.cdx.bas.domain.transaction.TransactionStatus.WAITING;
+import static com.cdx.bas.domain.transaction.TransactionStatus.UNPROCESSED;
 import static com.cdx.bas.domain.transaction.TransactionType.CREDIT;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import io.quarkus.test.InjectMock;
 import jakarta.inject.Inject;
@@ -18,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-public class TransactionServiceImplTest {
+public class TransactionServiceTest {
 
 	@Inject
 	TransactionServicePort transactionService;
@@ -30,13 +31,13 @@ public class TransactionServiceImplTest {
 	public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithPositiveAmount() {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);
-		transaction.setAmount(100L);
+		transaction.setAmount(new BigDecimal(100));
 		transaction.setAccountId(100L);
 		transaction.setType(CREDIT);
-		transaction.setStatus(WAITING);
+		transaction.setStatus(UNPROCESSED);
 		transaction.setDate(Instant.now());
 		transaction.setLabel("deposit of 100 euros");
-		transactionService.processTransaction(transaction);
+		transactionService.process(transaction);
 
 		verify(bankAccountService).deposit(transaction);
 		verifyNoMoreInteractions(bankAccountService);
@@ -46,13 +47,13 @@ public class TransactionServiceImplTest {
 	public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithNegativeAmount() {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);
-		transaction.setAmount(-100L);
+		transaction.setAmount(new BigDecimal(-100));
 		transaction.setAccountId(991L);
 		transaction.setType(CREDIT);
-		transaction.setStatus(WAITING);
+		transaction.setStatus(UNPROCESSED);
 		transaction.setDate(Instant.now());
 		transaction.setLabel("deposit of -100 euros");
-		transactionService.processTransaction(transaction);
+		transactionService.process(transaction);
 
 		verify(bankAccountService).deposit(transaction);
 		verifyNoMoreInteractions(bankAccountService);

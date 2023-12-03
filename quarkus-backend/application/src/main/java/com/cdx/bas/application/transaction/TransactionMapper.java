@@ -23,6 +23,9 @@ import org.hibernate.MappingException;
 public class TransactionMapper implements DtoEntityMapper<Transaction, TransactionEntity> {
 
     @Inject
+    TransactionRepository transactionRepository;
+
+    @Inject
     BankAccountRepository bankAccountRepository;
 
     @Inject
@@ -43,7 +46,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         }
 
         if (entity.getAmount() != null) {
-            dto.setAmount(entity.getAmount().longValue());
+            dto.setAmount(entity.getAmount());
         }
         dto.setCurrency(entity.getCurrency());
         dto.setType(entity.getType());
@@ -66,21 +69,20 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
 
     public TransactionEntity toEntity(Transaction dto) {
         
-        if (dto == null) {
+        if (dto == null || dto.getId() == null) {
             return null;
         }
         
-        TransactionEntity entity = new TransactionEntity();
+        TransactionEntity entity = transactionRepository.findByIdOptional(dto.getId()).orElse(new TransactionEntity());
         entity.setId(dto.getId());
-        Optional<BankAccountEntity> optionalBankAccountEntity = bankAccountRepository
-                .findByIdOptional(dto.getAccountId());
+        Optional<BankAccountEntity> optionalBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getAccountId());
         if (optionalBankAccountEntity.isPresent()) {
             entity.setAccount(optionalBankAccountEntity.get());
         } else {
             throw new NoSuchElementException("Bank Account entity not found for id: " + dto.getAccountId());
         }
 
-        entity.setAmount(new BigDecimal(dto.getAmount()));
+        entity.setAmount(dto.getAmount());
         entity.setCurrency(dto.getCurrency());
         entity.setType(dto.getType());
         entity.setStatus(dto.getStatus());

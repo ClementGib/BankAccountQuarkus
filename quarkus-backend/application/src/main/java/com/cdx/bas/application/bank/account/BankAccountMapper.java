@@ -19,10 +19,11 @@ import com.cdx.bas.domain.utils.BankAccountFactory;
 public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccountEntity> {
 
     @Inject
-    private DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
-
-    @Inject
     private CustomerRepository customerRepository;
+    @Inject
+    private BankAccountRepository bankAccountRepository;
+    @Inject
+    private DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
 
     @Override
     public BankAccount toDto(BankAccountEntity entity) {
@@ -47,11 +48,11 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
     @Override
     public BankAccountEntity toEntity(BankAccount dto) {
 
-        if (dto == null) {
+        if (dto == null || dto.getId() == null) {
             return null;
         }
 
-        BankAccountEntity entity = new BankAccountEntity();
+        BankAccountEntity entity = bankAccountRepository.findByIdOptional(dto.getId()).orElse(new BankAccountEntity());
         entity.setId(dto.getId());
         entity.setType(dto.getType());
 
