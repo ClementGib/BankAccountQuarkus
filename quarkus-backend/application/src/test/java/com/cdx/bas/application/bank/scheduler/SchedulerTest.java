@@ -3,6 +3,8 @@ package com.cdx.bas.application.bank.scheduler;
 import com.cdx.bas.application.scheduler.Scheduler;
 import com.cdx.bas.domain.transaction.*;
 import io.quarkus.test.InjectMock;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Disabled;
@@ -26,6 +28,7 @@ import static org.mockito.Mockito.*;
 
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)
+@QuarkusTestResource(H2DatabaseTestResource.class)
 public class SchedulerTest {
 
     @InjectMock

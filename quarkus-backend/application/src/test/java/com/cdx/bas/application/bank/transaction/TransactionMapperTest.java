@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import io.quarkus.test.InjectMock;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
 import jakarta.inject.Inject;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
@@ -28,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@QuarkusTestResource(H2DatabaseTestResource.class)
 public class TransactionMapperTest {
 
     @Inject

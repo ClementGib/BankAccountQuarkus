@@ -8,6 +8,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.math.BigDecimal;
 import java.time.Instant;
 import io.quarkus.test.InjectMock;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
 import jakarta.inject.Inject;
 
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@QuarkusTestResource(H2DatabaseTestResource.class)
 public class TransactionServiceTest {
 
 	@Inject
