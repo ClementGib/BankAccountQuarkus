@@ -37,20 +37,31 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     public Transaction deposit(Transaction transaction) {
         Map<String, String> metadata = new HashMap<>();
         try {
-            BankAccount currentBankAccount = bankAccountRepository.findById(transaction.getAccountId())
-                    .orElseThrow(() -> new NoSuchElementException("bank account " + transaction.getAccountId() + " is not found."));
+            BankAccount senderBankAccount = bankAccountRepository.findById(transaction.getSenderAccountId())
+                    .orElseThrow(() -> new NoSuchElementException("Sender bank account " + transaction.getSenderAccountId() + " is not found."));
+
+            BankAccount receiverBankAccount = bankAccountRepository.findById(transaction.getReceiverAccountId())
+                    .orElseThrow(() -> new NoSuchElementException("Receiver bank account " + transaction.getReceiverAccountId() + " is not found."));
+
             Transaction currentTransaction = transactionService.setAsOutstanding(transaction);
 
-            logger.info("BankAccount " + currentTransaction.getAccountId() + " process currentTransaction deposit " + currentTransaction.getId() + " for amount "+ currentTransaction.getAmount());
-            metadata.put("amount_before", currentBankAccount.getBalance().getAmount().toString());
-            creditBankAccountFromTransaction(currentBankAccount, currentTransaction);
-            bankAccountValidator.validateBankAccount(currentBankAccount);
-            metadata.put("amount_after", currentBankAccount.getBalance().getAmount().toString());
+            logger.info("Bank account " + currentTransaction.getSenderAccountId()
+                    + " process deposit transaction " + currentTransaction.getId()
+                    + " with amount " + currentTransaction.getAmount()
+                    + " to bank account " + currentTransaction.getReceiverAccountId());
+
+            metadata.put("sender_amount_before", senderBankAccount.getBalance().getAmount().toString());
+            metadata.put("receiver_amount_before", receiverBankAccount.getBalance().getAmount().toString());
+            creditBankAccountFromTransaction(senderBankAccount, receiverBankAccount, currentTransaction);
+            bankAccountValidator.validateBankAccount(senderBankAccount);
+            bankAccountValidator.validateBankAccount(receiverBankAccount);
+            metadata.put("sender_amount_after", senderBankAccount.getBalance().getAmount().toString());
+            metadata.put("receiver_amount_after", receiverBankAccount.getBalance().getAmount().toString());
 
             Transaction completedTransaction = transactionService.setAsCompleted(currentTransaction, metadata);
-            BankAccount updatedBankAccount = addTransaction(currentBankAccount, completedTransaction);
+            BankAccount updatedBankAccount = addTransaction(senderBankAccount, completedTransaction);
 
-            logger.info("BankAccount " + updatedBankAccount.getId() + " currentTransaction deposit " + + currentTransaction.getId() + " completed.");
+            logger.info("Bank account " + updatedBankAccount.getId() + " deposit transaction " + + currentTransaction.getId() + " completed.");
             return completedTransaction;
         } catch (NoSuchElementException exception) {
             logger.error("Transaction " + transaction.getId() + " deposit error for amount "+ transaction.getAmount() + ": " + exception.getMessage());
@@ -64,9 +75,10 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
         }
     }
 
-    private void creditBankAccountFromTransaction(BankAccount currentBankAccount, Transaction transactionToCredit) {
+    private void creditBankAccountFromTransaction(BankAccount senderBankAccount, BankAccount receiverBankAccount, Transaction transactionToCredit) {
         BigDecimal euroAmount = ExchangeRateUtils.getEuroAmountFrom(transactionToCredit.getCurrency(), transactionToCredit.getAmount());
-        currentBankAccount.getBalance().plus(Money.of(euroAmount));
+        senderBankAccount.getBalance().minus(Money.of(euroAmount));
+        receiverBankAccount.getBalance().plus(Money.of(euroAmount));
     }
 
     private BankAccount addTransaction(BankAccount currentBankAccount, Transaction newTransaction) {

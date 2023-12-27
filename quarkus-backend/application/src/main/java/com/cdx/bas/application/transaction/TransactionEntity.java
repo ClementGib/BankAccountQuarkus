@@ -26,8 +26,13 @@ public class TransactionEntity extends PanacheEntityBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "transaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "account_id"))
-    private BankAccountEntity account;
+            inverseJoinColumns = @JoinColumn(name = "sender_account_id"))
+    private BankAccountEntity senderAccount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "transaction_id"),
+            inverseJoinColumns = @JoinColumn(name = "receiver_account_id"))
+    private BankAccountEntity receiverAccount;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -61,12 +66,20 @@ public class TransactionEntity extends PanacheEntityBase {
         this.id = id;
     }
 
-    public BankAccountEntity getAccount() {
-        return account;
+    public BankAccountEntity getSenderAccount() {
+        return senderAccount;
     }
 
-    public void setAccount(BankAccountEntity account) {
-        this.account = account;
+    public void setSenderAccount(BankAccountEntity senderAccount) {
+        this.senderAccount = senderAccount;
+    }
+
+    public BankAccountEntity getReceiverAccount() {
+        return receiverAccount;
+    }
+
+    public void setReceiverAccount(BankAccountEntity receiverAccount) {
+        receiverAccount = receiverAccount;
     }
 
     public BigDecimal getAmount() {
@@ -127,7 +140,7 @@ public class TransactionEntity extends PanacheEntityBase {
 
     @Override
     public int hashCode() {
-        return Objects.hash(account, amount, date, id, label, metadata, status, type);
+        return Objects.hash(senderAccount, receiverAccount, amount, date, id, label, metadata, status, type);
     }
 
     @Override
@@ -142,8 +155,13 @@ public class TransactionEntity extends PanacheEntityBase {
             return false;
         }
         TransactionEntity other = (TransactionEntity) obj;
-        return Objects.equals(account, other.account) && Objects.equals(amount, other.amount)
-                && Objects.equals(date, other.date) && id == other.id && Objects.equals(label, other.label)
-                && Objects.equals(metadata, other.metadata) && status == other.status && type == other.type;
+        return Objects.equals(senderAccount, other.senderAccount) && Objects.equals(receiverAccount, other.receiverAccount)
+                && Objects.equals(amount, other.amount)
+                && Objects.equals(date, other.date)
+                && id == other.id
+                && Objects.equals(label, other.label)
+                && Objects.equals(metadata, other.metadata)
+                && status == other.status
+                && type == other.type;
     }
 }

@@ -41,8 +41,12 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
 
         dto.setId(entity.getId());
         
-        if (entity.getAccount() != null) {
-            dto.setAccountId(entity.getAccount().getId());
+        if (entity.getSenderAccount() != null) {
+            dto.setSenderAccountId(entity.getSenderAccount().getId());
+        }
+
+        if (entity.getReceiverAccount() != null) {
+            dto.setReceiverAccountId(entity.getReceiverAccount().getId());
         }
 
         if (entity.getAmount() != null) {
@@ -62,7 +66,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
                 dto.setMetadata(new HashMap<>());
             }
         } catch (JsonProcessingException exception) {
-            throw new MappingException("An error occured while parsing JSON String to Map<String, String>", exception);
+            throw new MappingException("Mapping error: An error occurred while parsing JSON String to Map<String, String>", exception);
         }
         return dto;
     }
@@ -75,11 +79,19 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         
         TransactionEntity entity = transactionRepository.findByIdOptional(dto.getId()).orElse(new TransactionEntity());
         entity.setId(dto.getId());
-        Optional<BankAccountEntity> optionalBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getAccountId());
-        if (optionalBankAccountEntity.isPresent()) {
-            entity.setAccount(optionalBankAccountEntity.get());
+
+        Optional<BankAccountEntity> optionalSenderBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getSenderAccountId());
+        if (optionalSenderBankAccountEntity.isPresent()) {
+            entity.setSenderAccount(optionalSenderBankAccountEntity.get());
         } else {
-            throw new NoSuchElementException("Bank Account entity not found for id: " + dto.getAccountId());
+            throw new NoSuchElementException("Mapping error: sender bank account entity is not found for id: " + dto.getSenderAccountId());
+        }
+
+        Optional<BankAccountEntity> optionalReceiverBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getReceiverAccountId());
+        if (optionalReceiverBankAccountEntity.isPresent()) {
+            entity.setReceiverAccount(optionalReceiverBankAccountEntity.get());
+        } else {
+            throw new NoSuchElementException("Mapping error: receiver bank account entity is not found for id: " + dto.getReceiverAccountId());
         }
 
         entity.setAmount(dto.getAmount());
@@ -96,7 +108,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
                 entity.setMetadata(null);
             }
         } catch (JsonProcessingException exception) {
-            throw new MappingException("An error occured while parsing Map<String, String> to JSON String", exception);
+            throw new MappingException("Mapping error: An error occurred while parsing Map<String, String> to JSON String", exception);
         }
         return entity;
     }

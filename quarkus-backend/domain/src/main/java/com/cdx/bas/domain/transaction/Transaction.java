@@ -1,15 +1,14 @@
 package com.cdx.bas.domain.transaction;
 
 import com.cdx.bas.domain.validator.ValidCurrency;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 
 public class Transaction implements Comparable<Transaction> {
 
@@ -18,7 +17,10 @@ public class Transaction implements Comparable<Transaction> {
     private Long id;
 
     @NotNull(message = "accountId must not be null.")
-    private Long accountId;
+    private Long senderAccountId;
+
+    @NotNull(message = "accountId must not be null.")
+    private Long receiverAccountId;
 
     @Min(value = 1, message = "amount must be positive and greater than 0.")
     private BigDecimal amount;
@@ -62,12 +64,20 @@ public class Transaction implements Comparable<Transaction> {
         this.id = id;
     }
 
-    public Long getAccountId() {
-        return accountId;
+    public Long getSenderAccountId() {
+        return senderAccountId;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public void setSenderAccountId(Long senderAccountId) {
+        this.senderAccountId = senderAccountId;
+    }
+
+    public Long getReceiverAccountId() {
+        return receiverAccountId;
+    }
+
+    public void setReceiverAccountId(Long receiverAccountId) {
+        this.receiverAccountId = receiverAccountId;
     }
 
     public BigDecimal getAmount() {
@@ -136,11 +146,20 @@ public class Transaction implements Comparable<Transaction> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return Objects.equals(id, that.id) && Objects.equals(accountId, that.accountId) && Objects.equals(amount, that.amount) && Objects.equals(currency, that.currency) && type == that.type && status == that.status && Objects.equals(date, that.date) && Objects.equals(label, that.label) && Objects.equals(metadata, that.metadata);
+        return Objects.equals(id, that.id)
+                && Objects.equals(senderAccountId, that.senderAccountId)
+                && Objects.equals(receiverAccountId, that.receiverAccountId)
+                && Objects.equals(amount, that.amount)
+                && Objects.equals(currency, that.currency)
+                && type == that.type
+                && status == that.status
+                && Objects.equals(date, that.date)
+                && Objects.equals(label, that.label)
+                && Objects.equals(metadata, that.metadata);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accountId, amount, currency, type, status, date, label, metadata);
+        return Objects.hash(id, senderAccountId, receiverAccountId, amount, currency, type, status, date, label, metadata);
     }
 }
