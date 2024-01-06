@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.cdx.bas.application.transaction.TransactionBankAccountsEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,21 +39,23 @@ public class BankAccountEntity extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_accounts_account_id_seq_gen")
     @SequenceGenerator(name = "bank_accounts_account_id_seq_gen", sequenceName = "bank_accounts_account_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
-    
+
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private AccountType type;
-    
+
     @Column(name = "balance", nullable = false)
     private BigDecimal balance;
-    
+
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<CustomerEntity> customers = new ArrayList<>();
-    
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
-    @OrderBy("date")
-    private Set<TransactionEntity> transactions = new HashSet<>();
+
+    @OneToMany(mappedBy = "sender_account_id", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    private Set<TransactionBankAccountsEntity> issuedTransactions = new HashSet<>();
+
+    @OneToMany(mappedBy = "receiver_account_id", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    private Set<TransactionBankAccountsEntity> receivedTransactions = new HashSet<>();
+
 
     public Long getId() {
         return id;
@@ -86,11 +89,19 @@ public class BankAccountEntity extends PanacheEntityBase {
         this.customers = customers;
     }
 
-    public Set<TransactionEntity> getTransactions() {
-        return transactions;
+    public Set<TransactionBankAccountsEntity> getIssuedTransactions() {
+        return issuedTransactions;
     }
 
-    public void setTransactions(Set<TransactionEntity> transactions) {
-        this.transactions = transactions;
+    public void setIssuedTransactions(Set<TransactionBankAccountsEntity> issuedTransactions) {
+        this.issuedTransactions = issuedTransactions;
+    }
+
+    public Set<TransactionBankAccountsEntity> getReceivedTransactions() {
+        return receivedTransactions;
+    }
+
+    public void setReceivedTransactions(Set<TransactionBankAccountsEntity> receivedTransactions) {
+        this.receivedTransactions = receivedTransactions;
     }
 }

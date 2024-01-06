@@ -1,6 +1,5 @@
 package com.cdx.bas.application.transaction;
 
-import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -24,15 +23,8 @@ public class TransactionEntity extends PanacheEntityBase {
     @SequenceGenerator(name = "transactions_transaction_id_seq_gen", sequenceName = "transactions_transaction_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "transaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "sender_account_id"))
-    private BankAccountEntity senderAccount;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "transaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "receiver_account_id"))
-    private BankAccountEntity receiverAccount;
+    @OneToOne(mappedBy = "transactionId", cascade = CascadeType.ALL)
+    private TransactionBankAccountsEntity transactionBankAccounts;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -66,20 +58,12 @@ public class TransactionEntity extends PanacheEntityBase {
         this.id = id;
     }
 
-    public BankAccountEntity getSenderAccount() {
-        return senderAccount;
+    public TransactionBankAccountsEntity getTransactionBankAccounts() {
+        return transactionBankAccounts;
     }
 
-    public void setSenderAccount(BankAccountEntity senderAccount) {
-        this.senderAccount = senderAccount;
-    }
-
-    public BankAccountEntity getReceiverAccount() {
-        return receiverAccount;
-    }
-
-    public void setReceiverAccount(BankAccountEntity receiverAccount) {
-        receiverAccount = receiverAccount;
+    public void setTransactionBankAccounts(TransactionBankAccountsEntity transactionBankAccounts) {
+        this.transactionBankAccounts = transactionBankAccounts;
     }
 
     public BigDecimal getAmount() {
@@ -140,7 +124,7 @@ public class TransactionEntity extends PanacheEntityBase {
 
     @Override
     public int hashCode() {
-        return Objects.hash(senderAccount, receiverAccount, amount, date, id, label, metadata, status, type);
+        return Objects.hash(transactionBankAccounts, amount, date, id, label, metadata, status, type);
     }
 
     @Override
@@ -155,7 +139,7 @@ public class TransactionEntity extends PanacheEntityBase {
             return false;
         }
         TransactionEntity other = (TransactionEntity) obj;
-        return Objects.equals(senderAccount, other.senderAccount) && Objects.equals(receiverAccount, other.receiverAccount)
+        return Objects.equals(transactionBankAccounts, other.transactionBankAccounts)
                 && Objects.equals(amount, other.amount)
                 && Objects.equals(date, other.date)
                 && id == other.id

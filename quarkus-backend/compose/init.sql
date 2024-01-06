@@ -61,7 +61,7 @@ SET search_path TO basapp;
 	);
 
 	-- CREATE bank_account_transactions TABLE --
-	CREATE TABLE basapp.bank_accounts_transactions
+	CREATE TABLE basapp.transactions_bank_accounts
 	(
 	sender_account_id bigint NOT NULL,
     receiver_account_id bigint NOT NULL,

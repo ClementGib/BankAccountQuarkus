@@ -38,7 +38,7 @@ public class BankAccountServiceTest {
     TransactionServicePort transactionService;
 
     @Inject
-    BankAccountServiceImpl bankAccountService;
+    BankAccountServicePort bankAccountService;
 
     @Test
     public void deposit_should_throwNoSuchElementException_when_accountIsNotFound() {
@@ -186,7 +186,8 @@ public class BankAccountServiceTest {
 		transaction.setId(id);
 		transaction.setAmount(amount);
         transaction.setCurrency("EUR");
-		transaction.setAccountId(accountId);
+		transaction.setSenderAccountId(accountId);
+        transaction.setReceiverAccountId(77L);
 		transaction.setType(type);
 		transaction.setStatus(status);
 		transaction.setDate(date);

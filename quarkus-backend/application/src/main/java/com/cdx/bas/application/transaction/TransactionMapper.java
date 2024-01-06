@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hibernate.MappingException;
 
+import javax.persistence.Entity;
+
 @RequestScoped
 public class TransactionMapper implements DtoEntityMapper<Transaction, TransactionEntity> {
 
@@ -41,12 +43,12 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
 
         dto.setId(entity.getId());
         
-        if (entity.getSenderAccount() != null) {
-            dto.setSenderAccountId(entity.getSenderAccount().getId());
+        if (entity.getTransactionBankAccounts() != null && entity.getTransactionBankAccounts().getSenderAccount() != null) {
+            dto.setSenderAccountId(entity.getTransactionBankAccounts().getSenderAccount().getId());
         }
 
-        if (entity.getReceiverAccount() != null) {
-            dto.setReceiverAccountId(entity.getReceiverAccount().getId());
+        if (entity.getTransactionBankAccounts() != null && entity.getTransactionBankAccounts().getReceiverAccount() != null) {
+            dto.setReceiverAccountId(entity.getTransactionBankAccounts().getReceiverAccount().getId());
         }
 
         if (entity.getAmount() != null) {
@@ -80,20 +82,8 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         TransactionEntity entity = transactionRepository.findByIdOptional(dto.getId()).orElse(new TransactionEntity());
         entity.setId(dto.getId());
 
-        Optional<BankAccountEntity> optionalSenderBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getSenderAccountId());
-        if (optionalSenderBankAccountEntity.isPresent()) {
-            entity.setSenderAccount(optionalSenderBankAccountEntity.get());
-        } else {
-            throw new NoSuchElementException("Mapping error: sender bank account entity is not found for id: " + dto.getSenderAccountId());
-        }
-
-        Optional<BankAccountEntity> optionalReceiverBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getReceiverAccountId());
-        if (optionalReceiverBankAccountEntity.isPresent()) {
-            entity.setReceiverAccount(optionalReceiverBankAccountEntity.get());
-        } else {
-            throw new NoSuchElementException("Mapping error: receiver bank account entity is not found for id: " + dto.getReceiverAccountId());
-        }
-
+        TransactionBankAccountsEntity transactionBankAccountsEntity = getTransactionBankAccountsEntity(dto);
+        entity.setTransactionBankAccounts(transactionBankAccountsEntity);
         entity.setAmount(dto.getAmount());
         entity.setCurrency(dto.getCurrency());
         entity.setType(dto.getType());
@@ -111,5 +101,24 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
             throw new MappingException("Mapping error: An error occurred while parsing Map<String, String> to JSON String", exception);
         }
         return entity;
+    }
+
+    private TransactionBankAccountsEntity getTransactionBankAccountsEntity(Transaction dto) {
+        Optional<BankAccountEntity> optionalSenderBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getSenderAccountId());
+        Optional<BankAccountEntity> optionalReceiverBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getReceiverAccountId());
+        TransactionBankAccountsEntity transactionBankAccountsEntity = new TransactionBankAccountsEntity();
+
+        if (optionalSenderBankAccountEntity.isPresent()) {
+            transactionBankAccountsEntity.setSenderAccount(optionalSenderBankAccountEntity.get());
+        } else {
+            throw new NoSuchElementException("Mapping error: sender bank account entity is not found for id: " + dto.getSenderAccountId());
+        }
+
+        if (optionalReceiverBankAccountEntity.isPresent()) {
+            transactionBankAccountsEntity.setReceiverAccount(optionalReceiverBankAccountEntity.get());
+        } else {
+            throw new NoSuchElementException("Mapping error: receiver bank account entity is not found for id: " + dto.getReceiverAccountId());
+        }
+        return transactionBankAccountsEntity;
     }
 }

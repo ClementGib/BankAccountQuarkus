@@ -78,7 +78,8 @@ public class BankAccountValidatorTest {
         dto.setType(null);
         dto.setBalance(null);
         dto.setCustomersId( null);
-        dto.setTransactions(null);
+        dto.setIssuedTransactions(null);
+        dto.setReceivedTransactions(null);
         
         try {
             bankAccountValidator.validateBankAccount(dto);
@@ -114,7 +115,8 @@ public class BankAccountValidatorTest {
         dto.setType(null);
         dto.setBalance(null);
         dto.setCustomersId( null);
-        dto.setTransactions(null);
+        dto.setIssuedTransactions(null);
+        dto.setReceivedTransactions(null);
         
         try {
             bankAccountValidator.validateBankAccount(dto);
@@ -150,7 +152,8 @@ public class BankAccountValidatorTest {
         dto.setType(null);
         dto.setBalance(null);
         dto.setCustomersId( null);
-        dto.setTransactions(null);
+        dto.setIssuedTransactions(null);
+        dto.setReceivedTransactions(null);
         
         try {
             bankAccountValidator.validateBankAccount(dto);

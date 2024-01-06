@@ -1,21 +1,5 @@
 package com.cdx.bas.application.bank.transaction;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import io.quarkus.test.InjectMock;
-import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
-import jakarta.inject.Inject;
-
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.bank.account.BankAccountRepository;
 import com.cdx.bas.application.transaction.TransactionEntity;
@@ -24,10 +8,23 @@ import com.cdx.bas.domain.bank.account.AccountType;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
-
+import io.quarkus.test.InjectMock;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.QuarkusTest;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -62,7 +59,8 @@ public class TransactionMapperTest {
         Transaction dto = transactionMapper.toDto(new TransactionEntity());
 
         assertThat(dto.getId()).isNull();
-        assertThat(dto.getAccountId()).isNull();
+        assertThat(dto.getSenderAccountId()).isNull();
+        assertThat(dto.getReceiverAccountId()).isNull();
         assertThat(dto.getAmount()).isNull();
         assertThat(dto.getCurrency()).isNull();
         assertThat(dto.getType()).isNull();
@@ -96,7 +94,8 @@ public class TransactionMapperTest {
         Transaction dto = transactionMapper.toDto(transactionEntity);
 
         assertThat(dto.getId()).isEqualTo(10L);
-        assertThat(dto.getAccountId()).isEqualTo(99L);
+        assertThat(dto.getSenderAccountId()).isEqualTo(99L);
+        assertThat(dto.getReceiverAccountId()).isEqualTo(77L);
         assertThat(dto.getAmount()).isEqualTo(new BigDecimal("100"));
         assertThat(dto.getCurrency()).isEqualTo("EUR");
         assertThat(dto.getType()).isEqualTo(TransactionType.CREDIT);
@@ -119,7 +118,8 @@ public class TransactionMapperTest {
         TransactionEntity entity = transactionMapper.toEntity(transaction);
         
         assertThat(entity.getId()).isEqualTo(10L);
-        assertThat(entity.getAccount()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
+        assertThat(entity.getSenderAccount()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
+        assertThat(entity.getReceiverAccount()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
         assertThat(entity.getAmount()).usingRecursiveComparison().isEqualTo(new BigDecimal(100));
         assertThat(entity.getCurrency()).isEqualTo("EUR");
         assertThat(entity.getType()).isEqualTo(TransactionType.CREDIT);
@@ -132,7 +132,7 @@ public class TransactionMapperTest {
     private Transaction createTransaction(long id, long accountId, Instant instantDate) {
         Transaction transaction = new Transaction();
         transaction.setId(id);
-        transaction.setAccountId(accountId);
+        transaction.setSenderAccountId(accountId);
         transaction.setAmount(new BigDecimal(100));
         transaction.setCurrency("EUR");
         transaction.setType(TransactionType.CREDIT);
@@ -147,7 +147,7 @@ public class TransactionMapperTest {
     private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(id);
-        transactionEntity.setAccount(createBankAccountEntity(accountId, instantDate));
+        transactionEntity.setSenderAccount(createBankAccountEntity(accountId, instantDate));
         transactionEntity.setAmount(new BigDecimal("100"));
         transactionEntity.setCurrency("EUR");
         transactionEntity.setType(TransactionType.CREDIT);

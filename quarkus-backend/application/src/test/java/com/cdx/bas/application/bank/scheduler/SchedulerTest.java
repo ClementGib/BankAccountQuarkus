@@ -95,7 +95,8 @@ public class SchedulerTest {
 		Transaction transaction = new Transaction();
 		transaction.setId(id);
 		transaction.setAmount(new BigDecimal(amount));
-		transaction.setAccountId(accountId);
+		transaction.setSenderAccountId(accountId);
+        transaction.setReceiverAccountId(77L);
 		transaction.setType(type);
 		transaction.setStatus(status);
 		transaction.setDate(date);
