@@ -176,7 +176,7 @@ public class BankAccountServiceTest {
         bankAccount.setCustomersId(customersId);
         HashSet<Transaction> transactionHistory = new HashSet<>();
         Collections.addAll(transactionHistory, transactions);
-        bankAccount.setTransactions(transactionHistory);
+        bankAccount.setIssuedTransactions(transactionHistory);
         return bankAccount;
     }
     

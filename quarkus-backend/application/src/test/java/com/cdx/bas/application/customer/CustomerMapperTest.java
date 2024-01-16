@@ -238,7 +238,7 @@ public class CustomerMapperTest {
         transactions.add(createTransaction(99L, accountId, instantDate));
         transactions.add(createTransaction(100L, accountId, instantDate));
         transactions.add(createTransaction(100L, accountId, instantDate));
-        bankAccount.setTransactions(transactions);
+        bankAccount.setIssuedTransactions(transactions);
         return bankAccount;
     }
     
@@ -273,8 +273,8 @@ public class CustomerMapperTest {
     private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(id);
-        transactionEntity.setSenderAccount(null);
-        transactionEntity.setReceiverAccount(null);
+        transactionEntity.setSenderBankAccountEntity(null);
+        transactionEntity.setReceiverBankAccountEntity(null);
         transactionEntity.setAmount(new BigDecimal("100"));
         transactionEntity.setType(TransactionType.CREDIT);
         transactionEntity.setStatus(TransactionStatus.ERROR);

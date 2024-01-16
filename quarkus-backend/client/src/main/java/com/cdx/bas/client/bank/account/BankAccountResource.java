@@ -41,7 +41,7 @@ public class BankAccountResource implements BankAccountControllerPort{
         if(bankAccountOptional.isPresent()) {
             currentAccount = bankAccountOptional.get();
             Transaction transaction = new Transaction(id,"EUR", new BigDecimal(amount), TransactionType.CREDIT);
-            currentAccount.getTransactions().add(transaction);
+            currentAccount.getIssuedTransactions().add(transaction);
             bankAccountRepository.update(currentAccount);
         }
         return currentAccount;

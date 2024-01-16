@@ -40,6 +40,8 @@ SET search_path TO basapp;
 	CREATE TABLE basapp.transactions
 	(
 	transaction_id BIGSERIAL UNIQUE NOT NULL,
+    sender_account_id bigint NOT NULL,
+    receiver_account_id bigint NOT NULL,
 	type VARCHAR(25) NOT NULL,
 	amount DECIMAL NOT NULL,
     currency VARCHAR(3) NOT NULL,
@@ -47,7 +49,9 @@ SET search_path TO basapp;
 	date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 	label text NOT NULL,
 	metadata jsonb,
-	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id)
+	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id),
+    CONSTRAINT fk_sender_account_id FOREIGN KEY(sender_account_id) REFERENCES basapp.bank_accounts(account_id),
+    CONSTRAINT fk_receiver_account_id FOREIGN KEY(receiver_account_id) REFERENCES basapp.bank_accounts(account_id)
 	);
 	
 	-- CREATE bank_account_customer TABLE --
@@ -58,18 +62,6 @@ SET search_path TO basapp;
 	PRIMARY KEY (account_id, customer_id),
 	CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
 	CONSTRAINT fk_customer_id FOREIGN KEY(customer_id) REFERENCES basapp.customers(customer_id)
-	);
-
-	-- CREATE bank_account_transactions TABLE --
-	CREATE TABLE basapp.transactions_bank_accounts
-	(
-	sender_account_id bigint NOT NULL,
-    receiver_account_id bigint NOT NULL,
-	transaction_id bigint NOT NULL,
-	PRIMARY KEY (sender_account_id, receiver_account_id, transaction_id),
-	CONSTRAINT fk_sender_account_id FOREIGN KEY(sender_account_id) REFERENCES basapp.bank_accounts(account_id),
-    CONSTRAINT fk_receiver_account_id FOREIGN KEY(receiver_account_id) REFERENCES basapp.bank_accounts(account_id),
-	CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
 	);
 
 -- GRANT USER --

@@ -75,7 +75,7 @@ public class BankAccountRepositoryTest {
         bankAccount.setCustomersId(customersId);
         HashSet<Transaction> transactionHistory = new HashSet<>();
         transactionHistory.add(createTransaction(2L, accountId, instantDate));
-        bankAccount.setTransactions(transactionHistory);
+        bankAccount.setIssuedTransactions(transactionHistory);
         return bankAccount;
     }
     

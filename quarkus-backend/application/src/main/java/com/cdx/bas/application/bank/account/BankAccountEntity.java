@@ -6,27 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.cdx.bas.application.transaction.TransactionBankAccountsEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import com.cdx.bas.application.transaction.TransactionEntity;
+import jakarta.persistence.*;
 
 import com.cdx.bas.application.customer.CustomerEntity;
-import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.AccountType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
@@ -50,11 +33,9 @@ public class BankAccountEntity extends PanacheEntityBase {
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<CustomerEntity> customers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sender_account_id", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    private Set<TransactionBankAccountsEntity> issuedTransactions = new HashSet<>();
-
-    @OneToMany(mappedBy = "receiver_account_id", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    private Set<TransactionBankAccountsEntity> receivedTransactions = new HashSet<>();
+    @OneToMany(mappedBy = "senderBankAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("date")
+    private Set<TransactionEntity> issuedTransactions = new HashSet<>();
 
 
     public Long getId() {
@@ -89,19 +70,11 @@ public class BankAccountEntity extends PanacheEntityBase {
         this.customers = customers;
     }
 
-    public Set<TransactionBankAccountsEntity> getIssuedTransactions() {
+    public Set<TransactionEntity> getIssuedTransactions() {
         return issuedTransactions;
     }
 
-    public void setIssuedTransactions(Set<TransactionBankAccountsEntity> issuedTransactions) {
+    public void setIssuedTransactions(Set<TransactionEntity> issuedTransactions) {
         this.issuedTransactions = issuedTransactions;
-    }
-
-    public Set<TransactionBankAccountsEntity> getReceivedTransactions() {
-        return receivedTransactions;
-    }
-
-    public void setReceivedTransactions(Set<TransactionBankAccountsEntity> receivedTransactions) {
-        this.receivedTransactions = receivedTransactions;
     }
 }

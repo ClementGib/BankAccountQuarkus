@@ -29,9 +29,6 @@ public abstract class BankAccount {
 
     @NotNull(message="issued transactions must not be null.")
     private Set<Transaction> issuedTransactions = new HashSet<>();
-
-    @NotNull(message="received transactions must not be null.")
-    private Set<Transaction> receivedTransactions = new HashSet<>();
     
     public BankAccount(AccountType type) {
         this.type = type;
@@ -85,26 +82,6 @@ public abstract class BankAccount {
         this.issuedTransactions = issuedTransactions;
     }
 
-    public Set<Transaction> getReceivedTransactions() {
-        return receivedTransactions;
-    }
-
-    public void setReceivedTransactions(Set<Transaction> receivedTransactions) {
-        this.receivedTransactions = receivedTransactions;
-    }
-
-    public Transaction getIssuedTransaction(Long transactionId) {
-        return issuedTransactions.stream()
-                .filter(transaction -> transaction.getId().equals(transactionId))
-                .findFirst().orElseThrow(() -> new TransactionException("Issued transaction " + transactionId + " not found in the bank account."));
-        }
-
-    public Transaction getReceivedTransaction(Long transactionId) {
-        return receivedTransactions.stream()
-                .filter(transaction -> transaction.getId().equals(transactionId))
-                .findFirst().orElseThrow(() -> new TransactionException("Received transaction " + transactionId + " not found in the bank account."));
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,12 +90,11 @@ public abstract class BankAccount {
         return Objects.equals(id, that.id) && type == that.type
                 && Objects.equals(balance, that.balance)
                 && Objects.equals(customersId, that.customersId)
-                && Objects.equals(issuedTransactions, that.issuedTransactions)
-                && Objects.equals(receivedTransactions, that.receivedTransactions);
+                && Objects.equals(issuedTransactions, that.issuedTransactions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, balance, customersId, issuedTransactions, receivedTransactions);
+        return Objects.hash(id, type, balance, customersId, issuedTransactions);
     }
 }

@@ -1,11 +1,5 @@
 package com.cdx.bas.application.bank.account;
 
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
-
 import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.customer.CustomerRepository;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
@@ -14,16 +8,21 @@ import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.utils.BankAccountFactory;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RequestScoped
 public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccountEntity> {
 
     @Inject
-    private CustomerRepository customerRepository;
+    CustomerRepository customerRepository;
     @Inject
-    private BankAccountRepository bankAccountRepository;
+    BankAccountRepository bankAccountRepository;
     @Inject
-    private DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
+    DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
 
     @Override
     public BankAccount toDto(BankAccountEntity entity) {

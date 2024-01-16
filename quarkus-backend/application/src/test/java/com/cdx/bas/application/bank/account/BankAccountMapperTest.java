@@ -90,7 +90,7 @@ public class BankAccountMapperTest {
         assertThat(dto.getType()).isEqualTo(AccountType.CHECKING);
         assertThat(dto.getBalance()).usingRecursiveComparison().isEqualTo(new Money(null));
         assertThat(dto.getCustomersId()).isEmpty();
-        assertThat(dto.getTransactions()).isEmpty();
+        assertThat(dto.getIssuedTransactions()).isEmpty();
 
         verifyNoInteractions(customerMapper);
     }
@@ -140,9 +140,9 @@ public class BankAccountMapperTest {
         assertThat(dto.getBalance()).usingRecursiveComparison().isEqualTo(new Money(new BigDecimal("1000")));
         assertThat(dto.getCustomersId()).hasSize(1);
         assertThat(dto.getCustomersId().iterator().next()).isEqualTo(99L);
-        assertThat(dto.getTransactions()).hasSize(2);
-        assertThat(dto.getTransactions()).contains(transaction1);
-        assertThat(dto.getTransactions()).contains(transaction2);
+        assertThat(dto.getIssuedTransactions()).hasSize(2);
+        assertThat(dto.getIssuedTransactions()).contains(transaction1);
+        assertThat(dto.getIssuedTransactions()).contains(transaction2);
 
         verify(transactionMapper).toDto(transactionEntity1);
         verify(transactionMapper).toDto(transactionEntity2);
@@ -165,7 +165,7 @@ public class BankAccountMapperTest {
         transactions.add(transaction1);
         Transaction transaction2 = createTransaction(5000L, 10L, date);
         transactions.add(transaction2);
-        dto.setTransactions(transactions);
+        dto.setIssuedTransactions(transactions);
 
         when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -197,7 +197,7 @@ public class BankAccountMapperTest {
         transactions.add(transaction1);
         Transaction transaction2 = createTransaction(5000L, 10L, date);
         transactions.add(transaction2);
-        dto.setTransactions(transactions);
+        dto.setIssuedTransactions(transactions);
 
         CustomerEntity customerEntity = createCustomerEntity();
         when(customerRepository.findByIdOptional(anyLong())).thenReturn(Optional.of(customerEntity));

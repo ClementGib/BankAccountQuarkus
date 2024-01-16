@@ -7,11 +7,11 @@ import com.cdx.bas.domain.transaction.TransactionServicePort;
 import com.cdx.bas.domain.utils.ExchangeRateUtils;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.transaction.Transactional;
-import jakarta.transaction.Transactional.TxType;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,16 +82,16 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     }
 
     private BankAccount addTransaction(BankAccount currentBankAccount, Transaction newTransaction) {
-        Optional<Transaction> optionalStoredTransaction = currentBankAccount.getTransactions().stream()
+        Optional<Transaction> optionalStoredTransaction = currentBankAccount.getIssuedTransactions().stream()
                 .filter(transaction -> transaction.getId().equals(newTransaction.getId()))
                 .findFirst();
 
         if (optionalStoredTransaction.isPresent()) {
             Transaction mergedTransaction = transactionService.mergeTransactions(optionalStoredTransaction.get(), newTransaction);
-            currentBankAccount.getTransactions().removeIf(existingTransaction -> existingTransaction.getId().equals(mergedTransaction.getId()));
-            currentBankAccount.getTransactions().add(mergedTransaction);
+            currentBankAccount.getIssuedTransactions().removeIf(existingTransaction -> existingTransaction.getId().equals(mergedTransaction.getId()));
+            currentBankAccount.getIssuedTransactions().add(mergedTransaction);
         } else {
-            currentBankAccount.getTransactions().add(newTransaction);
+            currentBankAccount.getIssuedTransactions().add(newTransaction);
         }
         return bankAccountRepository.update(currentBankAccount);
     }

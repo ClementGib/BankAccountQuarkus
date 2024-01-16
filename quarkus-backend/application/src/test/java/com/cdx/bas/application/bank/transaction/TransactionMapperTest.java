@@ -118,8 +118,8 @@ public class TransactionMapperTest {
         TransactionEntity entity = transactionMapper.toEntity(transaction);
         
         assertThat(entity.getId()).isEqualTo(10L);
-        assertThat(entity.getSenderAccount()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
-        assertThat(entity.getReceiverAccount()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
+        assertThat(entity.getSenderBankAccountEntity()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
+        assertThat(entity.getReceiverBankAccountEntity()).usingRecursiveComparison().isEqualTo(bankAccountEntity);
         assertThat(entity.getAmount()).usingRecursiveComparison().isEqualTo(new BigDecimal(100));
         assertThat(entity.getCurrency()).isEqualTo("EUR");
         assertThat(entity.getType()).isEqualTo(TransactionType.CREDIT);
@@ -147,7 +147,7 @@ public class TransactionMapperTest {
     private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(id);
-        transactionEntity.setSenderAccount(createBankAccountEntity(accountId, instantDate));
+        transactionEntity.setSenderBankAccountEntity(createBankAccountEntity(accountId, instantDate));
         transactionEntity.setAmount(new BigDecimal("100"));
         transactionEntity.setCurrency("EUR");
         transactionEntity.setType(TransactionType.CREDIT);

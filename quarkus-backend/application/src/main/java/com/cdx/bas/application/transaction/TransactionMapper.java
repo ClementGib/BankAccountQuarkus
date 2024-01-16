@@ -1,25 +1,19 @@
 package com.cdx.bas.application.transaction;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
-
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.bank.account.BankAccountRepository;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import org.hibernate.MappingException;
 
-import javax.persistence.Entity;
+import java.util.HashMap;
+import java.util.Map;
 
 @RequestScoped
 public class TransactionMapper implements DtoEntityMapper<Transaction, TransactionEntity> {
@@ -42,13 +36,18 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         Transaction dto = new Transaction();
 
         dto.setId(entity.getId());
-        
-        if (entity.getTransactionBankAccounts() != null && entity.getTransactionBankAccounts().getSenderAccount() != null) {
-            dto.setSenderAccountId(entity.getTransactionBankAccounts().getSenderAccount().getId());
+
+
+        if (entity.getSenderBankAccountEntity() != null) {
+            dto.setSenderAccountId(entity.getSenderBankAccountEntity().getId());
+        } else {
+            throw new TransactionException("Transaction does not have sender bank account.");
         }
 
-        if (entity.getTransactionBankAccounts() != null && entity.getTransactionBankAccounts().getReceiverAccount() != null) {
-            dto.setReceiverAccountId(entity.getTransactionBankAccounts().getReceiverAccount().getId());
+        if (entity.getReceiverBankAccountEntity() != null) {
+            dto.setSenderAccountId(entity.getReceiverBankAccountEntity().getId());
+        } else {
+            throw new TransactionException("Transaction does not have receiver bank account.");
         }
 
         if (entity.getAmount() != null) {
@@ -82,8 +81,14 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         TransactionEntity entity = transactionRepository.findByIdOptional(dto.getId()).orElse(new TransactionEntity());
         entity.setId(dto.getId());
 
-        TransactionBankAccountsEntity transactionBankAccountsEntity = getTransactionBankAccountsEntity(dto);
-        entity.setTransactionBankAccounts(transactionBankAccountsEntity);
+        BankAccountEntity senderBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getSenderAccountId())
+                .orElseThrow(() -> new TransactionException("Transaction does not have sender bank account entity."));
+
+        BankAccountEntity receiverBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getReceiverAccountId())
+                .orElseThrow(() -> new TransactionException("Transaction does not have receiver bank account entity."));
+
+        entity.setSenderBankAccountEntity(senderBankAccountEntity);
+        entity.setReceiverBankAccountEntity(receiverBankAccountEntity);
         entity.setAmount(dto.getAmount());
         entity.setCurrency(dto.getCurrency());
         entity.setType(dto.getType());
@@ -101,24 +106,5 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
             throw new MappingException("Mapping error: An error occurred while parsing Map<String, String> to JSON String", exception);
         }
         return entity;
-    }
-
-    private TransactionBankAccountsEntity getTransactionBankAccountsEntity(Transaction dto) {
-        Optional<BankAccountEntity> optionalSenderBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getSenderAccountId());
-        Optional<BankAccountEntity> optionalReceiverBankAccountEntity = bankAccountRepository.findByIdOptional(dto.getReceiverAccountId());
-        TransactionBankAccountsEntity transactionBankAccountsEntity = new TransactionBankAccountsEntity();
-
-        if (optionalSenderBankAccountEntity.isPresent()) {
-            transactionBankAccountsEntity.setSenderAccount(optionalSenderBankAccountEntity.get());
-        } else {
-            throw new NoSuchElementException("Mapping error: sender bank account entity is not found for id: " + dto.getSenderAccountId());
-        }
-
-        if (optionalReceiverBankAccountEntity.isPresent()) {
-            transactionBankAccountsEntity.setReceiverAccount(optionalReceiverBankAccountEntity.get());
-        } else {
-            throw new NoSuchElementException("Mapping error: receiver bank account entity is not found for id: " + dto.getReceiverAccountId());
-        }
-        return transactionBankAccountsEntity;
     }
 }
