@@ -1,23 +1,5 @@
 package com.cdx.bas.application.customer;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import io.quarkus.test.InjectMock;
-import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
-import jakarta.inject.Inject;
-
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.application.transaction.TransactionEntity;
@@ -33,10 +15,23 @@ import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-
+import io.quarkus.test.InjectMock;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.QuarkusTest;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -122,7 +117,7 @@ public class CustomerMapperTest {
         entity.setLastName("Martin");
         entity.setGender(Gender.MALE);
         entity.setMaritalStatus(MaritalStatus.SINGLE);
-        entity.setBirthdate(LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000));
+        entity.setBirthdate(LocalDate.of(1995,Month.MAY,3));
         entity.setCountry("FR");
         entity.setAddress("100 avenue de la république");
         entity.setCity("Paris");
@@ -152,8 +147,8 @@ public class CustomerMapperTest {
         assertThat(dto.getFirstName()).hasToString("Paul");
         assertThat(dto.getLastName()).hasToString("Martin");
         assertThat(dto.getGender()).isEqualTo(Gender.MALE);
-        assertThat(dto.getBirthdate()).isBefore(LocalDateTime.now());
-        assertThat(dto.getBirthdate().toString()).hasToString("1995-05-03T06:30:40.000050");
+        assertThat(dto.getBirthdate()).isBefore(LocalDate.now());
+        assertThat(dto.getBirthdate().toString()).hasToString("1995-05-03");
         assertThat(dto.getCountry()).isEqualTo("FR");
         assertThat(dto.getMaritalStatus()).isEqualTo(MaritalStatus.SINGLE);
         assertThat(dto.getAddress()).hasToString("100 avenue de la république");
@@ -179,7 +174,7 @@ public class CustomerMapperTest {
         model.setLastName("Martin");
         model.setGender(Gender.MALE);
         model.setMaritalStatus(MaritalStatus.SINGLE);
-        model.setBirthdate(LocalDateTime.of(1995,Month.MAY,3,6,30,40,50000));
+        model.setBirthdate(LocalDate.of(1995,Month.MAY,3));
         model.setCountry("FR");
         model.setAddress("100 avenue de la république");
         model.setCity("Paris");
@@ -194,7 +189,9 @@ public class CustomerMapperTest {
         accounts.add(account2);
         model.setAccounts(accounts);
         
-        Map<String, String> metadata = Map.of("contact_preferences", "email", "annual_salary", "48000");
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("contact_preferences", "email");
+        metadata.put("annual_salary", "48000");
         model.setMetadata(metadata);
         
         BankAccountEntity accountEntity1 = createBankAccountEntity(10L, instantDate);
@@ -208,8 +205,8 @@ public class CustomerMapperTest {
         assertThat(entity.getFirstName()).hasToString("Paul");
         assertThat(entity.getLastName()).hasToString("Martin");
         assertThat(entity.getGender()).isEqualTo(Gender.MALE);
-        assertThat(entity.getBirthdate()).isBefore(LocalDateTime.now());
-        assertThat(entity.getBirthdate().toString()).hasToString("1995-05-03T06:30:40.000050");
+        assertThat(entity.getBirthdate()).isBefore(LocalDate.now());
+        assertThat(entity.getBirthdate().toString()).hasToString("1995-05-03");
         assertThat(entity.getCountry()).isEqualTo("FR");
         assertThat(entity.getMaritalStatus()).isEqualTo(MaritalStatus.SINGLE);
         assertThat(entity.getAddress()).hasToString("100 avenue de la république");
@@ -217,10 +214,10 @@ public class CustomerMapperTest {
         assertThat(entity.getEmail()).hasToString("jean.dupont@yahoo.fr");
         assertThat(entity.getPhoneNumber()).hasToString("+33642645678");
         assertThat(entity.getAccounts()).hasSize(2);
-        Set<BankAccountEntity> accoutsToCompar = Stream.of(accountEntity1, accountEntity2).collect(Collectors.toSet());
-        assertThat(entity.getAccounts()).containsExactlyInAnyOrderElementsOf(accoutsToCompar);
+        Set<BankAccountEntity> accountsToCompar = Stream.of(accountEntity1, accountEntity2).collect(Collectors.toSet());
+        assertThat(entity.getAccounts()).containsExactlyInAnyOrderElementsOf(accountsToCompar);
         assertThat(entity.getMetadata()).hasToString("{\"contact_preferences\":\"email\",\"annual_salary\":\"48000\"}");
-        
+
         verify(bankAccountMapper).toEntity(account1);
         verify(bankAccountMapper).toEntity(account2);
         verifyNoMoreInteractions(bankAccountMapper);

@@ -38,9 +38,11 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
         dto.setCustomersId(entity.getCustomers().stream()
                 .map(CustomerEntity::getId)
                 .collect(Collectors.toList()));
+
         dto.setIssuedTransactions(entity.getIssuedTransactions().stream()
                 .map(transactionMapper::toDto)
                 .collect(Collectors.toSet()));
+
         return dto;
     }
 

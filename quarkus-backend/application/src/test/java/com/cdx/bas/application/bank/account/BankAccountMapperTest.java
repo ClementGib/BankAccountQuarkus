@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
@@ -96,7 +96,7 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toEntity_should_mapNullValues_when_dtoHasNullValuesButHasTypeAndId() {
+        public void toEntity_should_mapNullValues_when_dtoHasNullValuesButHasTypeAndId() {
         BankAccount bankAccount = new CheckingBankAccount();
         bankAccount.setId(1L);
         BankAccountEntity entity = bankAccountMapper.toEntity(bankAccount);
@@ -126,8 +126,7 @@ public class BankAccountMapperTest {
         transactionEntities.add(transactionEntity1);
         TransactionEntity transactionEntity2 = createTransactionEntity(5000L, 10L, date);
         transactionEntities.add(transactionEntity2);
-        //TODO
-//        entity.setIssuedTransactions(transactionEntities);
+        entity.setIssuedTransactions(transactionEntities);
 
         Transaction transaction1 = createTransaction(2000L, 10L, date);
         Transaction transaction2 = createTransaction(5000L, 10L, date);
@@ -216,9 +215,8 @@ public class BankAccountMapperTest {
         assertThat(entity.getCustomers()).hasSize(1);
         assertThat(entity.getCustomers().iterator().next()).isEqualTo(customerEntity);
         assertThat(entity.getIssuedTransactions()).hasSize(2);
-        //TODO
-//        assertThat(entity.getIssuedTransactions()).contains(transactionEntity1);
-//        assertThat(entity.getIssuedTransactions()).contains(transactionEntity2);
+        assertThat(entity.getIssuedTransactions()).contains(transactionEntity1);
+        assertThat(entity.getIssuedTransactions()).contains(transactionEntity2);
 
         verify(customerRepository).findByIdOptional(customer.getId());
         verify(transactionMapper).toEntity(transaction1);
@@ -233,7 +231,7 @@ public class BankAccountMapperTest {
         customer.setLastName("Martin");
         customer.setGender(Gender.MALE);
         customer.setMaritalStatus(MaritalStatus.SINGLE);
-        customer.setBirthdate(LocalDateTime.of(1995, Month.MAY, 3, 6, 30, 40, 50000));
+        customer.setBirthdate(LocalDate.of(1995, Month.MAY, 3));
         customer.setCountry("FR");
         customer.setAddress("100 avenue de la république");
         customer.setCity("Paris");
@@ -249,7 +247,7 @@ public class BankAccountMapperTest {
         customerEntity.setLastName("Martin");
         customerEntity.setGender(Gender.MALE);
         customerEntity.setMaritalStatus(MaritalStatus.SINGLE);
-        customerEntity.setBirthdate(LocalDateTime.of(1995, Month.MAY, 3, 6, 30, 40, 50000));
+        customerEntity.setBirthdate(LocalDate.of(1995, Month.MAY, 3));
         customerEntity.setCountry("FR");
         customerEntity.setAddress("100 avenue de la république");
         customerEntity.setCity("Paris");
@@ -274,9 +272,8 @@ public class BankAccountMapperTest {
     private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(id);
-        //TODO
-//        transactionEntity.setSenderAccount(null);
-//        transactionEntity.setReceiverAccount(null);
+        transactionEntity.setSenderBankAccountEntity(null);
+        transactionEntity.setReceiverBankAccountEntity(null);
         transactionEntity.setAmount(new BigDecimal("100"));
         transactionEntity.setType(TransactionType.CREDIT);
         transactionEntity.setStatus(TransactionStatus.ERROR);

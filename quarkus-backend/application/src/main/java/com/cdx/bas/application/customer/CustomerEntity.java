@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class CustomerEntity extends PanacheEntityBase {
     private MaritalStatus maritalStatus;
     
     @Column(name = "birthday", nullable = false)
-    private LocalDateTime birthdate;
+    private LocalDate birthdate;
     
     @Column(name = "country", nullable = false)
     private String country;
@@ -104,11 +104,11 @@ public class CustomerEntity extends PanacheEntityBase {
         this.maritalStatus = maritalStatus;
     }
 
-    public LocalDateTime getBirthdate() {
+    public LocalDate getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(LocalDateTime birthdate) {
+    public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
     }
 

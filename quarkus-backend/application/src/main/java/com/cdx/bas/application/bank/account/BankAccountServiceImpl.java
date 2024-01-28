@@ -3,6 +3,7 @@ package com.cdx.bas.application.bank.account;
 import com.cdx.bas.domain.bank.account.*;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionException;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
 import com.cdx.bas.domain.utils.ExchangeRateUtils;
 import jakarta.enterprise.context.RequestScoped;
@@ -52,47 +53,53 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
 
             metadata.put("sender_amount_before", senderBankAccount.getBalance().getAmount().toString());
             metadata.put("receiver_amount_before", receiverBankAccount.getBalance().getAmount().toString());
-            creditBankAccountFromTransaction(senderBankAccount, receiverBankAccount, currentTransaction);
+            processCreditTransaction(senderBankAccount, receiverBankAccount, currentTransaction);
             bankAccountValidator.validateBankAccount(senderBankAccount);
             bankAccountValidator.validateBankAccount(receiverBankAccount);
             metadata.put("sender_amount_after", senderBankAccount.getBalance().getAmount().toString());
             metadata.put("receiver_amount_after", receiverBankAccount.getBalance().getAmount().toString());
 
             Transaction completedTransaction = transactionService.setAsCompleted(currentTransaction, metadata);
-            BankAccount updatedBankAccount = addTransaction(senderBankAccount, completedTransaction);
+            BankAccount updatedSenderBankAccount = addTransaction(senderBankAccount, completedTransaction);
+            bankAccountRepository.update(receiverBankAccount);
 
-            logger.info("Bank account " + updatedBankAccount.getId() + " deposit transaction " + + currentTransaction.getId() + " completed.");
+            logger.info("Bank account " + updatedSenderBankAccount.getId() + " deposit transaction " + + currentTransaction.getId() + " completed.");
             return completedTransaction;
         } catch (NoSuchElementException exception) {
             logger.error("Transaction " + transaction.getId() + " deposit error for amount "+ transaction.getAmount() + ": " + exception.getMessage());
             metadata = new HashMap<>();
             metadata.put("error", exception.getMessage());
             return transactionService.setAsError(transaction, metadata);
-        } catch (BankAccountException exception) {
+        } catch (TransactionException exception) {
+            logger.error("Transaction " + transaction.getId() + " of " + transaction.getAmount() + " is invalid.");
             metadata.put("error", exception.getMessage());
+            return transactionService.setAsRefused(transaction, metadata);
+        } catch (BankAccountException exception) {
             logger.error("Transaction " + transaction.getId() + " deposit refused for amount "+ transaction.getAmount() + ": " + exception.getMessage());
+            metadata.put("error", exception.getMessage());
             return transactionService.setAsRefused(transaction, metadata);
         }
     }
 
-    private void creditBankAccountFromTransaction(BankAccount senderBankAccount, BankAccount receiverBankAccount, Transaction transactionToCredit) {
+    private void processCreditTransaction(BankAccount senderBankAccount, BankAccount receiverBankAccount, Transaction transactionToCredit) {
         BigDecimal euroAmount = ExchangeRateUtils.getEuroAmountFrom(transactionToCredit.getCurrency(), transactionToCredit.getAmount());
+        if (euroAmount.signum() < 0) throw new TransactionException("Credit transaction " + transactionToCredit.getId() + " should have positive value, actual value: " + euroAmount);
         senderBankAccount.getBalance().minus(Money.of(euroAmount));
         receiverBankAccount.getBalance().plus(Money.of(euroAmount));
     }
 
-    private BankAccount addTransaction(BankAccount currentBankAccount, Transaction newTransaction) {
-        Optional<Transaction> optionalStoredTransaction = currentBankAccount.getIssuedTransactions().stream()
+    private BankAccount addTransaction(BankAccount currentSenderBankAccount, Transaction newTransaction) {
+        Optional<Transaction> optionalStoredTransaction = currentSenderBankAccount.getIssuedTransactions().stream()
                 .filter(transaction -> transaction.getId().equals(newTransaction.getId()))
                 .findFirst();
 
         if (optionalStoredTransaction.isPresent()) {
             Transaction mergedTransaction = transactionService.mergeTransactions(optionalStoredTransaction.get(), newTransaction);
-            currentBankAccount.getIssuedTransactions().removeIf(existingTransaction -> existingTransaction.getId().equals(mergedTransaction.getId()));
-            currentBankAccount.getIssuedTransactions().add(mergedTransaction);
+            currentSenderBankAccount.getIssuedTransactions().removeIf(existingTransaction -> existingTransaction.getId().equals(mergedTransaction.getId()));
+            currentSenderBankAccount.getIssuedTransactions().add(mergedTransaction);
         } else {
-            currentBankAccount.getIssuedTransactions().add(newTransaction);
+            currentSenderBankAccount.getIssuedTransactions().add(newTransaction);
         }
-        return bankAccountRepository.update(currentBankAccount);
+        return bankAccountRepository.update(currentSenderBankAccount);
     }
 }

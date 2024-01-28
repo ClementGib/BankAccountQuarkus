@@ -1,31 +1,26 @@
--- CREATE EXTENSION --
-CREATE EXTENSION pgcrypto;
-
--- CREATE SCHEMA --
-CREATE SCHEMA basapp;
-
--- SET DEFAULT SCHEMA --
-SET search_path TO basapp;
-
--- CREATE TABLES --
-
--- CREATE customer TABLE --
-	CREATE TABLE basapp.customers
-	(
-	customer_id BIGSERIAL UNIQUE NOT NULL,
-	first_name VARCHAR(750) NOT NULL,
-	last_name VARCHAR(750) NOT NULL,
-	gender VARCHAR(25) NOT NULL,
-	marital_status VARCHAR(25) NOT NULL,
-	birthday DATE NOT NULL,
-	country VARCHAR(255) NOT NULL,
-	address text NOT NULL,
-	city VARCHAR(255) NOT NULL,
-	email VARCHAR(255) UNIQUE NOT NULL,
-	phone_number VARCHAR(20) NOT NULL,
-	metadata jsonb,
-	CONSTRAINT pk_customer PRIMARY KEY (customer_id)
-	);
+-- -- SET DEFAULT SCHEMA --
+CREATE SCHEMA IF NOT EXISTS basapp;
+CREATE TYPE "JSONB" AS json;
+--
+-- -- CREATE TABLES --
+--
+-- -- CREATE customer TABLE --
+CREATE TABLE basapp.customers
+(
+    customer_id BIGSERIAL UNIQUE NOT NULL,
+    first_name VARCHAR(750) NOT NULL,
+    last_name VARCHAR(750) NOT NULL,
+    gender VARCHAR(25) NOT NULL,
+    marital_status VARCHAR(25) NOT NULL,
+    birthday DATE NOT NULL,
+    country VARCHAR(255) NOT NULL,
+    address text NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    metadata jsonb,
+    CONSTRAINT pk_customer PRIMARY KEY (customer_id)
+);
 
 -- CREATE bank_account TABLE --
 	CREATE TABLE basapp.bank_accounts
@@ -53,7 +48,7 @@ SET search_path TO basapp;
     CONSTRAINT fk_sender_account_id FOREIGN KEY(sender_account_id) REFERENCES basapp.bank_accounts(account_id),
     CONSTRAINT fk_receiver_account_id FOREIGN KEY(receiver_account_id) REFERENCES basapp.bank_accounts(account_id)
 	);
-	
+
 	-- CREATE bank_account_customer TABLE --
 	CREATE TABLE basapp.bank_accounts_customers
 	(
@@ -65,8 +60,8 @@ SET search_path TO basapp;
 	);
 
 -- GRANT USER --
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA basapp TO basadm;
-GRANT SELECT, UPDATE, USAGE ON ALL SEQUENCES IN SCHEMA basapp to basadm;
+-- GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA basapp TO basadm;
+-- GRANT SELECT, UPDATE, USAGE ON ALL SEQUENCES IN SCHEMA basapp to basadm;
 
 CREATE SEQUENCE basapp.hibernate_sequence;
 
