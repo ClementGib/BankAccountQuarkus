@@ -9,8 +9,8 @@ services:
      - POSTGRES_PASSWORD=postgres
      - POSTGRES_DB=basdb
     volumes:
-     - ./init.sql:/docker-entrypoint-initdb.d/init.sql:z
-     - ./insert.sql:/docker-entrypoint-initdb.d/insert.sql:z
+     - ./init-pg.sql:/docker-entrypoint-initdb.d/init-pg.sql:z
+     - ./insert-pg.sql:/docker-entrypoint-initdb.d/insert-pg.sql:z
     networks:
      - quarkus-network
   pgadmin:

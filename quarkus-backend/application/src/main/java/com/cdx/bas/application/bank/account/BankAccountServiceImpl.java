@@ -95,10 +95,11 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
 
         if (optionalStoredTransaction.isPresent()) {
             Transaction mergedTransaction = transactionService.mergeTransactions(optionalStoredTransaction.get(), newTransaction);
-            currentSenderBankAccount.getIssuedTransactions().removeIf(existingTransaction -> existingTransaction.getId().equals(mergedTransaction.getId()));
-            currentSenderBankAccount.getIssuedTransactions().add(mergedTransaction);
+            currentSenderBankAccount.getIssuedTransactions()
+                    .removeIf(existingTransaction -> existingTransaction.getId().equals(mergedTransaction.getId()));
+            currentSenderBankAccount.addTransaction(mergedTransaction);
         } else {
-            currentSenderBankAccount.getIssuedTransactions().add(newTransaction);
+            currentSenderBankAccount.addTransaction(newTransaction);
         }
         return bankAccountRepository.update(currentSenderBankAccount);
     }

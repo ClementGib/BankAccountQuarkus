@@ -1,10 +1,7 @@
 package com.cdx.bas.application.bank.account;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.cdx.bas.application.transaction.TransactionEntity;
 import jakarta.persistence.*;
@@ -76,5 +73,18 @@ public class BankAccountEntity extends PanacheEntityBase {
 
     public void setIssuedTransactions(Set<TransactionEntity> issuedTransactions) {
         this.issuedTransactions = issuedTransactions;
+    }
+
+    public void addTransaction(TransactionEntity transaction) {
+        this.issuedTransactions.add(transaction);
+        transaction.setSenderBankAccountEntity(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BankAccountEntity that = (BankAccountEntity) o;
+        return Objects.equals(id, that.id) && type == that.type && Objects.equals(balance, that.balance) && Objects.equals(customers, that.customers) && Objects.equals(issuedTransactions, that.issuedTransactions);
     }
 }

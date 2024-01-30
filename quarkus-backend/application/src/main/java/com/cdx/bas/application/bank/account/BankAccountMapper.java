@@ -11,7 +11,9 @@ import com.cdx.bas.domain.utils.BankAccountFactory;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
+import java.util.HashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequestScoped
@@ -68,9 +70,15 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
                         .orElseThrow(() -> new NoSuchElementException("Customer entity not found for id: " + customerId)))
                 .collect(Collectors.toList()));
 
-        entity.setIssuedTransactions(dto.getIssuedTransactions().stream()
-                .map(transactionMapper::toEntity)
-                .collect(Collectors.toSet()));
+        Set<TransactionEntity> newIssuedTransactions = new HashSet<>();
+        for (Transaction issuedTransactionDto : dto.getIssuedTransactions()) {
+            TransactionEntity newIssuedTransactionEntity = transactionMapper.toEntity(issuedTransactionDto);
+            newIssuedTransactionEntity.setSenderBankAccountEntity(entity);
+            newIssuedTransactions.add(newIssuedTransactionEntity);
+        }
+
+        entity.getIssuedTransactions().clear();
+        entity.getIssuedTransactions().addAll(newIssuedTransactions);
         return entity;
     }
 }

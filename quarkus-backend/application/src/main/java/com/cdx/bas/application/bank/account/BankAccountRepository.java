@@ -29,7 +29,7 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     
     @Inject
     private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
-    
+
     @Override
     public Optional<BankAccount> findById(long id) {
         return findByIdOptional(id).map(bankAccountMapper::toDto);
@@ -45,7 +45,7 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     @Override
     @Transactional(value = Transactional.TxType.MANDATORY)
     public BankAccount update(BankAccount bankAccount) {
-        getEntityManager().merge(bankAccountMapper.toEntity(bankAccount));
+        bankAccount = bankAccountMapper.toDto(getEntityManager().merge(bankAccountMapper.toEntity(bankAccount)));
         logger.info("BankAccount " + bankAccount.getId() + " updated");
         return bankAccount;
     }

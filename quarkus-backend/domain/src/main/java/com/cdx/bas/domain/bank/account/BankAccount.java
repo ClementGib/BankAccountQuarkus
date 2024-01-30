@@ -82,12 +82,17 @@ public abstract class BankAccount {
         this.issuedTransactions = issuedTransactions;
     }
 
+    public void addTransaction(Transaction transaction) {
+        issuedTransactions.add(transaction);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BankAccount that = (BankAccount) o;
-        return Objects.equals(id, that.id) && type == that.type
+        return Objects.equals(id, that.id)
+                && type == that.type
                 && Objects.equals(balance, that.balance)
                 && Objects.equals(customersId, that.customersId)
                 && Objects.equals(issuedTransactions, that.issuedTransactions);

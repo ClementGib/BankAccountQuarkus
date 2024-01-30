@@ -24,11 +24,11 @@ public class TransactionEntity extends PanacheEntityBase {
     @SequenceGenerator(name = "transactions_transaction_id_seq_gen", sequenceName = "transactions_transaction_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "sender_account_id", nullable = false)
     private BankAccountEntity senderBankAccountEntity;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "receiver_account_id", nullable = false)
     private BankAccountEntity receiverBankAccountEntity;
 
