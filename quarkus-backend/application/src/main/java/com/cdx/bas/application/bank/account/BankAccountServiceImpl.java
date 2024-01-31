@@ -67,7 +67,6 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
             return completedTransaction;
         } catch (NoSuchElementException exception) {
             logger.error("Transaction " + transaction.getId() + " deposit error for amount "+ transaction.getAmount() + ": " + exception.getMessage());
-            metadata = new HashMap<>();
             metadata.put("error", exception.getMessage());
             return transactionService.setAsError(transaction, metadata);
         } catch (TransactionException exception) {
@@ -83,7 +82,9 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
 
     private void processCreditTransaction(BankAccount senderBankAccount, BankAccount receiverBankAccount, Transaction transactionToCredit) {
         BigDecimal euroAmount = ExchangeRateUtils.getEuroAmountFrom(transactionToCredit.getCurrency(), transactionToCredit.getAmount());
-        if (euroAmount.signum() < 0) throw new TransactionException("Credit transaction " + transactionToCredit.getId() + " should have positive value, actual value: " + euroAmount);
+        if (euroAmount.signum() < 0) {
+            throw new TransactionException("Credit transaction " + transactionToCredit.getId() + " should have positive value, actual value: " + euroAmount);
+        }
         senderBankAccount.getBalance().minus(Money.of(euroAmount));
         receiverBankAccount.getBalance().plus(Money.of(euroAmount));
     }

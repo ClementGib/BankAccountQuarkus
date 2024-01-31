@@ -1,14 +1,13 @@
 package com.cdx.bas.application.bank.account;
 
-import java.math.BigDecimal;
-import java.util.*;
-
-import com.cdx.bas.application.transaction.TransactionEntity;
-import jakarta.persistence.*;
-
 import com.cdx.bas.application.customer.CustomerEntity;
+import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.AccountType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.*;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 @Entity
 @Table(schema = "basapp", name = "bank_accounts", uniqueConstraints = @UniqueConstraint(columnNames = "account_id"))

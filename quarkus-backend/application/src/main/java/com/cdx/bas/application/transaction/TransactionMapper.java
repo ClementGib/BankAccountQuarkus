@@ -12,7 +12,6 @@ import jakarta.inject.Inject;
 import org.hibernate.MappingException;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RequestScoped
@@ -55,7 +54,8 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         try {
             if (entity.getMetadata() != null) {
                 dto.setMetadata(
-                        objectMapper.readValue(entity.getMetadata(), new TypeReference<Map<String, String>>() {}));
+                        objectMapper.readValue(entity.getMetadata(), new TypeReference<>() {
+                        }));
             } else {
                 dto.setMetadata(new HashMap<>());
             }
