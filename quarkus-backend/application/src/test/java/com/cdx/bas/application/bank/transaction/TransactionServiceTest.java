@@ -35,7 +35,8 @@ public class TransactionServiceTest {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);
 		transaction.setAmount(new BigDecimal(100));
-		transaction.setAccountId(100L);
+		transaction.setSenderAccountId(100L);
+		transaction.setReceiverAccountId(200L);
 		transaction.setType(CREDIT);
 		transaction.setStatus(UNPROCESSED);
 		transaction.setDate(Instant.now());
@@ -51,7 +52,7 @@ public class TransactionServiceTest {
 		Transaction transaction = new Transaction();
 		transaction.setId(1L);
 		transaction.setAmount(new BigDecimal(-100));
-		transaction.setAccountId(991L);
+		transaction.setSenderAccountId(99L);
 		transaction.setType(CREDIT);
 		transaction.setStatus(UNPROCESSED);
 		transaction.setDate(Instant.now());

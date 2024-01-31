@@ -24,10 +24,13 @@ public class TransactionEntity extends PanacheEntityBase {
     @SequenceGenerator(name = "transactions_transaction_id_seq_gen", sequenceName = "transactions_transaction_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "transaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "account_id"))
-    private BankAccountEntity account;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sender_account_id", nullable = false)
+    private BankAccountEntity senderBankAccountEntity;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "receiver_account_id", nullable = false)
+    private BankAccountEntity receiverBankAccountEntity;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -50,7 +53,7 @@ public class TransactionEntity extends PanacheEntityBase {
     private String label;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "metadata", columnDefinition = "jsonb",  nullable = true)
+    @Column(name = "metadata", columnDefinition = "jsonb")
     private String metadata;
 
     public Long getId() {
@@ -61,12 +64,20 @@ public class TransactionEntity extends PanacheEntityBase {
         this.id = id;
     }
 
-    public BankAccountEntity getAccount() {
-        return account;
+    public BankAccountEntity getSenderBankAccountEntity() {
+        return senderBankAccountEntity;
     }
 
-    public void setAccount(BankAccountEntity account) {
-        this.account = account;
+    public void setSenderBankAccountEntity(BankAccountEntity senderBankAccountEntity) {
+        this.senderBankAccountEntity = senderBankAccountEntity;
+    }
+
+    public BankAccountEntity getReceiverBankAccountEntity() {
+        return receiverBankAccountEntity;
+    }
+
+    public void setReceiverBankAccountEntity(BankAccountEntity receiverBankAccountEntity) {
+        this.receiverBankAccountEntity = receiverBankAccountEntity;
     }
 
     public BigDecimal getAmount() {
@@ -126,24 +137,23 @@ public class TransactionEntity extends PanacheEntityBase {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(account, amount, date, id, label, metadata, status, type);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TransactionEntity that = (TransactionEntity) o;
+        return Objects.equals(id, that.id)
+                && Objects.equals(senderBankAccountEntity, that.senderBankAccountEntity)
+                && Objects.equals(receiverBankAccountEntity, that.receiverBankAccountEntity)
+                && Objects.equals(amount, that.amount)
+                && Objects.equals(currency, that.currency)
+                & type == that.type && status == that.status
+                && Objects.equals(date, that.date)
+                && Objects.equals(label, that.label)
+                && Objects.equals(metadata, that.metadata);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        TransactionEntity other = (TransactionEntity) obj;
-        return Objects.equals(account, other.account) && Objects.equals(amount, other.amount)
-                && Objects.equals(date, other.date) && id == other.id && Objects.equals(label, other.label)
-                && Objects.equals(metadata, other.metadata) && status == other.status && type == other.type;
+    public int hashCode() {
+        return Objects.hash(id, senderBankAccountEntity, receiverBankAccountEntity, amount, currency, type, status, date, label, metadata);
     }
 }

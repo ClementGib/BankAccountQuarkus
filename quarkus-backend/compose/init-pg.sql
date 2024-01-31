@@ -1,11 +1,8 @@
-
 -- CREATE EXTENSION --
 CREATE EXTENSION pgcrypto;
 
 -- CREATE SCHEMA --
 CREATE SCHEMA basapp;
-
-
 
 -- SET DEFAULT SCHEMA --
 SET search_path TO basapp;
@@ -20,7 +17,7 @@ SET search_path TO basapp;
 	last_name VARCHAR(750) NOT NULL,
 	gender VARCHAR(25) NOT NULL,
 	marital_status VARCHAR(25) NOT NULL,
-	birthday TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+	birthday DATE NOT NULL,
 	country VARCHAR(255) NOT NULL,
 	address text NOT NULL,
 	city VARCHAR(255) NOT NULL,
@@ -43,14 +40,18 @@ SET search_path TO basapp;
 	CREATE TABLE basapp.transactions
 	(
 	transaction_id BIGSERIAL UNIQUE NOT NULL,
+    sender_account_id bigint NOT NULL,
+    receiver_account_id bigint NOT NULL,
 	type VARCHAR(25) NOT NULL,
 	amount DECIMAL NOT NULL,
     currency VARCHAR(3) NOT NULL,
     status VARCHAR(25) NOT NULL,
-	date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+	date TIMESTAMP NOT NULL,
 	label text NOT NULL,
 	metadata jsonb,
-	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id)
+	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id),
+    CONSTRAINT fk_sender_account_id FOREIGN KEY(sender_account_id) REFERENCES basapp.bank_accounts(account_id),
+    CONSTRAINT fk_receiver_account_id FOREIGN KEY(receiver_account_id) REFERENCES basapp.bank_accounts(account_id)
 	);
 	
 	-- CREATE bank_account_customer TABLE --
@@ -63,32 +64,9 @@ SET search_path TO basapp;
 	CONSTRAINT fk_customer_id FOREIGN KEY(customer_id) REFERENCES basapp.customers(customer_id)
 	);
 
-	-- CREATE bank_account_transactions TABLE --
-	CREATE TABLE basapp.bank_accounts_transactions
-	(
-	account_id bigint NOT NULL,
-	transaction_id bigint NOT NULL,
-	PRIMARY KEY (account_id, transaction_id),
-	CONSTRAINT fk_account_id FOREIGN KEY(account_id) REFERENCES basapp.bank_accounts(account_id),
-	CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
-	);
-
--- TODO
--- CREATE TABLE basapp.bank_accounts_transactions
--- (
---     sender_account_id bigint NOT NULL,
---     receiver_account_id bigint NOT NULL,
---     transaction_id bigint NOT NULL,
---     PRIMARY KEY (sender_account_id, receiver_account_id, transaction_id),
---     CONSTRAINT fk_account_id FOREIGN KEY(sender_account_id) REFERENCES basapp.bank_accounts(account_id),
---     CONSTRAINT fk_account_id FOREIGN KEY(receiver_account_id) REFERENCES basapp.bank_accounts(account_id),
---     CONSTRAINT fk_transaction_id FOREIGN KEY(transaction_id) REFERENCES basapp.transactions(transaction_id)
--- );
-	
-
--- GRANT basadm -- 
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA basapp TO basadm;	
+-- GRANT USER --
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA basapp TO basadm;
 GRANT SELECT, UPDATE, USAGE ON ALL SEQUENCES IN SCHEMA basapp to basadm;
 
-CREATE SEQUENCE basapp.hibernate_sequence
+CREATE SEQUENCE basapp.hibernate_sequence;
 

@@ -24,10 +24,10 @@ public class SavingBankAccount extends BankAccount {
         super(AccountType.SAVING);
     }
 
-    public SavingBankAccount(Long id, Money balance, List<Long> customersId, Set<Transaction> transactions) {
-        super(id, AccountType.SAVING, balance, customersId, transactions);
-        this.balance = balance;
-    }
+//    public SavingBankAccount(Long id, Money balance, List<Long> customersId, Set<Transaction> transactions) {
+//        super(id, AccountType.SAVING, balance, customersId, transactions);
+//        this.balance = balance;
+//    }
     
     public Money getBalance() {
         return balance;

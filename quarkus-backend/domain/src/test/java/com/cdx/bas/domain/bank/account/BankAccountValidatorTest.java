@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class BankAccountValidatorTest {
         dto.setType(null);
         dto.setBalance(null);
         dto.setCustomersId( null);
-        dto.setTransactions(null);
+        dto.setIssuedTransactions(null);
         
         try {
             bankAccountValidator.validateBankAccount(dto);
@@ -114,7 +115,7 @@ public class BankAccountValidatorTest {
         dto.setType(null);
         dto.setBalance(null);
         dto.setCustomersId( null);
-        dto.setTransactions(null);
+        dto.setIssuedTransactions(null);
         
         try {
             bankAccountValidator.validateBankAccount(dto);
@@ -150,7 +151,7 @@ public class BankAccountValidatorTest {
         dto.setType(null);
         dto.setBalance(null);
         dto.setCustomersId( null);
-        dto.setTransactions(null);
+        dto.setIssuedTransactions(null);
         
         try {
             bankAccountValidator.validateBankAccount(dto);
@@ -186,7 +187,7 @@ public class BankAccountValidatorTest {
         customer.setLastName("Martin");
         customer.setGender(Gender.MALE);
         customer.setMaritalStatus(MaritalStatus.SINGLE);
-        customer.setBirthdate(LocalDateTime.of(1995, Month.MAY, 3, 6, 30, 40, 50000));
+        customer.setBirthdate(LocalDate.of(1995, Month.MAY, 3));
         customer.setCountry("FR");
         customer.setAddress("100 avenue de la république");
         customer.setCity("Paris");

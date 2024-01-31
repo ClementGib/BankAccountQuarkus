@@ -1,20 +1,16 @@
 package com.cdx.bas.application.bank.account;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
-
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import java.util.Optional;
 
 /***
  * persistence implementation for BankAccount entities
@@ -29,7 +25,7 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     
     @Inject
     private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
-    
+
     @Override
     public Optional<BankAccount> findById(long id) {
         return findByIdOptional(id).map(bankAccountMapper::toDto);
@@ -41,11 +37,10 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
         logger.info("BankAccount " + bankAccount.getId() + " created");
         return bankAccount;
     }
-
     @Override
     @Transactional(value = Transactional.TxType.MANDATORY)
     public BankAccount update(BankAccount bankAccount) {
-        getEntityManager().merge(bankAccountMapper.toEntity(bankAccount));
+        bankAccount = bankAccountMapper.toDto(getEntityManager().merge(bankAccountMapper.toEntity(bankAccount)));
         logger.info("BankAccount " + bankAccount.getId() + " updated");
         return bankAccount;
     }

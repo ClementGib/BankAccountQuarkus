@@ -2,6 +2,7 @@ package com.cdx.bas.application.bank.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -15,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -29,9 +32,11 @@ import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
+import org.mockito.Mockito;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -42,17 +47,18 @@ public class BankAccountRepositoryTest {
     
     @InjectMock
     private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
-    
+
+
     @Test
     public void findById_should_returnBankAccount_when_accountIsFound() {
         long accountId = 1L;
         Instant date = Instant.now();
         BankAccount bankAccount = createBankAccount(accountId, date);
-        
+
         when(bankAccountMapper.toDto(any())).thenReturn(bankAccount);
         Optional<BankAccount> optionalBankAccount = bankAccountRepository.findById(accountId);
         
-        assertThat(optionalBankAccount.get()).usingRecursiveComparison().isEqualTo(bankAccount);
+        assertThat(optionalBankAccount).contains(bankAccount);
         verify(bankAccountMapper).toDto(any(BankAccountEntity.class));
         verifyNoMoreInteractions(bankAccountMapper);
     }
@@ -75,14 +81,15 @@ public class BankAccountRepositoryTest {
         bankAccount.setCustomersId(customersId);
         HashSet<Transaction> transactionHistory = new HashSet<>();
         transactionHistory.add(createTransaction(2L, accountId, instantDate));
-        bankAccount.setTransactions(transactionHistory);
+        bankAccount.setIssuedTransactions(transactionHistory);
         return bankAccount;
     }
     
     private Transaction createTransaction(long id, long accountId, Instant instantDate) {
         Transaction transaction = new Transaction();
         transaction.setId(id);
-        transaction.setAccountId(accountId);
+        transaction.setSenderAccountId(accountId);
+        transaction.setReceiverAccountId(77L);
         transaction.setAmount(new BigDecimal(100));
         transaction.setType(TransactionType.CREDIT);
         transaction.setStatus(TransactionStatus.ERROR);

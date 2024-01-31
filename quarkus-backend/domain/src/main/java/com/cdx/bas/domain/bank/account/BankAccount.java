@@ -1,19 +1,14 @@
 package com.cdx.bas.domain.bank.account;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
+import com.cdx.bas.domain.money.Money;
+import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.transaction.TransactionException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import com.cdx.bas.domain.money.Money;
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionException;
+import java.util.*;
 
 public abstract class BankAccount {
 
@@ -24,26 +19,26 @@ public abstract class BankAccount {
 	@NotNull(message="type must not be null.")
 	protected AccountType type;
     
-	@NotNull(message="balance must not be null.")
+    @NotNull(message="balance must not be null.")
 	@Valid
 	protected Money balance;
     
 	@NotNull(message="customersId must not be null.")
 	@Size(min=1, message="customersId must contains at least 1 customer id.")
 	protected List<Long> customersId = new ArrayList<>();
-    
-	@NotNull(message="transactions must not be null.")
-	protected Set<Transaction> transactions = new HashSet<>();
+
+    @NotNull(message="issued transactions must not be null.")
+    private Set<Transaction> issuedTransactions = new HashSet<>();
     
     public BankAccount(AccountType type) {
         this.type = type;
     }
 
-    public BankAccount(Long id, AccountType type, Money balance, List<Long> customersId, Set<Transaction> transactions) {
+    public BankAccount(Long id, AccountType type, Money balance, List<Long> customersId, Set<Transaction> issuedTransactions, Set<Transaction> receivedTransactions) {
       this.id = id;
       this.type = type;
       this.customersId = customersId;
-      this.transactions = transactions;
+      this.issuedTransactions = issuedTransactions;
       this.balance = balance;
     }
 
@@ -79,30 +74,32 @@ public abstract class BankAccount {
         this.customersId = customersId;
     }
 
-    public Set<Transaction> getTransactions() {
-        return transactions;
+    public Set<Transaction> getIssuedTransactions() {
+        return issuedTransactions;
     }
 
-    public void setTransactions(Set<Transaction> transactions) {
-        this.transactions = transactions;
+    public void setIssuedTransactions(Set<Transaction> issuedTransactions) {
+        this.issuedTransactions = issuedTransactions;
     }
 
-    public Transaction getTransaction(Long transactionId) {
-        return transactions.stream()
-                .filter(transaction -> transaction.getId().equals(transactionId))
-                .findFirst().orElseThrow(() -> new TransactionException("Transaction " + transactionId + " not found in the bank account."));
-        }
+    public void addTransaction(Transaction transaction) {
+        issuedTransactions.add(transaction);
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BankAccount that = (BankAccount) o;
-        return Objects.equals(id, that.id) && type == that.type && Objects.equals(balance, that.balance) && Objects.equals(customersId, that.customersId) && Objects.equals(transactions, that.transactions);
+        return Objects.equals(id, that.id)
+                && type == that.type
+                && Objects.equals(balance, that.balance)
+                && Objects.equals(customersId, that.customersId)
+                && Objects.equals(issuedTransactions, that.issuedTransactions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, balance, customersId, transactions);
+        return Objects.hash(id, type, balance, customersId, issuedTransactions);
     }
 }

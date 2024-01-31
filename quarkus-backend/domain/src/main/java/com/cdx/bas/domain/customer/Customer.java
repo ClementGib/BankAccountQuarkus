@@ -3,7 +3,7 @@ package com.cdx.bas.domain.customer;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import jakarta.validation.constraints.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 
 public class Customer {
@@ -33,7 +33,7 @@ public class Customer {
     
 	@NotNull(message="birthdate must not be null.")
 	@Past(message="birthdate must not be before the current date.")
-	private LocalDateTime birthdate;
+	private LocalDate birthdate;
     
 	@NotNull(message="country must not be null.")
 	@Pattern(regexp = ISO_COUNTRY_REGEX, message = "country must contain ISO 3166 country code.")
@@ -66,7 +66,7 @@ public class Customer {
 	}
 
 	public Customer(Long id, String firstName, String lastName, Gender gender, MaritalStatus maritalStatus,
-	        LocalDateTime birthdate, String country, String address, String city, String email, String phoneNumber,
+	        LocalDate birthdate, String country, String address, String city, String email, String phoneNumber,
 	        List<BankAccount> accounts, Map<String, String> metadata) {
 		super();
 		this.id = id;
@@ -123,15 +123,15 @@ public class Customer {
 	public void setMaritalStatus(MaritalStatus maritalStatus) {
 		this.maritalStatus = maritalStatus;
 	}
-	
-	public LocalDateTime getBirthdate() {
+
+	public LocalDate getBirthdate() {
 		return birthdate;
 	}
-	
-	public void setBirthdate(LocalDateTime birthdate) {
+
+	public void setBirthdate(LocalDate birthdate) {
 		this.birthdate = birthdate;
 	}
-	
+
 	public String getCountry() {
 		return country;
 	}

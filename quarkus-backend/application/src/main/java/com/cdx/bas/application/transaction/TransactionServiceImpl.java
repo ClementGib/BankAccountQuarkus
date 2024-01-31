@@ -76,10 +76,10 @@ public class TransactionServiceImpl implements TransactionServicePort {
         refusedTransaction.setStatus(status);
     }
     @Override
-    public Transaction mergeTransactions (Transaction oldTransaction, Transaction newTransaction){
+    public Transaction mergeTransactions(Transaction oldTransaction, Transaction newTransaction){
         oldTransaction.setId(newTransaction.getId());
-        oldTransaction.setAccountId(newTransaction.getAccountId()); //TODO
-        // oldTransaction.setReceivedAccountId(); //TODO
+        oldTransaction.setSenderAccountId(newTransaction.getSenderAccountId());
+        oldTransaction.setReceiverAccountId(newTransaction.getReceiverAccountId());
         oldTransaction.setAmount(newTransaction.getAmount());
         oldTransaction.setCurrency(newTransaction.getCurrency());
         oldTransaction.setType(newTransaction.getType());

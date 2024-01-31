@@ -24,10 +24,10 @@ public class MMABankAccount extends BankAccount {
         super(AccountType.MMA);
     }
 
-    public MMABankAccount(Long id, Money balance, List<Long> customersId, Set<Transaction> transactions) {
-        super(id, AccountType.MMA, balance, customersId, transactions);
-        this.balance = balance;
-    }
+//    public MMABankAccount(Long id, Money balance, List<Long> customersId, Set<Transaction> transactions) {
+//        super(id, AccountType.MMA, balance, customersId, transactions);
+//        this.balance = balance;
+//    }
     
     public Money getBalance() {
         return balance;

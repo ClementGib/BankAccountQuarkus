@@ -1,33 +1,13 @@
 package com.cdx.bas.application.bank.account;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-
 import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.AccountType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.*;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 @Entity
 @Table(schema = "basapp", name = "bank_accounts", uniqueConstraints = @UniqueConstraint(columnNames = "account_id"))
@@ -38,21 +18,21 @@ public class BankAccountEntity extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_accounts_account_id_seq_gen")
     @SequenceGenerator(name = "bank_accounts_account_id_seq_gen", sequenceName = "bank_accounts_account_id_seq", allocationSize = 1, initialValue = 1)
     private Long id;
-    
+
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private AccountType type;
-    
+
     @Column(name = "balance", nullable = false)
     private BigDecimal balance;
-    
+
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<CustomerEntity> customers = new ArrayList<>();
-    
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinTable(name = "bank_accounts_transactions", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
+
+    @OneToMany(mappedBy = "senderBankAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("date")
-    private Set<TransactionEntity> transactions = new HashSet<>();
+    private Set<TransactionEntity> issuedTransactions = new HashSet<>();
+
 
     public Long getId() {
         return id;
@@ -86,11 +66,24 @@ public class BankAccountEntity extends PanacheEntityBase {
         this.customers = customers;
     }
 
-    public Set<TransactionEntity> getTransactions() {
-        return transactions;
+    public Set<TransactionEntity> getIssuedTransactions() {
+        return issuedTransactions;
     }
 
-    public void setTransactions(Set<TransactionEntity> transactions) {
-        this.transactions = transactions;
+    public void setIssuedTransactions(Set<TransactionEntity> issuedTransactions) {
+        this.issuedTransactions = issuedTransactions;
+    }
+
+    public void addTransaction(TransactionEntity transaction) {
+        this.issuedTransactions.add(transaction);
+        transaction.setSenderBankAccountEntity(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BankAccountEntity that = (BankAccountEntity) o;
+        return Objects.equals(id, that.id) && type == that.type && Objects.equals(balance, that.balance) && Objects.equals(customers, that.customers) && Objects.equals(issuedTransactions, that.issuedTransactions);
     }
 }
