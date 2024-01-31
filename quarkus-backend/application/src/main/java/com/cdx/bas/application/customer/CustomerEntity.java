@@ -30,11 +30,11 @@ public class CustomerEntity extends PanacheEntityBase {
     private String lastName;
     
     @Column(name = "gender", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = GenderConverter.class)
     private Gender gender;
     
     @Column(name = "marital_status", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = MaritalStatusConverter.class)
     private MaritalStatus maritalStatus;
     
     @Column(name = "birthday", nullable = false)

@@ -22,7 +22,6 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.entry;
 
 
 @QuarkusTest
