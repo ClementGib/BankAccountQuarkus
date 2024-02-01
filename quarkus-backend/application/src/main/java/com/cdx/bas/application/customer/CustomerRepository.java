@@ -1,7 +1,11 @@
 package com.cdx.bas.application.customer;
 
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -27,6 +31,14 @@ public class CustomerRepository implements CustomerPersistencePort, PanacheRepos
     
     @Inject
     private DtoEntityMapper<Customer, CustomerEntity> customerMapper;
+
+    @Override
+    public Set<Customer> getAll() {
+//        return this.findAll().stream()
+//                .map(customerMapper::toDto)
+//                .collect(Collectors.toSet());
+        return new HashSet<>();
+    }
 
 	@Override
 	public Optional<Customer> findById(long id) {
