@@ -40,4 +40,4 @@ nb-configuration.xml
 .env
 
 # Docker
-compose/data/
+env/data/
