@@ -1,18 +1,16 @@
 package com.cdx.bas.application.scheduler;
 
-import java.util.PriorityQueue;
-
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionPersistencePort;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
-
-import org.jboss.logging.Logger;
-
 import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
+
+import java.util.PriorityQueue;
 
 @Startup
 @Singleton
@@ -28,20 +26,37 @@ public class SchedulerImpl implements Scheduler {
     @Inject
     TransactionPersistencePort transactionRepository;
 
+    @ConfigProperty(name = "scheduler.activation", defaultValue = "true")
+    boolean activation;
+
+    @ConfigProperty(name = "scheduler.every", defaultValue = "5s")
+    String every;
+
     public PriorityQueue<Transaction> getTransactionQueue() {
         return transactionQueue;
     }
 
-    @Scheduled(every = "5s")
+    @Override
+    @Scheduled(every = "{scheduler.every}")
     public void processQueue() {
-        logger.info("Scheduler start");
-        if (getTransactionQueue().isEmpty()) {
-            getTransactionQueue().addAll(transactionRepository.findUnprocessedTransactions());
-            logger.info("Queue size: " + transactionQueue.size());
-            getTransactionQueue().forEach(transaction -> {
-                transactionService.process(transaction);
-            });
+        if (isActivation()) {
+            logger.info("Scheduler start every " + getEvery());
+            if (getTransactionQueue().isEmpty()) {
+                getTransactionQueue().addAll(transactionRepository.findUnprocessedTransactions());
+                logger.info("Queue size: " + transactionQueue.size());
+                getTransactionQueue().forEach(transaction -> {
+                    transactionService.process(transaction);
+                });
+            }
+            logger.info("Scheduler end");
         }
-        logger.info("Scheduler end");
+    }
+
+    public boolean isActivation() {
+        return activation;
+    }
+
+    public String getEvery() {
+        return every;
     }
 }

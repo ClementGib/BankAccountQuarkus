@@ -1,12 +1,12 @@
 -- -- SET DEFAULT SCHEMA --
 CREATE SCHEMA IF NOT EXISTS basapp;
-CREATE TYPE "JSONB" AS json;
+CREATE TYPE IF NOT EXISTS "JSONB" AS TEXT;
 --
 -- -- CREATE TABLES --
 --
 -- -- CREATE customer TABLE --
-CREATE TABLE basapp.customers
-(
+    CREATE TABLE IF NOT EXISTS basapp.customers
+    (
     customer_id BIGSERIAL UNIQUE NOT NULL,
     first_name VARCHAR(750) NOT NULL,
     last_name VARCHAR(750) NOT NULL,
@@ -20,10 +20,10 @@ CREATE TABLE basapp.customers
     phone_number VARCHAR(20) NOT NULL,
     metadata jsonb,
     CONSTRAINT pk_customer PRIMARY KEY (customer_id)
-);
+    );
 
 -- CREATE bank_account TABLE --
-	CREATE TABLE basapp.bank_accounts
+	CREATE TABLE IF NOT EXISTS basapp.bank_accounts
 	(
 	account_id BIGSERIAL UNIQUE NOT NULL,
 	type varchar(25) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE basapp.customers
 	);
 
 -- CREATE transaction TABLE --
-	CREATE TABLE basapp.transactions
+	CREATE TABLE IF NOT EXISTS basapp.transactions
 	(
 	transaction_id BIGSERIAL UNIQUE NOT NULL,
     sender_account_id bigint NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE basapp.customers
 	);
 
 	-- CREATE bank_account_customer TABLE --
-	CREATE TABLE basapp.bank_accounts_customers
+	CREATE TABLE IF NOT EXISTS basapp.bank_accounts_customers
 	(
 	account_id bigint NOT NULL,
 	customer_id bigint NOT NULL,
@@ -63,5 +63,5 @@ CREATE TABLE basapp.customers
 -- GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA basapp TO basadm;
 -- GRANT SELECT, UPDATE, USAGE ON ALL SEQUENCES IN SCHEMA basapp to basadm;
 
-CREATE SEQUENCE basapp.hibernate_sequence;
+CREATE SEQUENCE IF NOT EXISTS basapp.hibernate_sequence;
 

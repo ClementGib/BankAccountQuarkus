@@ -23,7 +23,7 @@ import static jakarta.transaction.Transactional.TxType.MANDATORY;
  *
  */
 @ApplicationScoped
-public class CustomerRepository implements CustomerPersistencePort, PanacheRepositoryBase<CustomerEntity, Long>  {
+public class CustomerRepository implements CustomerPersistencePort, PanacheRepositoryBase<CustomerEntity, Long> {
 	
     private static final Logger logger = Logger.getLogger(CustomerRepository.class);
     
@@ -33,10 +33,9 @@ public class CustomerRepository implements CustomerPersistencePort, PanacheRepos
     @Override
     @Transactional(value = MANDATORY)
     public Set<Customer> getAll() {
-        Set<Customer> all = findAll().stream()
+        return findAll().stream()
                 .map(customer -> customerMapper.toDto(customer))
                 .collect(Collectors.toSet());
-        return all;
     }
 
 	@Override

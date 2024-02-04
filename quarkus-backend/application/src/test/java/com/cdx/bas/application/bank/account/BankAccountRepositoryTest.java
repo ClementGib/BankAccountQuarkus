@@ -1,28 +1,5 @@
 package com.cdx.bas.application.bank.account;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.test.InjectMock;
-import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
-import jakarta.inject.Inject;
-
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
@@ -31,12 +8,20 @@ import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
-
-import org.junit.jupiter.api.BeforeAll;
+import io.quarkus.test.InjectMock;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.QuarkusTest;
-import org.mockito.Mockito;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)

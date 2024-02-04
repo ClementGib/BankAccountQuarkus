@@ -4,10 +4,10 @@ import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class CustomerEntity extends PanacheEntityBase {
     @JoinTable(name = "bank_accounts_customers", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
     private List<BankAccountEntity> accounts = new ArrayList<>();
 
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Type(JsonType.class)
     @Column(name = "metadata", columnDefinition = "jsonb")
     private String metadata;
 

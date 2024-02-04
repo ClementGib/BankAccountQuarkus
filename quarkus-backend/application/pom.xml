@@ -54,8 +54,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.vladmihalcea</groupId>
-            <artifactId>hibernate-types-60</artifactId>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -79,6 +79,11 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-test-h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-panache-mock</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -106,6 +111,9 @@
                     <source>21</source>
                     <target>21</target>
                     <release>21</release>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
                     <annotationProcessorPaths>
                         <!-- Your existing annotation processor(s)... -->
                         <path>
