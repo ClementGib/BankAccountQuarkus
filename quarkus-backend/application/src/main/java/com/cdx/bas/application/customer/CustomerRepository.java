@@ -1,22 +1,20 @@
 package com.cdx.bas.application.customer;
 
 
-import java.util.HashSet;
-import java.util.List;
+import com.cdx.bas.application.mapper.DtoEntityMapper;
+import com.cdx.bas.domain.customer.Customer;
+import com.cdx.bas.domain.customer.CustomerPersistencePort;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import org.jboss.logging.Logger;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
-import com.cdx.bas.application.mapper.DtoEntityMapper;
-import com.cdx.bas.domain.customer.Customer;
-import com.cdx.bas.domain.customer.CustomerPersistencePort;
-
-import org.jboss.logging.Logger;
-
-import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import static jakarta.transaction.Transactional.TxType.MANDATORY;
 
 /***
  * persistence implementation for Customer entities
@@ -33,11 +31,12 @@ public class CustomerRepository implements CustomerPersistencePort, PanacheRepos
     private DtoEntityMapper<Customer, CustomerEntity> customerMapper;
 
     @Override
+    @Transactional(value = MANDATORY)
     public Set<Customer> getAll() {
-//        return this.findAll().stream()
-//                .map(customerMapper::toDto)
-//                .collect(Collectors.toSet());
-        return new HashSet<>();
+        Set<Customer> all = findAll().stream()
+                .map(customer -> customerMapper.toDto(customer))
+                .collect(Collectors.toSet());
+        return all;
     }
 
 	@Override

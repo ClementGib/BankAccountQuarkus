@@ -11,10 +11,13 @@ import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
 
 import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.stream.Collectors;
+
+import static javax.transaction.Transactional.TxType.*;
 
 /***
  * persistence implementation for Transaction entities
@@ -52,7 +55,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.MANDATORY)
+    @Transactional(value = MANDATORY)
     public Transaction update(Transaction transaction) {;
         getEntityManager().merge(transactionMapper.toEntity(transaction));
         logger.info("Transaction " + transaction.getId() + " updated");

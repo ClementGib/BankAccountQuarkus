@@ -21,10 +21,10 @@ import org.hibernate.MappingException;
 public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity> {
     
     @Inject
-    private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
+    DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
     
     @Inject
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
     
     @Override
     public Customer toDto(CustomerEntity entity) {

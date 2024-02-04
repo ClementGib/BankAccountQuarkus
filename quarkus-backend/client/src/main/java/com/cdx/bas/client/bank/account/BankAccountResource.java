@@ -16,35 +16,43 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 
-@Path("/account")
-public class BankAccountResource implements BankAccountControllerPort{
-
-    @Inject
-    BankAccountPersistencePort bankAccountRepository;
-    
-    @Inject
-    TransactionServicePort transactionService;
-    
-    @GET
+//@Path("/account")
+public class BankAccountResource implements BankAccountControllerPort {
     @Override
     public BankAccount findById(long id) {
-        Optional<BankAccount> bankAccountOptional = bankAccountRepository.findById(id);
-        return bankAccountOptional.get();
+        return null;
     }
 
-    @POST
-    @Path("/{id}")
     @Override
-    public BankAccount deposite(@PathParam("id") Long id, Long amount, String currency) {
-        BankAccount currentAccount = null;
-        Optional<BankAccount> bankAccountOptional = bankAccountRepository.findById(id);
-        if(bankAccountOptional.isPresent()) {
-            currentAccount = bankAccountOptional.get();
-            Transaction transaction = new Transaction(id,"EUR", new BigDecimal(amount), TransactionType.CREDIT);
-            currentAccount.getIssuedTransactions().add(transaction);
-            bankAccountRepository.update(currentAccount);
-        }
-        return currentAccount;
+    public BankAccount deposite(Long id, Long amount, String currency) {
+        return null;
     }
-
+//TODO
+//    @Inject
+//    BankAccountPersistencePort bankAccountPersistencePort;
+//
+//    @Inject
+//    TransactionServicePort transactionServicePort;
+//
+//    @GET
+//    @Override
+//    public BankAccount findById(long id) {
+//        Optional<BankAccount> bankAccountOptional = bankAccountPersistencePort.findById(id);
+//        return bankAccountOptional.get();
+//    }
+//
+//    @POST
+//    @Path("/{id}")
+//    @Override
+//    public BankAccount deposite(@PathParam("id") Long id, Long amount, String currency) {
+//        BankAccount currentAccount = null;
+//        Optional<BankAccount> bankAccountOptional = bankAccountPersistencePort.findById(id);
+//        if(bankAccountOptional.isPresent()) {
+//            currentAccount = bankAccountOptional.get();
+//            Transaction transaction = new Transaction(id,"EUR", new BigDecimal(amount), TransactionType.CREDIT);
+//            currentAccount.getIssuedTransactions().add(transaction);
+//            bankAccountPersistencePort.update(currentAccount);
+//        }
+//        return currentAccount;
+//    }
 }
