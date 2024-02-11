@@ -35,7 +35,7 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     
     @Override
     public BankAccount create(BankAccount bankAccount) {
-        persist(bankAccountMapper.toEntity(bankAccount));
+        getEntityManager().persist(bankAccountMapper.toEntity(bankAccount));
         logger.info("BankAccount " + bankAccount.getId() + " created");
         return bankAccount;
     }

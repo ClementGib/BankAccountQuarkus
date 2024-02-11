@@ -1,3 +1,9 @@
+-- DB SEQ ALTER
+ALTER SEQUENCE basapp.customers_customer_id_seq RESTART WITH 7;
+ALTER SEQUENCE basapp.bank_accounts_account_id_seq RESTART WITH 9;
+ALTER SEQUENCE basapp.transactions_transaction_id_seq RESTART WITH 8;
+
+
 INSERT INTO basapp.customers(customer_id, first_name, last_name, gender, marital_status, birthday, country, address, city, email, phone_number, metadata)
 VALUES (1, 'John', 'Doe', 'M', 'S', '1980-01-01', 'US', '200 Central Park West, NY 10024', 'New York', 'johndoe@bas.com', '+1 212-769-5100', '{"contact_preferences" : "phone", "annual_salary" : "52000", "newsletter" : "false"}'),
        (2, 'Anne', 'Jean', 'F', 'M', '1993-07-11', 'FR', '2 rue du chateau', 'Marseille', 'annej@bas.com', '+36 6 50 44 12 05', '{"contact_preferences" : "phone", "annual_salary" : "52000", "newsletter" : "false"}'),
@@ -27,10 +33,10 @@ VALUES (1, 1),
        (7, 6);
 
 INSERT INTO basapp.transactions (transaction_id, sender_account_id, receiver_account_id, type, amount, currency, status, date, label, metadata)
-VALUES (1, 1, 2, 'CREDIT', 1600.00, 'EUR', 'COMPLETED', parsedatetime('2022-06-06 12:00:00', 'YYYY-MM-DD HH:mm:ss'), 'transaction 1', '{"sender_amount_before" : "2000", "receiver_amount_before" : "0", "sender_amount_after" : "400", "receiver_amount_after" : "1600"}'),
-       (2, 6, 3, 'CREDIT', 9200.00, 'EUR', 'COMPLETED', parsedatetime('2022-07-10 15:00:00', 'YYYY-MM-DD HH:mm:ss'), 'transaction 2', '{"sender_amount_before" : "9200", "receiver_amount_before" : "10000", "sender_amount_after" : "0", "receiver_amount_after" : "19200"}'),
-       (3, 2, 1, 'CREDIT', 600.99, 'EUR', 'UNPROCESSED', parsedatetime('2022-11-06 18:00:00', 'YYYY-MM-DD HH:mm:ss'), 'transaction 3', null),
-       (4, 1, 7, 'DEBIT', 2000.00, 'EUR', 'UNPROCESSED', parsedatetime('2022-11-06 18:30:00', 'YYYY-MM-DD HH:mm:ss'), 'transaction 4', null),
-       (5, 3, 1, 'CREDIT', 1000.00, 'EUR', 'UNPROCESSED', parsedatetime('2022-12-06 18:00:00', 'YYYY-MM-DD HH:mm:ss'), 'transaction 5', null),
-       (6, 4, 2, 'DEBIT', 300.80, 'EUR', 'UNPROCESSED', parsedatetime('2022-12-06 19:00:00', 'YYYY-MM-DD HH:mm:ss'), 'transaction 6', null),
-       (7, 8, 7, 'DEBIT', 5000.00, 'EUR', 'UNPROCESSED', parsedatetime('2022-12-06 19:00:10', 'YYYY-MM-DD HH:mm:ss'), 'transaction 7', null);
+VALUES (1, 1, 2, 'CREDIT', 1600.00, 'EUR', 'COMPLETED', '2022-06-06T12:00:00', 'transaction 1', '{"sender_amount_before" : "2000", "receiver_amount_before" : "0", "sender_amount_after" : "400", "receiver_amount_after" : "1600"}'),
+       (2, 6, 3, 'CREDIT', 9200.00, 'EUR', 'COMPLETED', '2022-07-10T15:00:00', 'transaction 2', '{"sender_amount_before" : "9200", "receiver_amount_before" : "10000", "sender_amount_after" : "0", "receiver_amount_after" : "19200"}'),
+       (3, 2, 1, 'CREDIT', 600.99, 'EUR', 'UNPROCESSED', '2022-11-06T18:00:00', 'transaction 3', null),
+       (4, 1, 7, 'DEBIT', 2000.00, 'EUR', 'UNPROCESSED', '2022-11-06T18:30:00', 'transaction 4', null),
+       (5, 3, 1, 'CREDIT', 1000.00, 'EUR', 'UNPROCESSED', '2022-12-06T18:00:00', 'transaction 5', null),
+       (6, 4, 2, 'DEBIT', 300.80, 'EUR', 'UNPROCESSED', '2022-12-06T19:00:00', 'transaction 6', null),
+       (7, 8, 7, 'DEBIT', 5000.00, 'EUR', 'UNPROCESSED', '2022-12-06T19:00:10', 'transaction 7', null);

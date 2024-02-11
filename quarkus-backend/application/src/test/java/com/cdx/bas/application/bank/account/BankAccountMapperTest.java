@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@Disabled
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 public class BankAccountMapperTest {

@@ -25,9 +25,11 @@ class CustomerRepositoryTest {
     @Inject
     CustomerRepository customerRepository;
 
+
+
     @Test
     @Transactional
-    public void getAll_should_return_allCustomers() {
+    public void getAll_should_return_allCustomers_from_database() {
         Set<Customer> expectedCustomers = Set.of(
                 new Customer(1L, "John", "Doe", MALE, SINGLE, LocalDate.of(1980, 1, 1), "US", "200 Central Park West, NY 10024", "New York", "johndoe@bas.com", "+1 212-769-5100", Collections.emptyList(), Map.of("contact_preferences", "phone", "annual_salary", "52000", "newsletter", "false")),
                 new Customer(2L, "Anne", "Jean", FEMALE, MARRIED, LocalDate.of(1993, 7, 11), "FR", "2 rue du chateau", "Marseille", "annej@bas.com", "+36 6 50 44 12 05", Collections.emptyList(), Map.of("contact_preferences", "phone", "annual_salary", "52000", "newsletter", "false")),

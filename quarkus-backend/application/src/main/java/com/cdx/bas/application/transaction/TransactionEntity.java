@@ -7,6 +7,7 @@ import io.hypersistence.utils.hibernate.type.json.JsonStringType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
@@ -55,6 +56,7 @@ public class TransactionEntity extends PanacheEntityBase {
 
     @Type(JsonStringType.class)
     @Column(name = "metadata", columnDefinition = "jsonb")
+    @ColumnTransformer(write = "?::jsonb")
     private String metadata;
 
     public Long getId() {

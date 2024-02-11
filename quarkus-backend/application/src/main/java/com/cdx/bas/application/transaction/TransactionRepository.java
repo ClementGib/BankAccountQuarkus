@@ -1,6 +1,5 @@
 package com.cdx.bas.application.transaction;
 
-import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionPersistencePort;
 import com.cdx.bas.domain.transaction.TransactionStatus;
@@ -17,8 +16,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-import static javax.transaction.Transactional.TxType.*;
-
 /***
  * persistence implementation for Transaction entities
  * 
@@ -31,7 +28,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     private static final Logger logger = Logger.getLogger(TransactionRepository.class);
     
     @Inject
-    private DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
+    TransactionMapper transactionMapper;
 
     @Override
     public Optional<Transaction> findById(long id) {
@@ -48,6 +45,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     }
 
     @Override
+    @Transactional(TxType.REQUIRED)
     public Transaction create(Transaction transaction) {
         persist(transactionMapper.toEntity(transaction));
         logger.info("Transaction " + transaction.getId() + " created");
@@ -55,14 +53,15 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     }
 
     @Override
-    @Transactional(value = MANDATORY)
-    public Transaction update(Transaction transaction) {;
+    @Transactional(TxType.REQUIRED)
+    public Transaction update(Transaction transaction) {
         getEntityManager().merge(transactionMapper.toEntity(transaction));
         logger.info("Transaction " + transaction.getId() + " updated");
         return transaction;
     }
 
     @Override
+    @Transactional(TxType.REQUIRED)
     public Optional<Transaction> deleteById(long id) {
         Optional<TransactionEntity> entityOptional = findByIdOptional(id);
         if (entityOptional.isPresent()) {
