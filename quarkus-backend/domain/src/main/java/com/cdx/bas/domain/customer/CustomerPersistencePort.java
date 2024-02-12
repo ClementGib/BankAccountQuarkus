@@ -1,8 +1,16 @@
 package com.cdx.bas.domain.customer;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface CustomerPersistencePort {
+
+    /**
+     * find every Customers
+     * @return all Customer
+     */
+    public Set<Customer> getAll();
+
     
     /**
      * find Customer from its id

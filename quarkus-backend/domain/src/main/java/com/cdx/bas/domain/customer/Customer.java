@@ -187,30 +187,30 @@ public class Customer {
 	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(accounts, address, birthdate, city, email, firstName, gender, id, lastName, maritalStatus,
-				metadata, country, phoneNumber);
+		return Objects.hash(id, firstName, lastName, gender, maritalStatus,
+				birthdate, country, address, city, email, phoneNumber, accounts, metadata);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-		    return true;
-		}
-		if (obj == null)  {
-		    return false;
-		}
-		if (getClass() != obj.getClass()) {
-		    return false;
-		}
-		Customer other = (Customer) obj;
-		return Objects.equals(accounts, other.accounts) && Objects.equals(address, other.address)
-				&& Objects.equals(birthdate, other.birthdate) && Objects.equals(city, other.city)
-				&& Objects.equals(email, other.email) && Objects.equals(firstName, other.firstName)
-				&& gender == other.gender && id == other.id && Objects.equals(lastName, other.lastName)
-				&& maritalStatus == other.maritalStatus && Objects.equals(metadata, other.metadata)
-				&& Objects.equals(country, other.country) && Objects.equals(phoneNumber, other.phoneNumber);
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Customer customer = (Customer) o;
+		return Objects.equals(id, customer.id) &&
+				Objects.equals(firstName, customer.firstName) &&
+				Objects.equals(lastName, customer.lastName) &&
+				gender == customer.gender &&
+				maritalStatus == customer.maritalStatus &&
+				Objects.equals(birthdate, customer.birthdate) &&
+				Objects.equals(country, customer.country) &&
+				Objects.equals(address, customer.address) &&
+				Objects.equals(city, customer.city) &&
+				Objects.equals(email, customer.email) &&
+				Objects.equals(phoneNumber, customer.phoneNumber) &&
+				Objects.equals(accounts, customer.accounts) &&
+				Objects.equals(metadata, customer.metadata);
 	}
 }

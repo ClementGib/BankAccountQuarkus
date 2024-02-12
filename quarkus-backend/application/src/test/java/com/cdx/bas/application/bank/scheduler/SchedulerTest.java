@@ -6,12 +6,9 @@ import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -27,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest
-@TestMethodOrder(OrderAnnotation.class)
+@TestProfile(SchedulerTestProfile.class)
 @QuarkusTestResource(H2DatabaseTestResource.class)
 public class SchedulerTest {
 
@@ -41,8 +38,6 @@ public class SchedulerTest {
     Scheduler scheduler;
 
     @Test
-    @Order(0)
-    @Disabled
     public void processQueue_should_tryToFillTheQueue_when_QueueWasEmpty() {
         when(transactionRepository.findUnprocessedTransactions()).thenReturn(new PriorityQueue<Transaction>());
         scheduler.processQueue();
@@ -53,12 +48,12 @@ public class SchedulerTest {
     }
 
     @Test
-    @Order(1)
-    @Disabled
     public void processQueue_should_runSchedulerProcess_with_OrderedQueues_when_QueueIsFilled_with_UnprocessedTransactions() throws InterruptedException {
         Queue<Transaction> queue = createCreditTransactions();
         when(transactionRepository.findUnprocessedTransactions()).thenReturn(queue);
         Clock clock;
+
+        scheduler.processQueue();
 
         assertThat(queue.peek()).usingRecursiveComparison().isEqualTo(createTransaction(5L, 59L, 99L, CREDIT, UNPROCESSED, Instant.MIN, "Fifth transaction"));
         verify(transactionService).process(queue.poll());

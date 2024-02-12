@@ -9,7 +9,6 @@ import com.cdx.bas.domain.utils.ExchangeRateUtils;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.transaction.Transactional.TxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
 @RequestScoped
 public class BankAccountServiceImpl implements BankAccountServicePort {
@@ -34,7 +35,7 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     TransactionServicePort transactionService;
 
     @Override
-    @Transactional(value = TxType.REQUIRES_NEW)
+    @Transactional(value = REQUIRES_NEW)
     public Transaction deposit(Transaction transaction) {
         Map<String, String> metadata = new HashMap<>();
         try {

@@ -5,7 +5,6 @@ import com.cdx.bas.domain.transaction.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.transaction.Transactional.TxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.cdx.bas.domain.transaction.TransactionStatus.*;
+import static jakarta.transaction.Transactional.TxType.MANDATORY;
 
 @RequestScoped
 public class TransactionServiceImpl implements TransactionServicePort {
@@ -40,7 +40,7 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
 
     @Override
-    @Transactional(value = TxType.MANDATORY)
+    @Transactional(value = MANDATORY)
     public Transaction setAsOutstanding(Transaction transaction) {
         if (UNPROCESSED.equals(transaction.getStatus())) {
             transaction.setStatus(OUTSTANDING);
@@ -51,21 +51,21 @@ public class TransactionServiceImpl implements TransactionServicePort {
     }
 
     @Override
-    @Transactional(value = TxType.MANDATORY)
+    @Transactional(value = MANDATORY)
 	public Transaction setAsCompleted(Transaction completedTransaction, Map<String, String> metadata) {
         setState(completedTransaction, metadata, COMPLETED);
 		return transactionRepository.update(completedTransaction);
 	}
 
     @Override
-    @Transactional(value = TxType.MANDATORY)
+    @Transactional(value = MANDATORY)
     public Transaction setAsError(Transaction erroredTransaction, Map<String, String> metadata) {
         setState(erroredTransaction, metadata, ERROR);
         return transactionRepository.update(erroredTransaction);
     }
 
     @Override
-    @Transactional(value = TxType.MANDATORY)
+    @Transactional(value = MANDATORY)
     public Transaction setAsRefused(Transaction refusedTransaction, Map<String, String> metadata) {
         setState(refusedTransaction, metadata, REFUSED);
         return transactionRepository.update(refusedTransaction);

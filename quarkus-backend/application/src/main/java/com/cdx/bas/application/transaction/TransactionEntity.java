@@ -3,10 +3,12 @@ package com.cdx.bas.application.transaction;
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import com.cdx.bas.domain.transaction.TransactionType;
+import io.hypersistence.utils.hibernate.type.json.JsonStringType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -52,8 +54,9 @@ public class TransactionEntity extends PanacheEntityBase {
     @Column(name = "label", nullable = false)
     private String label;
 
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Type(JsonStringType.class)
     @Column(name = "metadata", columnDefinition = "jsonb")
+    @ColumnTransformer(write = "?::jsonb")
     private String metadata;
 
     public Long getId() {

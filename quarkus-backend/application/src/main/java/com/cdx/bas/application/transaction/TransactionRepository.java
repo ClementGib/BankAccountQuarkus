@@ -1,6 +1,5 @@
 package com.cdx.bas.application.transaction;
 
-import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionPersistencePort;
 import com.cdx.bas.domain.transaction.TransactionStatus;
@@ -11,6 +10,7 @@ import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
 
 import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -28,7 +28,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     private static final Logger logger = Logger.getLogger(TransactionRepository.class);
     
     @Inject
-    private DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
+    TransactionMapper transactionMapper;
 
     @Override
     public Optional<Transaction> findById(long id) {
@@ -45,6 +45,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     }
 
     @Override
+    @Transactional(TxType.REQUIRED)
     public Transaction create(Transaction transaction) {
         persist(transactionMapper.toEntity(transaction));
         logger.info("Transaction " + transaction.getId() + " created");
@@ -52,14 +53,15 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     }
 
     @Override
-    @Transactional(value = Transactional.TxType.MANDATORY)
-    public Transaction update(Transaction transaction) {;
+    @Transactional(TxType.REQUIRED)
+    public Transaction update(Transaction transaction) {
         getEntityManager().merge(transactionMapper.toEntity(transaction));
         logger.info("Transaction " + transaction.getId() + " updated");
         return transaction;
     }
 
     @Override
+    @Transactional(TxType.REQUIRED)
     public Optional<Transaction> deleteById(long id) {
         Optional<TransactionEntity> entityOptional = findByIdOptional(id);
         if (entityOptional.isPresent()) {

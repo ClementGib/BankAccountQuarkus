@@ -53,9 +53,7 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
 
         try {
             if (entity.getMetadata() != null) {
-                dto.setMetadata(
-                        objectMapper.readValue(entity.getMetadata(), new TypeReference<>() {
-                        }));
+                dto.setMetadata(objectMapper.readValue(entity.getMetadata(), new TypeReference<HashMap<String, String>>() {}));
             } else {
                 dto.setMetadata(new HashMap<>());
             }

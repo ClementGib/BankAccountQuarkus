@@ -1,12 +1,5 @@
 package com.cdx.bas.application.customer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
-
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
@@ -14,17 +7,21 @@ import com.cdx.bas.domain.customer.Customer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import org.hibernate.MappingException;
+
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @RequestScoped
 public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity> {
     
     @Inject
-    private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
+    DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
     
     @Inject
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
     
     @Override
     public Customer toDto(CustomerEntity entity) {
@@ -50,7 +47,7 @@ public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity>
         
         try {
             if (entity.getMetadata() != null) {
-                dto.setMetadata(objectMapper.readValue(entity.getMetadata(), new TypeReference<Map<String, String>>() {}));
+                dto.setMetadata(objectMapper.readValue(entity.getMetadata(), new TypeReference<HashMap<String, String>>() {}));
             } else {
                 dto.setMetadata(new HashMap<>());
             }

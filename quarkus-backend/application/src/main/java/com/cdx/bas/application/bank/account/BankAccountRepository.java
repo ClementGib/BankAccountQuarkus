@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
+import static jakarta.transaction.Transactional.TxType.MANDATORY;
+
 /***
  * persistence implementation for BankAccount entities
  * 
@@ -33,12 +35,12 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     
     @Override
     public BankAccount create(BankAccount bankAccount) {
-        persist(bankAccountMapper.toEntity(bankAccount));
+        getEntityManager().persist(bankAccountMapper.toEntity(bankAccount));
         logger.info("BankAccount " + bankAccount.getId() + " created");
         return bankAccount;
     }
     @Override
-    @Transactional(value = Transactional.TxType.MANDATORY)
+    @Transactional(value = MANDATORY)
     public BankAccount update(BankAccount bankAccount) {
         bankAccount = bankAccountMapper.toDto(getEntityManager().merge(bankAccountMapper.toEntity(bankAccount)));
         logger.info("BankAccount " + bankAccount.getId() + " updated");
