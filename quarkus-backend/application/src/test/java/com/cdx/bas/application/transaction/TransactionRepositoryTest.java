@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TransactionRepositoryTest {
 
     @Inject
-    private TransactionRepository transactionRepository;
+    TransactionRepository transactionRepository;
 
     @Test
     @Order(1)
@@ -51,11 +51,11 @@ class TransactionRepositoryTest {
         Queue<Transaction> actualUnprocessedTransactions = transactionRepository.findUnprocessedTransactions();
 
         Queue<Transaction> expectedUnprocessedTransactions = new PriorityQueue<>();
-        expectedUnprocessedTransactions.add(new Transaction(3L, 2L, 1L, new BigDecimal("600.99"), "EUR", CREDIT, UNPROCESSED, OffsetDateTime.parse("2022-11-06T18:00:00+01:00").toInstant(), "transaction 3", new HashMap<>()));
-        expectedUnprocessedTransactions.add(new Transaction(4L, 1L, 7L, new BigDecimal("2000.00"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-11-06T18:30:00+01:00").toInstant(), "transaction 4", new HashMap<>()));
-        expectedUnprocessedTransactions.add(new Transaction(5L, 3L, 1L, new BigDecimal("1000.00"), "EUR", CREDIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T18:00:00+01:00").toInstant(), "transaction 5", new HashMap<>()));
-        expectedUnprocessedTransactions.add(new Transaction(6L, 4L, 2L, new BigDecimal("300.80"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T19:00:00+01:00").toInstant(), "transaction 6", new HashMap<>()));
-        expectedUnprocessedTransactions.add(new Transaction(7L, 8L, 7L, new BigDecimal("5000.00"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T19:00:10+01:00").toInstant(), "transaction 7", new HashMap<>()));
+        expectedUnprocessedTransactions.add(new Transaction(5L, 2L, 1L, new BigDecimal("600.99"), "EUR", CREDIT, UNPROCESSED, OffsetDateTime.parse("2022-11-06T18:00:00+01:00").toInstant(), "transaction 5", new HashMap<>()));
+        expectedUnprocessedTransactions.add(new Transaction(6L, 1L, 7L, new BigDecimal("2000.00"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-11-06T18:30:00+01:00").toInstant(), "transaction 6", new HashMap<>()));
+        expectedUnprocessedTransactions.add(new Transaction(7L, 3L, 1L, new BigDecimal("1000.00"), "EUR", CREDIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T18:00:00+01:00").toInstant(), "transaction 7", new HashMap<>()));
+        expectedUnprocessedTransactions.add(new Transaction(8L, 4L, 2L, new BigDecimal("300.80"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T19:00:00+01:00").toInstant(), "transaction 8", new HashMap<>()));
+        expectedUnprocessedTransactions.add(new Transaction(9L, 8L, 7L, new BigDecimal("5000.00"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T19:00:10+01:00").toInstant(), "transaction 9", new HashMap<>()));
 
         assertThat(actualUnprocessedTransactions)
                 .usingRecursiveComparison()
@@ -71,9 +71,9 @@ class TransactionRepositoryTest {
         Transaction createdTransaction = transactionRepository.create(transactionToCreate);
 
         transactionRepository.getEntityManager().flush();
-        Optional<Transaction> actualOptionalTransaction = transactionRepository.findById(8L);
+        Optional<Transaction> actualOptionalTransaction = transactionRepository.findById(10L);
 
-        Transaction expectedTransaction = new Transaction(8L, 8L, 1L, new BigDecimal("99999.00"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T19:00:10+01:00").toInstant(), "transaction 8", new HashMap<>());
+        Transaction expectedTransaction = new Transaction(10L, 8L, 1L, new BigDecimal("99999.00"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T19:00:10+01:00").toInstant(), "transaction 8", new HashMap<>());
         Optional<Transaction> optionalTransaction = Optional.of(expectedTransaction);
         assertThat(createdTransaction)
                 .usingRecursiveComparison()
@@ -108,13 +108,13 @@ class TransactionRepositoryTest {
     @Order(5)
     @Transactional
     public void deleteById_should_delete_transaction_and_return_it_as_optional() {
-        long transactionIdToDelete = 8L;
-        Transaction transactionToDelete = new Transaction(8L, 8L, 1L, new BigDecimal("99999.00"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T19:00:10+01:00").toInstant(), "transaction 8", new HashMap<>());
+        long transactionIdToDelete = 10L;
+        Transaction transactionToDelete = new Transaction(10L, 8L, 1L, new BigDecimal("99999.00"), "EUR", DEBIT, UNPROCESSED, OffsetDateTime.parse("2022-12-06T19:00:10+01:00").toInstant(), "transaction 8", new HashMap<>());
         Optional<Transaction> optionalTransaction = Optional.of(transactionToDelete);
 
 
         Optional<Transaction> deletedTransaction = transactionRepository.deleteById(transactionIdToDelete);
-        Optional<Transaction> deletedOptionalTransaction = transactionRepository.findById(8L);
+        Optional<Transaction> deletedOptionalTransaction = transactionRepository.findById(10L);
 
         assertThat(deletedOptionalTransaction).isEmpty();
         assertThat(deletedTransaction)

@@ -68,5 +68,4 @@ SET search_path TO basapp;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA basapp TO basadm;
 GRANT SELECT, UPDATE, USAGE ON ALL SEQUENCES IN SCHEMA basapp to basadm;
 
-CREATE SEQUENCE basapp.hibernate_sequence;
-
+CREATE SEQUENCE IF NOT EXISTS basapp.hibernate_sequence;

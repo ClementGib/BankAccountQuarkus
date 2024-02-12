@@ -4,6 +4,7 @@ import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountControllerPort;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 import com.cdx.bas.domain.transaction.TransactionServicePort;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -12,6 +13,7 @@ import jakarta.ws.rs.PathParam;
 
 
 @Path("/accounts")
+@ApplicationScoped
 public class BankAccountResource implements BankAccountControllerPort {
     @Inject
     BankAccountPersistencePort bankAccountPersistencePort;

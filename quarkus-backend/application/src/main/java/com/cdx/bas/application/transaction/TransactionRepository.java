@@ -5,6 +5,8 @@ import com.cdx.bas.domain.transaction.TransactionPersistencePort;
 import com.cdx.bas.domain.transaction.TransactionStatus;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Parameters;
+import io.quarkus.panache.common.Sort;
+import jakarta.annotation.Nullable;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
@@ -14,6 +16,7 @@ import javax.transaction.Transactional.TxType;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /***
@@ -33,6 +36,22 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     @Override
     public Optional<Transaction> findById(long id) {
         return findByIdOptional(id).map(transactionMapper::toDto);
+    }
+
+    @Override
+    public Set<Transaction> getAll() {
+        return findAll(Sort.by("status")).stream()
+                .map(customer -> transactionMapper.toDto(customer))
+                .collect(Collectors.toSet());
+    }
+
+
+    @Override
+    public Set<Transaction> findAllByStatus(TransactionStatus transactionStatus) {
+        return findAll(Sort.by("status")).stream()
+                .filter(transaction -> transaction.getStatus().equals(transactionStatus))
+                .map(customer -> transactionMapper.toDto(customer))
+                .collect(Collectors.toSet());
     }
 
     @Override
