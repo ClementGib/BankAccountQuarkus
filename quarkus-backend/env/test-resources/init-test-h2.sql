@@ -64,9 +64,5 @@ CREATE TYPE IF NOT EXISTS "JSONB" AS TEXT;
 	CONSTRAINT fk_customer_id FOREIGN KEY(customer_id) REFERENCES basapp.customers(customer_id)
 	);
 
--- GRANT USER --
-GRANT ALL PRIVILEGES ON SCHEMA basapp to basadm;
-
 -- SEQUENCE INIT WITH USE CASES
 CREATE SEQUENCE IF NOT EXISTS basapp.hibernate_sequence;
-

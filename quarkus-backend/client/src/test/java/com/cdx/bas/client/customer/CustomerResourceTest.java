@@ -16,7 +16,7 @@ import java.util.Set;
 import static com.cdx.bas.domain.customer.Gender.FEMALE;
 import static com.cdx.bas.domain.customer.Gender.MALE;
 import static com.cdx.bas.domain.customer.MaritalStatus.*;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -49,6 +49,7 @@ class CustomerResourceTest {
         Customer expectedCustomer = new Customer(6L, "Juan", "Pedros", MALE, SINGLE, LocalDate.of(1975, 12, 17), "ES", "Place de las Delicias", "Sevilla", "juanito@bas.com", "+34 9 20 55 62 05", Collections.emptyList(), Map.of("contact_preferences", "phone", "annual_salary", "200000", "newsletter", "false"));
 
         Optional<Customer> actualCustomer = customerResource.getCustomer(6L);
+        assertThat(actualCustomer.isPresent()).isTrue();
         assertThat(actualCustomer.get())
                 .usingRecursiveComparison()
                 .ignoringFields("accounts")

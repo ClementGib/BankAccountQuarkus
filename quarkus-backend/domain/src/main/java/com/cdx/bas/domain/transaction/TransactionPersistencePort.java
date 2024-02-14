@@ -1,7 +1,10 @@
 package com.cdx.bas.domain.transaction;
 
+import jakarta.annotation.Nullable;
+
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 
 public interface TransactionPersistencePort {
     
@@ -12,7 +15,21 @@ public interface TransactionPersistencePort {
      * @return <Optional>Transaction if id corresponding or not to a Transaction
      */
     public Optional<Transaction> findById(long id);
-    
+
+    /**
+     * find all transactions
+     *
+     * @return Set with all the transactions
+     */
+    public Set<Transaction> getAll();
+
+    /**
+     * find all transactions by status
+     *
+     * @return Set with all the transactions by status
+     */
+    public Set<Transaction> findAllByStatus(TransactionStatus transactionStatus);
+
     /**
      * find all unprocessed transactions in a queue
      * 

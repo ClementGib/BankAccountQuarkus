@@ -17,8 +17,8 @@ import java.util.Set;
 
 import static jakarta.transaction.Transactional.TxType.*;
 
-@ApplicationScoped
 @Path("/customers")
+@ApplicationScoped
 public class CustomerResource {
 
     @Inject

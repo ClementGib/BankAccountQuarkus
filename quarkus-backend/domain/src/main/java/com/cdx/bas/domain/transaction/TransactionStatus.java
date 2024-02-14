@@ -6,5 +6,16 @@ public enum TransactionStatus {
     WAITING,
     COMPLETED,
     REFUSED,
-    ERROR
+    ERROR;
+
+
+    public static TransactionStatus fromString(String status) throws IllegalArgumentException{
+        for (TransactionStatus value : values()) {
+            if (value.name().equalsIgnoreCase(status)) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("Invalid status: " + status);
+    }
+
 }
