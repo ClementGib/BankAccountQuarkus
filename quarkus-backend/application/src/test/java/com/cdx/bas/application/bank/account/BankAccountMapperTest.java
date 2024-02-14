@@ -19,7 +19,6 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -41,19 +40,17 @@ public class BankAccountMapperTest {
     BankAccountMapper bankAccountMapper;
 
     @InjectMock
-    private DtoEntityMapper<Customer, CustomerEntity> customerMapper;
+    DtoEntityMapper<Customer, CustomerEntity> customerMapper;
 
     @InjectMock
-    private DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
+    DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
 
     @InjectMock
-    private CustomerRepository customerRepository;
+    CustomerRepository customerRepository;
     
     @Test
-    public void toDto_should_returnNullDto_when_entityIsNull() {
-        BankAccountEntity entity = null;
-
-        BankAccount dto = bankAccountMapper.toDto(entity);
+    public void toDto_shouldReturnNullDto_whenEntityIsNull() {
+        BankAccount dto = bankAccountMapper.toDto(null);
 
         assertThat(dto).isNull();
 
@@ -61,10 +58,8 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toEntity_should_returnNullEntity_when_dtoIsNull() {
-        BankAccount dto = null;
-
-        BankAccountEntity entity = bankAccountMapper.toEntity(dto);
+    public void toEntity_shouldReturnNullEntity_whenDtoIsNull() {
+        BankAccountEntity entity = bankAccountMapper.toEntity(null);
 
         assertThat(entity).isNull();
 
@@ -72,7 +67,7 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toDto_should_returnNullDto_when_entityHasNullTypeValues() {
+    public void toDto_shouldReturnNullDto_whenEntityHasEmptyObject() {
         BankAccount dto = bankAccountMapper.toDto(new BankAccountEntity());
 
         assertThat(dto).isNull();
@@ -81,7 +76,7 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toDto_should_mapNullValues_when_entityHasNullValuesButHasType() {
+    public void toDto_shouldMapAccountTypeOnly_whenEntityHasAccount_withOnlyAccountType() {
         BankAccountEntity entity = new BankAccountEntity();
         entity.setType(AccountType.CHECKING);
 
@@ -97,7 +92,7 @@ public class BankAccountMapperTest {
     }
 
     @Test
-        public void toEntity_should_mapNullValues_when_dtoHasNullValuesButHasTypeAndId() {
+        public void toEntity_shouldMapNullValues_whenDtoHasAccount_withOnlyAccountTypeAndId() {
         BankAccount bankAccount = new CheckingBankAccount();
         bankAccount.setId(1L);
         BankAccountEntity entity = bankAccountMapper.toEntity(bankAccount);
@@ -112,25 +107,25 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toDto_should_mapDtoValues_when_entityHasValues() {
+    public void toDto_shouldMapEveryFieldsOfDto_whenEntityHasValues() {
         Instant date = Instant.now();
         BankAccountEntity entity = new BankAccountEntity();
         entity.setId(10L);
         entity.setType(AccountType.CHECKING);
         entity.setBalance(new BigDecimal("1000"));
         List<CustomerEntity> customers = new ArrayList<>();
-        CustomerEntity customerEntity = createCustomerEntity();
+        CustomerEntity customerEntity = createCustomerEntityUtils();
         customers.add(customerEntity);
         entity.setCustomers(customers);
         Set<TransactionEntity> transactionEntities = new HashSet<>();
-        TransactionEntity transactionEntity1 = createTransactionEntity(2000L, 10L, date);
+        TransactionEntity transactionEntity1 = createTransactionEntity(2000L, date);
         transactionEntities.add(transactionEntity1);
-        TransactionEntity transactionEntity2 = createTransactionEntity(5000L, 10L, date);
+        TransactionEntity transactionEntity2 = createTransactionEntity(5000L, date);
         transactionEntities.add(transactionEntity2);
         entity.setIssuedTransactions(transactionEntities);
 
-        Transaction transaction1 = createTransaction(2000L, 10L, date);
-        Transaction transaction2 = createTransaction(5000L, 10L, date);
+        Transaction transaction1 = createTransactionUtils(2000L, date);
+        Transaction transaction2 = createTransactionUtils(5000L, date);
         when(transactionMapper.toDto(transactionEntity1)).thenReturn(transaction1);
         when(transactionMapper.toDto(transactionEntity2)).thenReturn(transaction2);
         BankAccount dto = bankAccountMapper.toDto(entity);
@@ -150,20 +145,20 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toDto_should_mapThrowNoSuchElementException_when_customerIsMissing() {
+    public void toEntity_shouldThrowNoSuchElementException_whenCustomerIsNotFound() {
         Instant date = Instant.now();
         BankAccount dto = new CheckingBankAccount();
         dto.setId(10L);
         dto.setType(AccountType.CHECKING);
         dto.setBalance(new Money(new BigDecimal("1000")));
         List<Long> customers = new ArrayList<>();
-        Customer customer = createCustomer();
+        Customer customer = createCustomerUtils();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
         Set<Transaction> transactions = new HashSet<>();
-        Transaction transaction1 = createTransaction(2000L, 10L, date);
+        Transaction transaction1 = createTransactionUtils(2000L, date);
         transactions.add(transaction1);
-        Transaction transaction2 = createTransaction(5000L, 10L, date);
+        Transaction transaction2 = createTransactionUtils(5000L, date);
         transactions.add(transaction2);
         dto.setIssuedTransactions(transactions);
 
@@ -182,29 +177,29 @@ public class BankAccountMapperTest {
     }
 
     @Test
-    public void toEntity_should_mapDtoValues_when_dtoHasValues() {
+    public void toEntity_shouldMapEveryFieldsOfEntity_whenDtoHasValues() {
         Instant date = Instant.now();
         BankAccount dto = new CheckingBankAccount();
         dto.setId(10L);
         dto.setType(AccountType.CHECKING);
         dto.setBalance(new Money(new BigDecimal("1000")));
         List<Long> customers = new ArrayList<>();
-        Customer customer = createCustomer();
+        Customer customer = createCustomerUtils();
         customers.add(customer.getId());
         dto.setCustomersId(customers);
         Set<Transaction> transactions = new HashSet<>();
-        Transaction transaction1 = createTransaction(2000L, 10L, date);
+        Transaction transaction1 = createTransactionUtils(2000L, date);
         transactions.add(transaction1);
-        Transaction transaction2 = createTransaction(5000L, 10L, date);
+        Transaction transaction2 = createTransactionUtils(5000L, date);
         transactions.add(transaction2);
         dto.setIssuedTransactions(transactions);
 
-        CustomerEntity customerEntity = createCustomerEntity();
+        CustomerEntity customerEntity = createCustomerEntityUtils();
         when(customerRepository.findByIdOptional(anyLong())).thenReturn(Optional.of(customerEntity));
         when(customerMapper.toEntity(customer)).thenReturn(customerEntity);
-        TransactionEntity transactionEntity1 = createTransactionEntity(2000L, 10L, date);
+        TransactionEntity transactionEntity1 = createTransactionEntity(2000L, date);
         when(transactionMapper.toEntity(transaction1)).thenReturn(transactionEntity1);
-        TransactionEntity transactionEntity2 = createTransactionEntity(5000L, 10L, date);
+        TransactionEntity transactionEntity2 = createTransactionEntity(5000L, date);
         when(transactionMapper.toEntity(transaction2)).thenReturn(transactionEntity2);
 
 
@@ -225,7 +220,7 @@ public class BankAccountMapperTest {
         verifyNoMoreInteractions(customerMapper, transactionMapper, customerRepository);
     }
 
-    private Customer createCustomer() {
+    private Customer createCustomerUtils() {
         Customer customer = new Customer();
         customer.setId(99L);
         customer.setFirstName("Paul");
@@ -241,7 +236,7 @@ public class BankAccountMapperTest {
         return customer;
     }
 
-    private CustomerEntity createCustomerEntity() {
+    private CustomerEntity createCustomerEntityUtils() {
         CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setId(99L);
         customerEntity.setFirstName("Paul");
@@ -257,12 +252,12 @@ public class BankAccountMapperTest {
         return customerEntity;
     }
 
-    private Transaction createTransaction(long id, long accountId, Instant instantDate) {
+    private Transaction createTransactionUtils(long id, Instant instantDate) {
         Transaction transaction = new Transaction();
         transaction.setId(id);
-        transaction.setSenderAccountId(accountId);
+        transaction.setSenderAccountId(10L);
         transaction.setReceiverAccountId(77L);
-        transaction.setAmount(new BigDecimal(100.00));
+        transaction.setAmount(new BigDecimal("100.00"));
         transaction.setType(TransactionType.CREDIT);
         transaction.setStatus(TransactionStatus.ERROR);
         transaction.setDate(instantDate);
@@ -270,7 +265,7 @@ public class BankAccountMapperTest {
         return transaction;
     }
 
-    private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {
+    private TransactionEntity createTransactionEntity(long id, Instant instantDate) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(id);
         transactionEntity.setSenderBankAccountEntity(null);

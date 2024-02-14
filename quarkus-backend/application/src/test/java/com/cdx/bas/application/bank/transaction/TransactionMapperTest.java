@@ -2,6 +2,7 @@ package com.cdx.bas.application.bank.transaction;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.bank.account.BankAccountRepository;
+import com.cdx.bas.application.customer.CustomerEntity;
 import com.cdx.bas.application.transaction.TransactionEntity;
 import com.cdx.bas.application.transaction.TransactionMapper;
 import com.cdx.bas.domain.bank.account.AccountType;
@@ -13,7 +14,6 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -29,19 +29,19 @@ import static org.mockito.Mockito.when;
 public class TransactionMapperTest {
 
     @InjectMock
-    private BankAccountRepository bankAccountRepository;
+    BankAccountRepository bankAccountRepository;
 
     @Inject
     TransactionMapper transactionMapper;
 
     @Test
-    public void toDto_should_throwException_when_transactionDto_doesNotHave_senderBankAccount() {
+    public void toDto_shouldThrowException_whenTransactionDtoDoesNotHaveSenderBankAccount() {
         try {
-            TransactionEntity transactionEntity = new TransactionEntity();
             BankAccountEntity bankAccountEntity = new BankAccountEntity();
-            bankAccountEntity.setId(10L);
+            TransactionEntity transactionEntity = new TransactionEntity();
             transactionEntity.setSenderBankAccountEntity(bankAccountEntity);
-            Transaction dto = transactionMapper.toDto(transactionEntity);
+            bankAccountEntity.setId(10L);
+            transactionMapper.toDto(transactionEntity);
             fail();
         } catch (NoSuchElementException exception) {
             assertThat(exception.getMessage()).hasToString("Transaction does not have receiver bank account.");
@@ -50,9 +50,8 @@ public class TransactionMapperTest {
 
     @Test
     public void toDto_should_throwException_when_transactionDto_doesNotHave_receiverBankAccount() {
-
         try {
-            Transaction dto = transactionMapper.toDto(new TransactionEntity());
+            transactionMapper.toDto(new TransactionEntity());
             fail();
         } catch (NoSuchElementException exception) {
             assertThat(exception.getMessage()).hasToString("Transaction does not have sender bank account.");
@@ -97,7 +96,7 @@ public class TransactionMapperTest {
         long senderAccountId = 99L;
         long receiverAccountId = 77L;
         Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "100");
-        TransactionEntity transactionEntity = createTransactionEntity(10L, senderAccountId, receiverAccountId, date);
+        TransactionEntity transactionEntity = createTransactionEntityUtils(senderAccountId, receiverAccountId, date);
 
         Transaction dto = transactionMapper.toDto(transactionEntity);
 
@@ -124,7 +123,7 @@ public class TransactionMapperTest {
         metadata.put("amount_after", "100");
         BankAccountEntity senderBankAccountEntity = createBankAccountEntity(senderAccountId);
         BankAccountEntity receiverBankAccountEntity = createBankAccountEntity(receiverAccountId);
-        Transaction transaction = createTransaction(10L, senderAccountId, receiverAccountId, date);
+        Transaction transaction = createTransactionUtils(senderAccountId, receiverAccountId, date);
         transaction.setMetadata(metadata);
 
         when(bankAccountRepository.findByIdOptional(99L)).thenReturn(Optional.of(senderBankAccountEntity));
@@ -144,9 +143,9 @@ public class TransactionMapperTest {
         assertThat(entity.getMetadata()).contains(strMetadata);
     }
     
-    private Transaction createTransaction(long id, long senderAccountId, long receiverAccountId, Instant instantDate) {
+    private Transaction createTransactionUtils(long senderAccountId, long receiverAccountId, Instant instantDate) {
         Transaction transaction = new Transaction();
-        transaction.setId(id);
+        transaction.setId(10L);
         transaction.setSenderAccountId(senderAccountId);
         transaction.setReceiverAccountId(receiverAccountId);
         transaction.setAmount(new BigDecimal(100));
@@ -160,9 +159,9 @@ public class TransactionMapperTest {
         return transaction;
     }
 
-    private TransactionEntity createTransactionEntity(long id, long senderAccountId, long receiverAccountId, Instant instantDate) {
+    private TransactionEntity createTransactionEntityUtils(long senderAccountId, long receiverAccountId, Instant instantDate) {
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(id);
+        transactionEntity.setId(10L);
         transactionEntity.setSenderBankAccountEntity(createBankAccountEntity(senderAccountId));
         transactionEntity.setReceiverBankAccountEntity(createBankAccountEntity(receiverAccountId));
         transactionEntity.setAmount(new BigDecimal("100"));
@@ -180,8 +179,9 @@ public class TransactionMapperTest {
         bankAccountEntity.setId(id);
         bankAccountEntity.setType(AccountType.CHECKING);
         bankAccountEntity.setBalance(new BigDecimal("100"));
-        HashSet<Long> customersId = new HashSet<>();
-        customersId.add(99L);
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setId(99L);
+        bankAccountEntity.setCustomers(List.of(customerEntity));
         return bankAccountEntity;
     }
 }

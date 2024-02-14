@@ -28,17 +28,17 @@ import static org.mockito.Mockito.*;
 public class BankAccountRepositoryTest {
 
     @Inject
-    private BankAccountRepository bankAccountRepository;
+    BankAccountRepository bankAccountRepository;
     
     @InjectMock
-    private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
+    DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
 
 
     @Test
-    public void findById_should_returnBankAccount_when_accountIsFound() {
+    public void findById_shouldReturnsBankAccount_whenAccountIsFound() {
         long accountId = 1L;
         Instant date = Instant.now();
-        BankAccount bankAccount = createBankAccount(accountId, date);
+        BankAccount bankAccount = createBankAccountUtils(accountId, date);
 
         when(bankAccountMapper.toDto(any())).thenReturn(bankAccount);
         Optional<BankAccount> optionalBankAccount = bankAccountRepository.findById(accountId);
@@ -49,14 +49,14 @@ public class BankAccountRepositoryTest {
     }
     
     @Test
-    public void findById_should_returnEmptyOptionak_when_accountIsNotFound() {
+    public void findById_shouldReturnsEmptyOptional_whenAccountIsNotFound() {
         Optional<BankAccount> optionalBankAccount = bankAccountRepository.findById(99999L);
         
         assertThat(optionalBankAccount).isEmpty();
         verifyNoInteractions(bankAccountMapper);
     }
     
-    private BankAccount createBankAccount(long accountId, Instant instantDate) {
+    private BankAccount createBankAccountUtils(long accountId, Instant instantDate) {
         BankAccount bankAccount = new CheckingBankAccount();
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
@@ -65,14 +65,14 @@ public class BankAccountRepositoryTest {
         customersId.add(1L);
         bankAccount.setCustomersId(customersId);
         HashSet<Transaction> transactionHistory = new HashSet<>();
-        transactionHistory.add(createTransaction(2L, accountId, instantDate));
+        transactionHistory.add(createTransactionUtils(accountId, instantDate));
         bankAccount.setIssuedTransactions(transactionHistory);
         return bankAccount;
     }
     
-    private Transaction createTransaction(long id, long accountId, Instant instantDate) {
+    private Transaction createTransactionUtils(long accountId, Instant instantDate) {
         Transaction transaction = new Transaction();
-        transaction.setId(id);
+        transaction.setId(2L);
         transaction.setSenderAccountId(accountId);
         transaction.setReceiverAccountId(77L);
         transaction.setAmount(new BigDecimal(100));
@@ -81,6 +81,7 @@ public class BankAccountRepositoryTest {
         transaction.setDate(instantDate);
         transaction.setLabel("transaction test");
         Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "350");
+        transaction.setMetadata(metadata);
         return transaction;
     }
 }
