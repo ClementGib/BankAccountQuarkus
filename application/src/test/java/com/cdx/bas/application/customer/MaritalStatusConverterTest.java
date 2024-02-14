@@ -18,7 +18,7 @@ public class MaritalStatusConverterTest {
         maritalStatusConverter = new MaritalStatusConverter();
     }
     @Test
-    public void convertToDatabaseColumn_should_convertToMaritalCode() {
+    public void convertToDatabaseColumn_shouldConvertToMaritalCode() {
         assertEquals(strSingle, maritalStatusConverter.convertToDatabaseColumn(SINGLE));
         assertEquals(strMarried, maritalStatusConverter.convertToDatabaseColumn(MARRIED));
         assertEquals(strWidowed, maritalStatusConverter.convertToDatabaseColumn(WIDOWED));
@@ -27,7 +27,7 @@ public class MaritalStatusConverterTest {
     }
 
     @Test
-    public void convertToEntityAttribute_should_convertToMaritalStatus() {
+    public void convertToEntityAttribute_shouldConvertToMaritalStatus() {
         assertEquals(SINGLE, maritalStatusConverter.convertToEntityAttribute(strSingle));
         assertEquals(MARRIED, maritalStatusConverter.convertToEntityAttribute(strMarried));
         assertEquals(WIDOWED, maritalStatusConverter.convertToEntityAttribute(strWidowed));
@@ -36,7 +36,7 @@ public class MaritalStatusConverterTest {
     }
 
     @Test
-    public void convertToEntityAttribute_should_ThrowExceptionForInvalidDatabaseColumn() {
+    public void convertToEntityAttribute_shouldThrowExceptionForInvalidDatabaseColumn() {
         assertThrows(IllegalStateException.class, () -> maritalStatusConverter.convertToEntityAttribute('X'));
     }
 }

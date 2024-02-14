@@ -19,7 +19,6 @@ import java.time.Instant;
 import java.util.*;
 
 import static com.cdx.bas.domain.transaction.TransactionStatus.*;
-import static com.cdx.bas.domain.transaction.TransactionType.CREDIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -41,14 +40,14 @@ public class BankAccountServiceTest {
     BankAccountServicePort bankAccountService;
 
     @Test
-    public void deposit_should_throwNoSuchElementException_when_senderAccountIsNotFound() {
+    public void deposit_shouldThrowNoSuchElementException_whenSenderAccountIsNotFound() {
         long senderAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Money.of(new BigDecimal(0));
         Instant instantDate = Instant.now();
-        Transaction transaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, instantDate, new HashMap<>());
+        Transaction transaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
         Map<String, String> metadata = Map.of("error", "Sender bank account 99 is not found.");
-        Transaction erroredTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadata);
+        Transaction erroredTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadata);
 
         when(bankAccountRepository.findById(senderAccountId)).thenThrow(new NoSuchElementException("Sender bank account 99 is not found."));
         when(transactionService.setAsError(eq(transaction), eq(metadata))).thenReturn(erroredTransaction);
@@ -56,7 +55,7 @@ public class BankAccountServiceTest {
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
 
         assertThat(returnedTransaction).usingRecursiveComparison()
-        .isEqualTo(createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadata));
+        .isEqualTo(createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadata));
         verify(bankAccountRepository).findById(eq(senderAccountId));
         verify(transactionService).setAsError(eq(transaction), eq(metadata));
         verifyNoMoreInteractions(bankAccountRepository, transactionService);
@@ -64,15 +63,15 @@ public class BankAccountServiceTest {
     }
 
     @Test
-    public void deposit_should_throwNoSuchElementException_when_receiverAccountIsNotFound() {
+    public void deposit_shouldThrowNoSuchElementException_whenReceiverAccountIsNotFound() {
         long senderAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Money.of(new BigDecimal(0));
         Instant instantDate = Instant.now();
-        Transaction transaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, instantDate, new HashMap<>());
+        Transaction transaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
         Map<String, String> metadata = Map.of("error", "Receiver bank account 77 is not found.");
-        Transaction erroredTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadata);
-        BankAccount senderBankAccount = createBankAccount(senderAccountId, "0", transaction);
+        Transaction erroredTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadata);
+        BankAccount senderBankAccount = createBankAccountUtils(senderAccountId, "0", transaction);
 
         when(bankAccountRepository.findById(senderAccountId)).thenReturn(Optional.of(senderBankAccount));
         when(bankAccountRepository.findById(receiverAccountId)).thenThrow(new NoSuchElementException("Receiver bank account 77 is not found."));
@@ -81,7 +80,7 @@ public class BankAccountServiceTest {
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
 
         assertThat(returnedTransaction).usingRecursiveComparison()
-                .isEqualTo(createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadata));
+                .isEqualTo(createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadata));
         verify(bankAccountRepository).findById(eq(senderAccountId));
         verify(bankAccountRepository).findById(eq(receiverAccountId));
         verify(transactionService).setAsError(eq(transaction), eq(metadata));
@@ -90,25 +89,24 @@ public class BankAccountServiceTest {
     }
 
     @Test
-    public void deposit_should_withdrawMoneyFromSenderAccount_and_addMoneyToTheReceiverAccount_and_returnCompletedTransaction_when_accountsAreFound_from_creditTransaction() {
+    public void deposit_shouldReturnCompletedTransaction_whenAccountsAreFound_fromCreditTransaction() {
         long senderAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Money.of(new BigDecimal(1000));
         Instant instantDate = Instant.now();
-        Transaction oldTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), TransactionType.CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-        BankAccount senderBankAccount = createBankAccount(senderAccountId, "1000", oldTransaction);
-        BankAccount receiverBankAccount = createBankAccount(receiverAccountId, "0");
+        Transaction oldTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        BankAccount senderBankAccount = createBankAccountUtils(senderAccountId, "1000", oldTransaction);
+        BankAccount receiverBankAccount = createBankAccountUtils(receiverAccountId, "0");
 
-        Transaction transaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-        Transaction outstandingTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, OUTSTANDING, instantDate, new HashMap<>());
+        Transaction transaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction outstandingTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), OUTSTANDING, instantDate, new HashMap<>());
 
         Map<String, String> metadataAfter = Map.of("sender_amount_before", "1000",
                 "receiver_amount_before", "0",
                 "sender_amount_after", "0",
                 "receiver_amount_after", "1000");
-        Transaction completedTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, COMPLETED, instantDate, metadataAfter);
-        BankAccount updatedSenderBankAccount = createBankAccount(senderAccountId, "0", completedTransaction);
-        BankAccount updatedReceiverBankAccount = createBankAccount(receiverAccountId, "1000");
+        Transaction completedTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), COMPLETED, instantDate, metadataAfter);
+        BankAccount updatedSenderBankAccount = createBankAccountUtils(senderAccountId, "0", completedTransaction);
 
         when(bankAccountRepository.findById(senderAccountId)).thenReturn(Optional.of(senderBankAccount));
         when(bankAccountRepository.findById(receiverAccountId)).thenReturn(Optional.of(receiverBankAccount));
@@ -123,7 +121,39 @@ public class BankAccountServiceTest {
         senderBankAccount.getBalance().minus(senderBankAccount.getBalance());
 
         assertThat(returnedTransaction).usingRecursiveComparison()
-                .isEqualTo(createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, COMPLETED, instantDate, metadataAfter));
+                .isEqualTo(createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), COMPLETED, instantDate, metadataAfter));
+    }
+
+    @Test
+    public void deposit_shouldAddMoneyToTheReceiverAccount_whenAccountsAreFound_fromCreditTransaction() {
+        long senderAccountId = 99L;
+        long receiverAccountId = 77L;
+        Money amountOfMoney = Money.of(new BigDecimal(1000));
+        Instant instantDate = Instant.now();
+        Transaction oldTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        BankAccount senderBankAccount = createBankAccountUtils(senderAccountId, "1000", oldTransaction);
+        BankAccount receiverBankAccount = createBankAccountUtils(receiverAccountId, "0");
+
+        Transaction transaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction outstandingTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), OUTSTANDING, instantDate, new HashMap<>());
+
+        Map<String, String> metadataAfter = Map.of("sender_amount_before", "1000",
+                "receiver_amount_before", "0",
+                "sender_amount_after", "0",
+                "receiver_amount_after", "1000");
+        Transaction completedTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), COMPLETED, instantDate, metadataAfter);
+        BankAccount updatedSenderBankAccount = createBankAccountUtils(senderAccountId, "0", completedTransaction);
+        BankAccount updatedReceiverBankAccount = createBankAccountUtils(receiverAccountId, "1000");
+
+        when(bankAccountRepository.findById(senderAccountId)).thenReturn(Optional.of(senderBankAccount));
+        when(bankAccountRepository.findById(receiverAccountId)).thenReturn(Optional.of(receiverBankAccount));
+        when(transactionService.setAsOutstanding(transaction)).thenReturn(outstandingTransaction);
+        when(transactionService.setAsCompleted(outstandingTransaction, metadataAfter)).thenReturn(completedTransaction);
+        when(transactionService.mergeTransactions(transaction, completedTransaction)).thenReturn(completedTransaction);
+        when(bankAccountRepository.update(updatedSenderBankAccount)).thenReturn(updatedSenderBankAccount);
+
+        bankAccountService.deposit(transaction);
+
         verify(bankAccountRepository).findById(eq(senderAccountId));
         verify(bankAccountRepository).findById(eq(receiverAccountId));
         verify(transactionService).setAsOutstanding(transaction);
@@ -137,22 +167,22 @@ public class BankAccountServiceTest {
     }
 
     @Test
-    public void deposit_should_returnErroredTransaction_when_amountIsNegative() {
+    public void deposit_shouldReturnErroredTransaction_whenAmountIsNegative() {
         long senderAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Money.of(new BigDecimal(-1000));
         Instant instantDate = Instant.now();
-        Transaction oldTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), TransactionType.CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-        BankAccount senderBankAccount = createBankAccount(senderAccountId, "1000", oldTransaction);
-        BankAccount receiverBankAccount = createBankAccount(receiverAccountId, "0");
+        Transaction oldTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        BankAccount senderBankAccount = createBankAccountUtils(senderAccountId, "1000", oldTransaction);
+        BankAccount receiverBankAccount = createBankAccountUtils(receiverAccountId, "0");
 
-        Transaction transaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-        Transaction outstandingTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, OUTSTANDING, instantDate, new HashMap<>());
+        Transaction transaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction outstandingTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), OUTSTANDING, instantDate, new HashMap<>());
 
         Map<String, String> metadataAfter = Map.of("sender_amount_before", "1000",
                 "receiver_amount_before", "0",
                 "error", "Credit transaction 1 should have positive value, actual value: -1000");
-        Transaction refusedTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadataAfter);
+        Transaction refusedTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadataAfter);
 
         when(bankAccountRepository.findById(senderAccountId)).thenReturn(Optional.of(senderBankAccount));
         when(bankAccountRepository.findById(receiverAccountId)).thenReturn(Optional.of(receiverBankAccount));
@@ -162,7 +192,7 @@ public class BankAccountServiceTest {
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
 
         assertThat(returnedTransaction).usingRecursiveComparison()
-                .isEqualTo(createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadataAfter));
+                .isEqualTo(createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadataAfter));
         verify(bankAccountRepository).findById(eq(senderAccountId));
         verify(bankAccountRepository).findById(eq(receiverAccountId));
         verify(transactionService).setAsOutstanding(transaction);
@@ -171,22 +201,22 @@ public class BankAccountServiceTest {
     }
     
     @Test
-    public void deposit_should_returnErroredTransaction_when_senderBankAccountValidatorThrowsException() {
+    public void deposit_shouldReturnErroredTransaction_whenSenderBankAccountValidatorThrowsException() {
         long senderAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Money.of(new BigDecimal(1000));
         Instant instantDate = Instant.now();
-        Transaction oldTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), TransactionType.CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-        BankAccount senderBankAccount = createBankAccount(senderAccountId, "1000", oldTransaction);
-        BankAccount receiverBankAccount = createBankAccount(receiverAccountId, "0");
+        Transaction oldTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        BankAccount senderBankAccount = createBankAccountUtils(senderAccountId, "1000", oldTransaction);
+        BankAccount receiverBankAccount = createBankAccountUtils(receiverAccountId, "0");
 
-        Transaction transaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-        Transaction outstandingTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, OUTSTANDING, instantDate, new HashMap<>());
+        Transaction transaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction outstandingTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), OUTSTANDING, instantDate, new HashMap<>());
 
         Map<String, String> metadataAfter = Map.of("sender_amount_before", "1000",
                 "receiver_amount_before", "0",
                 "error", "Amount of credit should not be negative");
-        Transaction refusedTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadataAfter);
+        Transaction refusedTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadataAfter);
 
         when(bankAccountRepository.findById(senderAccountId)).thenReturn(Optional.of(senderBankAccount));
         when(bankAccountRepository.findById(receiverAccountId)).thenReturn(Optional.of(receiverBankAccount));
@@ -197,7 +227,7 @@ public class BankAccountServiceTest {
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
 
         assertThat(returnedTransaction).usingRecursiveComparison()
-                .isEqualTo(createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadataAfter));
+                .isEqualTo(createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadataAfter));
         verify(bankAccountRepository).findById(eq(senderAccountId));
         verify(bankAccountRepository).findById(eq(receiverAccountId));
         verify(transactionService).setAsOutstanding(transaction);
@@ -207,22 +237,22 @@ public class BankAccountServiceTest {
     }
 
     @Test
-    public void deposit_should_returnErroredTransaction_when_receiverBankAccountValidatorThrowsException() {
+    public void deposit_shouldReturnErroredTransaction_whenReceiverBankAccountValidatorThrowsException() {
         long senderAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Money.of(new BigDecimal(1000));
         Instant instantDate = Instant.now();
-        Transaction oldTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), TransactionType.CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-        BankAccount senderBankAccount = createBankAccount(senderAccountId, "1000", oldTransaction);
-        BankAccount receiverBankAccount = createBankAccount(receiverAccountId, "0");
+        Transaction oldTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        BankAccount senderBankAccount = createBankAccountUtils(senderAccountId, "1000", oldTransaction);
+        BankAccount receiverBankAccount = createBankAccountUtils(receiverAccountId, "0");
 
-        Transaction transaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, UNPROCESSED, instantDate, new HashMap<>());
-        Transaction outstandingTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, OUTSTANDING, instantDate, new HashMap<>());
+        Transaction transaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction outstandingTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), OUTSTANDING, instantDate, new HashMap<>());
 
         Map<String, String> metadataAfter = Map.of("sender_amount_before", "1000",
                 "receiver_amount_before", "0",
                 "error", "Amount of credit should not be negative");
-        Transaction refusedTransaction = createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadataAfter);
+        Transaction refusedTransaction = createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadataAfter);
 
         when(bankAccountRepository.findById(senderAccountId)).thenReturn(Optional.of(senderBankAccount));
         when(bankAccountRepository.findById(receiverAccountId)).thenReturn(Optional.of(receiverBankAccount));
@@ -233,7 +263,7 @@ public class BankAccountServiceTest {
         Transaction returnedTransaction =  bankAccountService.deposit(transaction);
 
         assertThat(returnedTransaction).usingRecursiveComparison()
-                .isEqualTo(createTransaction(1L, senderAccountId, receiverAccountId, amountOfMoney.getAmount(), CREDIT, ERROR, instantDate, metadataAfter));
+                .isEqualTo(createTransactionUtils(senderAccountId, receiverAccountId, amountOfMoney.getAmount(), ERROR, instantDate, metadataAfter));
         verify(bankAccountRepository).findById(eq(senderAccountId));
         verify(bankAccountRepository).findById(eq(receiverAccountId));
         verify(transactionService).setAsOutstanding(transaction);
@@ -243,7 +273,7 @@ public class BankAccountServiceTest {
         verifyNoMoreInteractions(bankAccountRepository, transactionService, bankAccountValidator);
     }
 
-    private static BankAccount createBankAccount(long accountId, String amount, Transaction ...transactions) {
+    private static BankAccount createBankAccountUtils(long accountId, String amount, Transaction ...transactions) {
         BankAccount bankAccount = new CheckingBankAccount();
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
@@ -257,16 +287,16 @@ public class BankAccountServiceTest {
         return bankAccount;
     }
     
-    private static Transaction createTransaction(long id, long senderAccountId, long receiverAccountId,
-                                                 BigDecimal amount, TransactionType type, TransactionStatus status,
-                                                 Instant date, Map<String, String> metadata) {
+    private static Transaction createTransactionUtils(long senderAccountId, long receiverAccountId,
+                                                      BigDecimal amount, TransactionStatus status,
+                                                      Instant date, Map<String, String> metadata) {
 		Transaction transaction = new Transaction();
-		transaction.setId(id);
+		transaction.setId(1L);
 		transaction.setAmount(amount);
         transaction.setCurrency("EUR");
 		transaction.setSenderAccountId(senderAccountId);
         transaction.setReceiverAccountId(receiverAccountId);
-		transaction.setType(type);
+		transaction.setType(TransactionType.CREDIT);
 		transaction.setStatus(status);
 		transaction.setDate(date);
 		transaction.setLabel("transaction of " + amount);

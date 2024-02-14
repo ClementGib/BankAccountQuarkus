@@ -29,7 +29,7 @@ public class SchedulerImpl implements Scheduler {
     @ConfigProperty(name = "scheduler.activation", defaultValue = "true")
     boolean activation;
 
-    @ConfigProperty(name = "scheduler.every", defaultValue = "5s")
+    @ConfigProperty(name = "scheduler.every", defaultValue = "30s")
     String every;
 
     public PriorityQueue<Transaction> getTransactionQueue() {
@@ -37,7 +37,7 @@ public class SchedulerImpl implements Scheduler {
     }
 
     @Override
-    @Scheduled(every = "{scheduler.every}")
+    @Scheduled(every = "{scheduler.every}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     public void processQueue() {
         if (isActivation()) {
             logger.info("Scheduler start every " + getEvery());

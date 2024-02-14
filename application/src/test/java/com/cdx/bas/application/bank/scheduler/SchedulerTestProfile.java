@@ -12,7 +12,7 @@ public class SchedulerTestProfile implements QuarkusTestProfile {
     public Map<String, String> getConfigOverrides() {
         Map<String, String> overridenConfig = new HashMap<>();
         overridenConfig.put("scheduler.activation", "true");
-        overridenConfig.put("scheduler.every", "360s");
+        overridenConfig.put("scheduler.every", "10m");
         return overridenConfig;
     }
 

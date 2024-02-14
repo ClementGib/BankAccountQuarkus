@@ -17,14 +17,14 @@ class GenderConverterTest {
         genderConverter = new GenderConverter();
     }
     @Test
-    public void convertToDatabaseColumn_should_convertToGenderCode() {
+    public void convertToDatabaseColumn_shouldConvertToGenderCode() {
         assertThat(genderConverter.convertToDatabaseColumn(MALE)).isEqualTo(strMale);
         assertThat(genderConverter.convertToDatabaseColumn(FEMALE)).isEqualTo(strFemale);
         assertThat(genderConverter.convertToDatabaseColumn(OTHER)).isEqualTo(strOther);
     }
 
     @Test
-    public void convertToEntityAttribute_should_convertToGender() {
+    public void convertToEntityAttribute_shouldConvertToGender() {
         assertThat(genderConverter.convertToEntityAttribute(strMale)).isEqualTo(MALE);
         assertThat(genderConverter.convertToEntityAttribute(strFemale)).isEqualTo(FEMALE);
         assertThat(genderConverter.convertToEntityAttribute(strOther)).isEqualTo(OTHER);
@@ -34,5 +34,4 @@ class GenderConverterTest {
     public void convertToEntityAttribute_should_ThrowExceptionForInvalidDatabaseColumn() {
         assertThrows(IllegalStateException.class, () -> genderConverter.convertToEntityAttribute('X'));
     }
-
 }
