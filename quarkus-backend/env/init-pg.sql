@@ -7,6 +7,10 @@ CREATE SCHEMA basapp;
 -- SET DEFAULT SCHEMA --
 SET search_path TO basapp;
 
+-- SET TIME ZONE
+SET TIME ZONE 'Europe/Paris';
+
+
 -- CREATE TABLES --
 
 -- CREATE customer TABLE --
@@ -46,7 +50,7 @@ SET search_path TO basapp;
 	amount DECIMAL NOT NULL,
     currency VARCHAR(3) NOT NULL,
     status VARCHAR(25) NOT NULL,
-	date TIMESTAMP NOT NULL,
+	date TIMESTAMP WITH TIME ZONE NOT NULL,
 	label text NOT NULL,
 	metadata jsonb,
 	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id),
