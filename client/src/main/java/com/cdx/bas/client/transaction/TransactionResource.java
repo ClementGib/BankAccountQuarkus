@@ -1,11 +1,9 @@
 package com.cdx.bas.client.transaction;
 
-import com.cdx.bas.application.transaction.TransactionServiceImpl;
 import com.cdx.bas.domain.transaction.Transaction;
 import com.cdx.bas.domain.transaction.TransactionControllerPort;
 import com.cdx.bas.domain.transaction.TransactionPersistencePort;
 import com.cdx.bas.domain.transaction.TransactionStatus;
-import jakarta.annotation.Nullable;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;

@@ -120,14 +120,14 @@ I want to see the history (operation, date, amount, balance) of my operations
 
 1. Lancer les containers (PostgreSQL, PgAdmin, KeyClock) 🐘🐋
 
-*Dans le répertoire `quarkus-backend/compose`*
+*Dans le répertoire `compose`*
 ```bash 
 docker-compose up
 ```
 
-2. Lancer le back-end Quarkus 
+1. Lancer le back-end Quarkus 
 
-*Dans le répertoire `quarkus-backend`*
+*A la racine du projet*
 ```bash 
 quarkus dev -e
 #OU
@@ -136,12 +136,30 @@ quarkus dev -e
 
 3. (Optionel) Lancer les tests Junit 5
 
-*Dans le répertoire `quarkus-backend`*
+*A la racine du projet*
 ```bash 
 mvn test
 ```
 
-
 Quarkus HTTP : `localhost:8080`
 
 Accéder a pgAdmin via : `localhost:15050` 
+
+
+
+# DETAIL
+
+- validation métier: API Bean validation (JSR 303)
+
+#### Domain :
+
+- validation fonctionnelle dès l'initialisation des objets métier
+- organisation métier dans le code métier (package by feature)
+
+### Technique
+
+- Utilisation des records et des constructeurs compact (Java 14)
+
+### Patterns:
+
+- Naming unit test : MethodName_ExpectedBehavior_StateUnderTest
