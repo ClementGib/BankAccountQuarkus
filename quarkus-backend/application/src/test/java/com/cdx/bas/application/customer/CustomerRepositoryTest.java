@@ -25,8 +25,6 @@ class CustomerRepositoryTest {
     @Inject
     CustomerRepository customerRepository;
 
-
-
     @Test
     @Transactional
     public void getAll_should_return_all_Customers() {
