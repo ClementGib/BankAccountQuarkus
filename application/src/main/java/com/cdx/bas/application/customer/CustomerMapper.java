@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RequestScoped
 public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity> {
-    
+
     @Inject
     DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
     

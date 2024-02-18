@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ExchangeRateUtilsTest {
 
     @Test
-    public void getEuroAmountFrom_should_throw_CurrencyException_when_exchangeRate_not_found() {
+    public void getEuroAmountFrom_shouldThrowCurrencyException_whenExchangeRateNotFound() {
         String currency = "ABC";
         BigDecimal amount = new BigDecimal(1000);
         try {
@@ -24,7 +24,7 @@ public class ExchangeRateUtilsTest {
     }
 
     @Test
-    public void getEuroAmountFrom_should_return_BigDecimal_amount_with_exchangeRate_applied_when_currency_is_EUR() {
+    public void getEuroAmountFrom_shouldReturnBigDecimalAmountWithExchangeRateApplied_whenCurrencyIsEUR() {
         String currency = "EUR";
         BigDecimal amount = new BigDecimal(1000);
 
@@ -34,7 +34,7 @@ public class ExchangeRateUtilsTest {
     }
 
     @Test
-    public void getEuroAmountFrom_should_return_BigDecimal_amount_with_exchangeRate_applied_when_exchangeRate_found() {
+    public void getEuroAmountFrom_shouldReturnBigDecimalAmountWithExchangeRateApplied_whenExchangeRateFound() {
         String currency = "JPY";
         BigDecimal amount = new BigDecimal(1000);
 
@@ -44,7 +44,7 @@ public class ExchangeRateUtilsTest {
     }
 
     @Test
-    public void hasCurrency_should_return_true_when_currency_is_EUR() {
+    public void hasCurrency_shouldReturnTrue_whenCurrencyIsEUR() {
         String currency = "EUR";
 
         boolean hasCurrency = ExchangeRateUtils.hasCurrency(currency);
@@ -53,7 +53,7 @@ public class ExchangeRateUtilsTest {
     }
 
     @Test
-    public void hasCurrency_should_return_true_when_currency_exists_in_exchangeRate_map() {
+    public void hasCurrency_shouldReturnTrue_whenCurrencyExistsInExchangeRateMap() {
         String currency = "USD";
 
         boolean hasCurrency = ExchangeRateUtils.hasCurrency(currency);
@@ -62,7 +62,7 @@ public class ExchangeRateUtilsTest {
     }
 
     @Test
-    public void hasCurrency_should_return_false_when_currency_is_not_found() {
+    public void hasCurrency_shouldReturnFalse_whenCurrencyIsNotFound() {
         String currency = "ABC";
 
         boolean hasCurrency = ExchangeRateUtils.hasCurrency(currency);

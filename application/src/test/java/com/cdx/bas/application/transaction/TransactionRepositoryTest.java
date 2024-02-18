@@ -34,7 +34,7 @@ class TransactionRepositoryTest {
 
     @Test
     @Order(1)
-    public void findById_should_find_transaction_and_return_it() {
+    public void findById_shouldFindTransaction_whenIdIsFound() {
         Instant expectedInstant = OffsetDateTime.of(
                 2024, 6, 6, 12, 0, 0, 0,
                 ZoneOffset.ofHours(1)).toInstant();
@@ -52,7 +52,7 @@ class TransactionRepositoryTest {
 
     @Test
     @Order(2)
-    public void findUnprocessedTransactions_should_find_every_transactions_that_are_not_processed() {
+    public void findUnprocessedTransactions_shouldFindEveryUnprocessedTransactions() {
         Queue<Transaction> actualUnprocessedTransactions = transactionRepository.findUnprocessedTransactions();
 
         Queue<Transaction> expectedUnprocessedTransactions = new PriorityQueue<>();
@@ -71,7 +71,7 @@ class TransactionRepositoryTest {
     @Test
     @Order(3)
     @Transactional
-    public void create_should_persist_transaction_and_return_it() {
+    public void create_shouldPersistTransaction() {
         Transaction transactionToCreate = new Transaction(null, 8L, 1L, new BigDecimal("99999.00"), "EUR", DEBIT, UNPROCESSED, Instant.parse("2024-12-06T18:00:10+00:00"), "transaction 8", new HashMap<>());
         Transaction createdTransaction = transactionRepository.create(transactionToCreate);
 
@@ -91,7 +91,7 @@ class TransactionRepositoryTest {
     @Test
     @Order(4)
     @Transactional
-    public void update_should_merge_transaction_and_return_it() {
+    public void update_shouldMergeTransaction() {
         Transaction expectedTransaction = new Transaction(2L, 6L, 3L,
                 new BigDecimal("9200.00"), "EUR", CREDIT, UNPROCESSED,
                 Instant.parse("2024-11-10T15:00:00+02:00"),
@@ -112,7 +112,7 @@ class TransactionRepositoryTest {
     @Test
     @Order(5)
     @Transactional
-    public void deleteById_should_delete_transaction_and_return_it_as_optional() {
+    public void deleteById_shouldDeleteTransaction_whenIdIsFound() {
         long transactionIdToDelete = 10L;
         Transaction transactionToDelete = new Transaction(10L, 8L, 1L, new BigDecimal("99999.00"), "EUR", DEBIT, UNPROCESSED, Instant.parse("2024-12-06T18:00:10+00:00"), "transaction 8", new HashMap<>());
         Optional<Transaction> optionalTransaction = Optional.of(transactionToDelete);

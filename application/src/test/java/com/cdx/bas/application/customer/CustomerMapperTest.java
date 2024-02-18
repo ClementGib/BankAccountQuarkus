@@ -44,10 +44,8 @@ public class CustomerMapperTest {
     private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
     
     @Test
-    public void toDto_should_returnNullDto_when_entityIsNull() {
-        CustomerEntity entity = null;
-
-        Customer dto = customerMapper.toDto(entity);
+    public void toDto_shouldReturnNullDto_whenEntityIsNull() {
+        Customer dto = customerMapper.toDto(null);
         
         assertThat(dto).isNull();
         
@@ -55,7 +53,7 @@ public class CustomerMapperTest {
     }
 
     @Test
-    public void toEntity_should_returnNullEntity_when_dtoIsNull() {
+    public void toEntity_shouldReturnNullEntity_whenDtoIsNull() {
         Customer dto = null;
 
         CustomerEntity entity = customerMapper.toEntity(dto);
@@ -66,7 +64,7 @@ public class CustomerMapperTest {
     }
     
 	@Test
-	public void toDto_should_mapNullValues_when_entityValuesNotDefined() throws JsonMappingException, JsonProcessingException {
+	public void toDto_shouldMapNullValues_whenEntityValuesNotDefined() throws JsonMappingException, JsonProcessingException {
         Customer dto = customerMapper.toDto(new CustomerEntity());
         
         assertThat(dto.getId()).isNull();
@@ -88,7 +86,7 @@ public class CustomerMapperTest {
     }
     
     @Test
-    public void toEntity_should_mapNullValues_when_dtoValuesNotDefined() throws JsonProcessingException {
+    public void toEntity_shouldMapNullValues_whenDtoValuesNotDefined() throws JsonProcessingException {
         CustomerEntity entity = customerMapper.toEntity(new Customer());
         
         assertThat(entity.getId()).isNull();
@@ -110,7 +108,7 @@ public class CustomerMapperTest {
     }
     
 	@Test
-	public void toDto_should_mapDtoValues_when_entityHasValues() {
+	public void toDto_shouldMapDtoValues_whenEntityHasValues() {
         CustomerEntity entity = new CustomerEntity();
         entity.setId(1L);
         entity.setFirstName("Paul");
@@ -139,7 +137,6 @@ public class CustomerMapperTest {
         BankAccount account2 = createBankAccount(11L, instantDate);
         when(bankAccountMapper.toDto(accountEntity1)).thenReturn(account1);
         when(bankAccountMapper.toDto(accountEntity2)).thenReturn(account2);
-        Map<String, String> metadata = Map.of("contact_preferences", "email", "annual_salary", "52000");
         
         Customer dto = customerMapper.toDto(entity);
         
@@ -167,7 +164,7 @@ public class CustomerMapperTest {
     }
     
     @Test
-    public void toEntity_should_mapEntityValues_when_dtoHasValues() {
+    public void toEntity_shouldMapEntityValues_whenDtoHasValues() {
         Customer model = new Customer();
         model.setId(1L);
         model.setFirstName("Paul");
@@ -248,8 +245,8 @@ public class CustomerMapperTest {
         customersId.add(new CustomerEntity());
         bankAccountEntity.setCustomers(customersId);
         HashSet<TransactionEntity> transactionEntities = new HashSet<>();
-        transactionEntities.add(createTransactionEntity(99L, id, instantDate));
-        transactionEntities.add(createTransactionEntity(100L, id, instantDate));
+        transactionEntities.add(createTransactionEntity(99L, instantDate));
+        transactionEntities.add(createTransactionEntity(100L, instantDate));
         bankAccountEntity.setIssuedTransactions(transactionEntities);
         return bankAccountEntity;
     }
@@ -267,7 +264,7 @@ public class CustomerMapperTest {
         return transactionEntity;
     }
     
-    private TransactionEntity createTransactionEntity(long id, long accountId, Instant instantDate) {
+    private TransactionEntity createTransactionEntity(long id, Instant instantDate) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(id);
         transactionEntity.setSenderBankAccountEntity(null);

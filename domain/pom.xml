@@ -5,7 +5,6 @@
 		<artifactId>bank-account-simulator</artifactId>
 		<groupId>com.cdx.bas</groupId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>domain</artifactId>
@@ -70,8 +69,6 @@
 					<systemPropertyVariables>
 						<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
 					</systemPropertyVariables>
-					<source>21</source>
-					<target>21</target>
 				</configuration>
 			</plugin>
 		</plugins>

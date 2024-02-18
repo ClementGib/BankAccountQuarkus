@@ -1,17 +1,5 @@
 package com.cdx.bas.domain.bank.account;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.inject.Inject;
-
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.bank.account.mma.MMABankAccount;
 import com.cdx.bas.domain.bank.account.saving.SavingBankAccount;
@@ -19,10 +7,18 @@ import com.cdx.bas.domain.customer.Customer;
 import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
 import com.cdx.bas.domain.money.Money;
-
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.QuarkusTest;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @QuarkusTest
 public class BankAccountValidatorTest {
@@ -31,7 +27,7 @@ public class BankAccountValidatorTest {
     BankAccountValidator bankAccountValidator;
     
     @Test
-    public void validateBankAccount_should_doNothing_when_CheckingBankAccountIsValid(){
+    public void validateBankAccount_shouldDoNothing_whenCheckingBankAccountIsValid(){
         BankAccount dto = new CheckingBankAccount();
         dto.setId(10L);
         dto.setType(AccountType.CHECKING);
@@ -45,7 +41,7 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_doNothing_when_SavingBankAccountIsValid(){
+    public void validateBankAccount_shouldDoNothing_whenSavingBankAccountIsValid(){
         BankAccount dto = new SavingBankAccount();
         dto.setId(10L);
         dto.setType(AccountType.SAVING);
@@ -59,7 +55,7 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_doNothing_when_MMABankAccountIsValid(){
+    public void validateBankAccount_shouldDoNothing_whenMMABankAccountIsValid(){
         BankAccount dto = new MMABankAccount();
         dto.setId(10L);
         dto.setType(AccountType.MMA);
@@ -73,7 +69,7 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_CheckingBankAccountFieldsAreInvalid(){
+    public void validateBankAccount_shouldThrowBankAccountException_whenCheckingBankAccountFieldsAreInvalid(){
         BankAccount dto = new CheckingBankAccount();
         dto.setId(null);
         dto.setType(null);
@@ -90,7 +86,7 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_CheckingBankAccountAmountIsInvalid(){
+    public void validateBankAccount_shouldThrowBankAccountException_whenCheckingBankAccountAmountIsInvalid(){
         BankAccount dto = new CheckingBankAccount();
         dto.setId(10L);
         dto.setType(AccountType.CHECKING);
@@ -109,7 +105,7 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_SavingBankAccountFieldsAreInvalid(){
+    public void validateBankAccount_shouldThrowBankAccountException_whenSavingBankAccountFieldsAreInvalid(){
         BankAccount dto = new SavingBankAccount();
         dto.setId(null);
         dto.setType(null);
@@ -126,7 +122,7 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_SavingBankAccountAmountIsInvalid(){
+    public void validateBankAccount_shouldThrowBankAccountException_whenSavingBankAccountAmountIsInvalid(){
         BankAccount dto = new SavingBankAccount();
         dto.setId(10L);
         dto.setType(AccountType.SAVING);
@@ -145,7 +141,7 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_MMABankAccountFieldsAreInvalid(){
+    public void validateBankAccount_shouldThrowBankAccountException_whenMMABankAccountFieldsAreInvalid(){
         BankAccount dto = new MMABankAccount();
         dto.setId(null);
         dto.setType(null);
@@ -162,7 +158,7 @@ public class BankAccountValidatorTest {
     }
     
     @Test
-    public void validateBankAccount_should_throwBankAccountException_when_MMABankAccountAmountIsInvalid(){
+    public void validateBankAccount_shouldThrowBankAccountException_whenMMABankAccountAmountIsInvalid(){
         BankAccount dto = new MMABankAccount();
         dto.setId(10L);
         dto.setType(AccountType.MMA);
