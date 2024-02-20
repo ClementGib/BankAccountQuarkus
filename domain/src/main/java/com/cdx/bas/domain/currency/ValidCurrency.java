@@ -1,4 +1,4 @@
-package com.cdx.bas.domain.validator;
+package com.cdx.bas.domain.currency;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

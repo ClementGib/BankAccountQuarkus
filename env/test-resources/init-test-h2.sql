@@ -43,7 +43,7 @@ SET TIME ZONE 'Europe/Paris';
 	CREATE TABLE IF NOT EXISTS basapp.transactions
 	(
 	transaction_id BIGSERIAL UNIQUE NOT NULL,
-    sender_account_id bigint NOT NULL,
+    sender_account_id bigint,
     receiver_account_id bigint NOT NULL,
 	type VARCHAR(25) NOT NULL,
 	amount DECIMAL NOT NULL,

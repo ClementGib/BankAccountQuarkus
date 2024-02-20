@@ -1,5 +1,7 @@
 package com.cdx.bas.domain.bank.account;
 
+import com.cdx.bas.domain.transaction.Transaction;
+
 public interface BankAccountControllerPort {
 
     
@@ -13,8 +15,10 @@ public interface BankAccountControllerPort {
     
     /**
      * make a deposite on bank account
-     * 
-     * @return List<BankAccount> corresponding to all the bank account
+     *
+     * @param id of BankAccount
+     * @param depositTransaction to add to the BankAccount
+     * @return deposit Transaction added to the BankAccount
      */
-    public BankAccount deposite(Long id, Long amount, String currency);
+    public Transaction deposite(Long id, Transaction depositTransaction);
 }
