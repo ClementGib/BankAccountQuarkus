@@ -89,15 +89,15 @@ public class SchedulerTest {
     }
     
     private static Transaction createTransactionUtils(long id, long amount, Instant date, String label) {
-		Transaction transaction = new Transaction();
-		transaction.setId(id);
-		transaction.setAmount(new BigDecimal(amount));
-		transaction.setSenderAccountId(99L);
-        transaction.setReceiverAccountId(77L);
-		transaction.setType(TransactionType.CREDIT);
-		transaction.setStatus(TransactionStatus.UNPROCESSED);
-		transaction.setDate(date);
-		transaction.setLabel(label);
-		return transaction;
+		return Transaction.builder()
+                .id(id)
+                .amount(new BigDecimal(amount))
+                .senderAccountId(99L)
+                .receiverAccountId(77L)
+                .type(TransactionType.CREDIT)
+                .status(TransactionStatus.UNPROCESSED)
+                .date(date)
+                .label(label)
+                .build();
     }
 }

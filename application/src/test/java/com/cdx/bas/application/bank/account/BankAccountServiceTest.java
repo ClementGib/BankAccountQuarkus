@@ -290,17 +290,16 @@ public class BankAccountServiceTest {
     private static Transaction createTransactionUtils(long senderAccountId, long receiverAccountId,
                                                       BigDecimal amount, TransactionStatus status,
                                                       Instant date, Map<String, String> metadata) {
-		Transaction transaction = new Transaction();
-		transaction.setId(1L);
-		transaction.setAmount(amount);
-        transaction.setCurrency("EUR");
-		transaction.setSenderAccountId(senderAccountId);
-        transaction.setReceiverAccountId(receiverAccountId);
-		transaction.setType(TransactionType.CREDIT);
-		transaction.setStatus(status);
-		transaction.setDate(date);
-		transaction.setLabel("transaction of " + amount);
-		transaction.setMetadata(metadata);
-		return transaction;
+		return Transaction.builder()
+                .id(1L)
+        .amount(amount)
+        .currency("EUR")
+        .senderAccountId(senderAccountId)
+        .receiverAccountId(receiverAccountId)
+        .type(TransactionType.CREDIT)
+        .status(status)
+        .date(date)
+        .label("transaction of " + amount)
+        .metadata(metadata).build();
     }
 }

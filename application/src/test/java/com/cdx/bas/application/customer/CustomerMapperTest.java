@@ -11,8 +11,6 @@ import com.cdx.bas.domain.customer.Gender;
 import com.cdx.bas.domain.customer.MaritalStatus;
 import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionStatus;
-import com.cdx.bas.domain.transaction.TransactionType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import io.quarkus.test.InjectMock;
@@ -30,6 +28,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.cdx.bas.domain.transaction.TransactionStatus.ERROR;
+import static com.cdx.bas.domain.transaction.TransactionType.CREDIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -250,18 +250,18 @@ public class CustomerMapperTest {
         bankAccountEntity.setIssuedTransactions(transactionEntities);
         return bankAccountEntity;
     }
-    
-    private Transaction createTransaction(long id, long accountId, Instant instantDate) {
-        Transaction transactionEntity = new Transaction();
-        transactionEntity.setId(id);
-        transactionEntity.setSenderAccountId(accountId);
-        transactionEntity.setReceiverAccountId(77L);
-        transactionEntity.setAmount(new BigDecimal(100));
-        transactionEntity.setType(TransactionType.CREDIT);
-        transactionEntity.setStatus(TransactionStatus.ERROR);
-        transactionEntity.setDate(instantDate);
-        transactionEntity.setLabel("transaction test");
-        return transactionEntity;
+
+    private Transaction createTransaction(long id, long senderAccountId, Instant instantDate) {
+        return Transaction.builder()
+                .id(id)
+                .type(CREDIT)
+                .senderAccountId(senderAccountId)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal("100"))
+                .status(ERROR)
+                .date(instantDate)
+                .label("transaction test")
+                .build();
     }
     
     private TransactionEntity createTransactionEntity(long id, Instant instantDate) {
@@ -270,8 +270,8 @@ public class CustomerMapperTest {
         transactionEntity.setSenderBankAccountEntity(null);
         transactionEntity.setReceiverBankAccountEntity(null);
         transactionEntity.setAmount(new BigDecimal("100"));
-        transactionEntity.setType(TransactionType.CREDIT);
-        transactionEntity.setStatus(TransactionStatus.ERROR);
+        transactionEntity.setType(CREDIT);
+        transactionEntity.setStatus(ERROR);
         transactionEntity.setDate(instantDate);
         transactionEntity.setLabel("transaction test");
         return transactionEntity;

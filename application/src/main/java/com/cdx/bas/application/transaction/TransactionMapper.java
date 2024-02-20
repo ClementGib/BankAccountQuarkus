@@ -27,8 +27,14 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
     ObjectMapper objectMapper;
 
     public Transaction toDto(TransactionEntity entity) {
-        Transaction dto = new Transaction();
-        dto.setId(entity.getId());
+        Transaction dto = Transaction.builder()
+                .id(entity.getId())
+                .type(entity.getType())
+                .currency(entity.getCurrency())
+                .status(entity.getStatus())
+                .date(entity.getDate())
+                .label(entity.getLabel())
+                .build();
 
         if (entity.getSenderBankAccountEntity() != null) {
             dto.setSenderAccountId(entity.getSenderBankAccountEntity().getId());
@@ -45,11 +51,6 @@ public class TransactionMapper implements DtoEntityMapper<Transaction, Transacti
         if (entity.getAmount() != null) {
             dto.setAmount(entity.getAmount());
         }
-        dto.setCurrency(entity.getCurrency());
-        dto.setType(entity.getType());
-        dto.setStatus(entity.getStatus());
-        dto.setDate(entity.getDate());
-        dto.setLabel(entity.getLabel());
 
         try {
             if (entity.getMetadata() != null) {

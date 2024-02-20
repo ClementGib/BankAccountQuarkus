@@ -38,10 +38,18 @@ class TransactionRepositoryTest {
         Instant expectedInstant = OffsetDateTime.of(
                 2024, 6, 6, 12, 0, 0, 0,
                 ZoneOffset.ofHours(1)).toInstant();
-        Optional<Transaction> expectedTransaction = Optional.of(new Transaction(1L, 1L, 2L,
-                new BigDecimal("1600.00"), "EUR", CREDIT, COMPLETED,
-                expectedInstant,
-                "transaction 1", Map.of("sender_amount_before", "2000", "receiver_amount_before", "0", "sender_amount_after", "400", "receiver_amount_after", "1600")));
+        Optional<Transaction> expectedTransaction = Optional.of(Transaction.builder()
+                .id(1L)
+                .senderAccountId(1L)
+                .receiverAccountId(2L)
+                .amount(new BigDecimal("1600.00"))
+                .currency("EUR")
+                .type(CREDIT)
+                .status(COMPLETED)
+                .date(expectedInstant)
+                .label("transaction 1")
+                .metadata(Map.of("sender_amount_before", "2000", "receiver_amount_before", "0", "sender_amount_after", "400", "receiver_amount_after", "1600"))
+                .build());
         Optional<Transaction> actualTransaction = transactionRepository.findById(1);
 
         // Assert

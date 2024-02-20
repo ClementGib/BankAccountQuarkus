@@ -253,16 +253,16 @@ public class BankAccountMapperTest {
     }
 
     private Transaction createTransactionUtils(long id, Instant instantDate) {
-        Transaction transaction = new Transaction();
-        transaction.setId(id);
-        transaction.setSenderAccountId(10L);
-        transaction.setReceiverAccountId(77L);
-        transaction.setAmount(new BigDecimal("100.00"));
-        transaction.setType(TransactionType.CREDIT);
-        transaction.setStatus(TransactionStatus.ERROR);
-        transaction.setDate(instantDate);
-        transaction.setLabel("transaction test");
-        return transaction;
+        return Transaction.builder()
+                .id(id)
+                .senderAccountId(10L)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal("100.00"))
+                .type(TransactionType.CREDIT)
+                .status(TransactionStatus.ERROR)
+                .date(instantDate)
+                .label("transaction test")
+                .build();
     }
 
     private TransactionEntity createTransactionEntity(long id, Instant instantDate) {
