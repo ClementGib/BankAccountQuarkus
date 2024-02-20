@@ -62,9 +62,10 @@ public class TransactionMapperTest {
     public void toEntity_shouldThrowException_whenTransactionDto_doesNotHave_senderBankAccount() {
 
         try {
-            Transaction transaction = new Transaction();
-            transaction.setId(10L);
-            transaction.setSenderAccountId(null);
+            Transaction transaction = Transaction.builder()
+                    .id(10L)
+                    .senderAccountId(null)
+                    .build();
             transactionMapper.toEntity(transaction);
             fail();
         } catch (NoSuchElementException exception) {
@@ -76,10 +77,11 @@ public class TransactionMapperTest {
     public void toEntity_shouldThrowException_whenTransactionDto_doesNotHave_receiverBankAccount() {
 
         try {
-            Transaction transaction = new Transaction();
-            transaction.setId(10L);
-            transaction.setSenderAccountId(99L);
-            transaction.setReceiverAccountId(null);
+            Transaction transaction = Transaction.builder()
+                    .id(10L)
+                    .senderAccountId(99L)
+                    .receiverAccountId(null)
+                    .build();
 
             when(bankAccountRepository.findByIdOptional(99L)).thenReturn(Optional.of(new BankAccountEntity()));
 
@@ -144,19 +146,19 @@ public class TransactionMapperTest {
     }
     
     private Transaction createTransactionUtils(long senderAccountId, long receiverAccountId, Instant instantDate) {
-        Transaction transaction = new Transaction();
-        transaction.setId(10L);
-        transaction.setSenderAccountId(senderAccountId);
-        transaction.setReceiverAccountId(receiverAccountId);
-        transaction.setAmount(new BigDecimal(100));
-        transaction.setCurrency("EUR");
-        transaction.setType(TransactionType.CREDIT);
-        transaction.setStatus(TransactionStatus.COMPLETED);
-        transaction.setDate(instantDate);
-        transaction.setLabel("transaction test");
         Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "100");
-        transaction.setMetadata(metadata);
-        return transaction;
+        return Transaction.builder()
+                .id(10L)
+                .senderAccountId(senderAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal(100))
+                .currency("EUR")
+                .type(TransactionType.CREDIT)
+                .status(TransactionStatus.COMPLETED)
+                .date(instantDate)
+                .label("transaction test")
+                .metadata(metadata)
+                .build();
     }
 
     private TransactionEntity createTransactionEntityUtils(long senderAccountId, long receiverAccountId, Instant instantDate) {

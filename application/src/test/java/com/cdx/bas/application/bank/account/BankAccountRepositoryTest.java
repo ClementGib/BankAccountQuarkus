@@ -71,17 +71,17 @@ public class BankAccountRepositoryTest {
     }
     
     private Transaction createTransactionUtils(long accountId, Instant instantDate) {
-        Transaction transaction = new Transaction();
-        transaction.setId(2L);
-        transaction.setSenderAccountId(accountId);
-        transaction.setReceiverAccountId(77L);
-        transaction.setAmount(new BigDecimal(100));
-        transaction.setType(TransactionType.CREDIT);
-        transaction.setStatus(TransactionStatus.ERROR);
-        transaction.setDate(instantDate);
-        transaction.setLabel("transaction test");
         Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "350");
-        transaction.setMetadata(metadata);
-        return transaction;
+        return Transaction.builder()
+                .id(2L)
+                .senderAccountId(accountId)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal(100))
+                .type(TransactionType.CREDIT)
+                .status(TransactionStatus.ERROR)
+                .date(instantDate)
+                .label("transaction test")
+                .metadata(metadata)
+                .build();
     }
 }

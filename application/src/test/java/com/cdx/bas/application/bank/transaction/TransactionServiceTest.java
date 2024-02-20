@@ -32,15 +32,16 @@ public class TransactionServiceTest {
 
 	@Test
 	public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithPositiveAmount() {
-		Transaction transaction = new Transaction();
-		transaction.setId(1L);
-		transaction.setAmount(new BigDecimal(100));
-		transaction.setSenderAccountId(100L);
-		transaction.setReceiverAccountId(200L);
-		transaction.setType(CREDIT);
-		transaction.setStatus(UNPROCESSED);
-		transaction.setDate(Instant.now());
-		transaction.setLabel("deposit of 100 euros");
+		Transaction transaction = Transaction.builder()
+				.id(1L)
+				.amount(new BigDecimal(100))
+				.senderAccountId(100L)
+				.receiverAccountId(200L)
+				.type(CREDIT)
+				.status(UNPROCESSED)
+				.date(Instant.now())
+				.label("deposit of 100 euros")
+				.build();
 		transactionService.process(transaction);
 
 		verify(bankAccountService).deposit(transaction);
@@ -49,14 +50,15 @@ public class TransactionServiceTest {
 
 	@Test
 	public void processTransaction_should_processBankAccountDeposit_when_creditTransactionWithNegativeAmount() {
-		Transaction transaction = new Transaction();
-		transaction.setId(1L);
-		transaction.setAmount(new BigDecimal(-100));
-		transaction.setSenderAccountId(99L);
-		transaction.setType(CREDIT);
-		transaction.setStatus(UNPROCESSED);
-		transaction.setDate(Instant.now());
-		transaction.setLabel("deposit of -100 euros");
+		Transaction transaction = Transaction.builder()
+				.id(1L)
+				.amount(new BigDecimal(-100))
+				.senderAccountId(99L)
+				.type(CREDIT)
+				.status(UNPROCESSED)
+				.date(Instant.now())
+				.label("deposit of -100 euros")
+				.build();
 		transactionService.process(transaction);
 
 		verify(bankAccountService).deposit(transaction);
