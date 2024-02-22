@@ -1,15 +1,11 @@
 package com.cdx.bas.domain.bank.account.mma;
 
-import java.util.List;
-import java.util.Set;
-
 import jakarta.validation.constraints.NotNull;
 
-import com.cdx.bas.domain.bank.account.AccountType;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.money.Amount;
 import com.cdx.bas.domain.money.Money;
-import com.cdx.bas.domain.transaction.Transaction;
 
 /**
  * Money Market Account

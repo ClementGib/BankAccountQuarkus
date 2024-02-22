@@ -1,8 +1,8 @@
 package com.cdx.bas.application.scheduler;
 
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionPersistencePort;
-import com.cdx.bas.domain.transaction.TransactionServicePort;
+import com.cdx.bas.domain.bank.transaction.Transaction;
+import com.cdx.bas.domain.bank.transaction.TransactionPersistencePort;
+import com.cdx.bas.domain.bank.transaction.TransactionServicePort;
 import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.inject.Inject;

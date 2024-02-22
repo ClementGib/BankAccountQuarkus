@@ -12,17 +12,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class BankAccountResourceTest {
 
     @Test
-    public void deposite_shouldCreateDepositeTransaction_whenBankAccountFound_andDepositeTransactionIsValid() {
+    public void deposit_shouldCreateDepositTransaction_whenBankAccountFound_andDepositTransactionIsValid() {
 
     }
 
     @Test
-    public void deposite_shouldReturnHTTPError_whenBankAccountFound_butDepositeTransactionIsInvalid() {
+    public void deposit_shouldReturnHTTPError_whenBankAccountFound_butDepositTransactionIsInvalid() {
 
     }
 
     @Test
-    public void deposite_shouldReturnHTTPError_whenBankAccountFound_butDepositeAmountReach() {
+    public void deposit_shouldReturnHTTPError_whenBankAccountFound_butDepositAmountReach() {
 
     }
 

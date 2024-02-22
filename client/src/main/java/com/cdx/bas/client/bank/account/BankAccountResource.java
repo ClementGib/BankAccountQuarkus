@@ -2,41 +2,39 @@ package com.cdx.bas.client.bank.account;
 
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountControllerPort;
-import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionServicePort;
-import com.cdx.bas.domain.transaction.validation.TransactionValidator;
-import jakarta.enterprise.context.ApplicationScoped;
+import com.cdx.bas.domain.bank.account.BankAccountServicePort;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.*;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import java.util.Set;
+
 @Path("/accounts")
-@ApplicationScoped
+@RequestScoped
 public class BankAccountResource implements BankAccountControllerPort {
-    @Inject
-    BankAccountPersistencePort bankAccountPersistencePort;
 
     @Inject
-    TransactionValidator transactionValidator;
+    BankAccountServicePort bankAccountServicePort;
 
-    @Inject
-    TransactionServicePort transactionServicePort;
-
-    @GET()
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     @Override
-    public BankAccount findById(long id) {
-        return bankAccountPersistencePort.findById(id).orElse(null);
+    public Set<BankAccount> getAll() {
+        return bankAccountServicePort.getAll();
     }
 
-    @POST
+    @GET()
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     @Override
-    public Transaction deposite(@PathParam("id") Long id, Transaction depositTransaction) {
-        transactionValidator.validateNewTransaction(depositTransaction);
-
-        return depositTransaction;
+    public BankAccount findById(@PathParam("id") long id) {
+        return bankAccountServicePort.findBankAccount(id);
     }
 }

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.bank.account.mma.MMABankAccount;
 import com.cdx.bas.domain.bank.account.saving.SavingBankAccount;
-import com.cdx.bas.domain.utils.BankAccountFactory;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 
 import org.junit.jupiter.api.Test;
 

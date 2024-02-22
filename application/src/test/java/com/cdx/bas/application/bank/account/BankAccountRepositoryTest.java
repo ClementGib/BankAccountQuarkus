@@ -1,13 +1,12 @@
 package com.cdx.bas.application.bank.account;
 
 import com.cdx.bas.application.mapper.DtoEntityMapper;
-import com.cdx.bas.domain.bank.account.AccountType;
+import com.cdx.bas.application.bank.transaction.TransactionTestUtils;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.money.Money;
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionStatus;
-import com.cdx.bas.domain.transaction.TransactionType;
+import com.cdx.bas.domain.bank.transaction.Transaction;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -65,23 +64,8 @@ public class BankAccountRepositoryTest {
         customersId.add(1L);
         bankAccount.setCustomersId(customersId);
         HashSet<Transaction> transactionHistory = new HashSet<>();
-        transactionHistory.add(createTransactionUtils(accountId, instantDate));
+        transactionHistory.add(TransactionTestUtils.createTransactionUtils(accountId, instantDate));
         bankAccount.setIssuedTransactions(transactionHistory);
         return bankAccount;
-    }
-    
-    private Transaction createTransactionUtils(long accountId, Instant instantDate) {
-        Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "350");
-        return Transaction.builder()
-                .id(2L)
-                .senderAccountId(accountId)
-                .receiverAccountId(77L)
-                .amount(new BigDecimal(100))
-                .type(TransactionType.CREDIT)
-                .status(TransactionStatus.ERROR)
-                .date(instantDate)
-                .label("transaction test")
-                .metadata(metadata)
-                .build();
     }
 }

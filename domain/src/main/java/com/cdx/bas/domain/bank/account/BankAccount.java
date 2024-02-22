@@ -1,8 +1,8 @@
 package com.cdx.bas.domain.bank.account;
 
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.money.Money;
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionException;
+import com.cdx.bas.domain.bank.transaction.Transaction;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

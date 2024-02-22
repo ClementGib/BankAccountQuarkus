@@ -1,13 +1,13 @@
 package com.cdx.bas.application.bank.account;
 
-import com.cdx.bas.application.customer.CustomerEntity;
-import com.cdx.bas.application.customer.CustomerRepository;
+import com.cdx.bas.application.bank.customer.CustomerEntity;
+import com.cdx.bas.application.bank.customer.CustomerRepository;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
-import com.cdx.bas.application.transaction.TransactionEntity;
+import com.cdx.bas.application.bank.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.money.Money;
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.utils.BankAccountFactory;
+import com.cdx.bas.domain.bank.transaction.Transaction;
+import com.cdx.bas.domain.bank.account.BankAccountFactory;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 

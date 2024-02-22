@@ -1,8 +1,8 @@
 package com.cdx.bas.application.bank.account;
 
-import com.cdx.bas.application.customer.CustomerEntity;
-import com.cdx.bas.application.transaction.TransactionEntity;
-import com.cdx.bas.domain.bank.account.AccountType;
+import com.cdx.bas.application.bank.customer.CustomerEntity;
+import com.cdx.bas.application.bank.transaction.TransactionEntity;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
