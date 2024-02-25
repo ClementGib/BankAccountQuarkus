@@ -4,6 +4,8 @@ import com.cdx.bas.domain.bank.customer.maritalstatus.MaritalStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+import static com.cdx.bas.domain.bank.customer.maritalstatus.MaritalStatus.*;
+
 @Converter
 public class MaritalStatusConverter implements AttributeConverter<MaritalStatus, Character> {
 

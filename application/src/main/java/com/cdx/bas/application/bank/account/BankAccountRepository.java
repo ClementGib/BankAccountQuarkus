@@ -33,7 +33,7 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     BankAccountMapper bankAccountMapper;
 
     @Override
-    @Transactional(Transactional.TxType.MANDATORY)
+    @Transactional
     public Set<BankAccount> getAll() {
         return findAll(Sort.by("id")).stream()
                 .map(bankAccountEntity -> bankAccountMapper.toDto(bankAccountEntity))
@@ -41,20 +41,20 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     }
 
     @Override
-    @Transactional(Transactional.TxType.MANDATORY)
+    @Transactional
     public Optional<BankAccount> findById(long id) {
         return findByIdOptional(id).map(bankAccountMapper::toDto);
     }
     
     @Override
-    @Transactional(value = MANDATORY)
+    @Transactional
     public BankAccount create(BankAccount bankAccount) {
         getEntityManager().persist(bankAccountMapper.toEntity(bankAccount));
         logger.info("BankAccount " + bankAccount.getId() + " created");
         return bankAccount;
     }
     @Override
-    @Transactional(value = MANDATORY)
+    @Transactional
     public BankAccount update(BankAccount bankAccount) {
         bankAccount = bankAccountMapper.toDto(getEntityManager().merge(bankAccountMapper.toEntity(bankAccount)));
         logger.info("BankAccount " + bankAccount.getId() + " updated");
@@ -62,7 +62,7 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     }
     
     @Override
-    @Transactional(value = MANDATORY)
+    @Transactional
     public Optional<BankAccount> deleteById(long id) {
         Optional<BankAccountEntity> entityOptional = findByIdOptional(id);
         if (entityOptional.isPresent()) {

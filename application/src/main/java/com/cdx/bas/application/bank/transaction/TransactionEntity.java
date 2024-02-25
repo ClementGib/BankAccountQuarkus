@@ -26,8 +26,8 @@ public class TransactionEntity extends PanacheEntityBase {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "sender_account_id", nullable = false)
-    private BankAccountEntity senderBankAccountEntity;
+    @JoinColumn(name = "emitter_account_id", nullable = false)
+    private BankAccountEntity emitterBankAccountEntity;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "receiver_account_id", nullable = false)
@@ -66,12 +66,12 @@ public class TransactionEntity extends PanacheEntityBase {
         this.id = id;
     }
 
-    public BankAccountEntity getSenderBankAccountEntity() {
-        return senderBankAccountEntity;
+    public BankAccountEntity getEmitterBankAccountEntity() {
+        return emitterBankAccountEntity;
     }
 
-    public void setSenderBankAccountEntity(BankAccountEntity senderBankAccountEntity) {
-        this.senderBankAccountEntity = senderBankAccountEntity;
+    public void setEmitterBankAccountEntity(BankAccountEntity emitterBankAccountEntity) {
+        this.emitterBankAccountEntity = emitterBankAccountEntity;
     }
 
     public BankAccountEntity getReceiverBankAccountEntity() {
@@ -144,7 +144,7 @@ public class TransactionEntity extends PanacheEntityBase {
         if (o == null || getClass() != o.getClass()) return false;
         TransactionEntity that = (TransactionEntity) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(senderBankAccountEntity, that.senderBankAccountEntity)
+                && Objects.equals(emitterBankAccountEntity, that.emitterBankAccountEntity)
                 && Objects.equals(receiverBankAccountEntity, that.receiverBankAccountEntity)
                 && Objects.equals(amount, that.amount)
                 && Objects.equals(currency, that.currency)
@@ -156,6 +156,6 @@ public class TransactionEntity extends PanacheEntityBase {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, senderBankAccountEntity, receiverBankAccountEntity, amount, currency, type, status, date, label, metadata);
+        return Objects.hash(id, emitterBankAccountEntity, receiverBankAccountEntity, amount, currency, type, status, date, label, metadata);
     }
 }

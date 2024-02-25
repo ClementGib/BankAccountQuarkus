@@ -8,10 +8,7 @@ import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.bank.transaction.Transaction;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class BankAccountTestUtils {
 
@@ -34,8 +31,8 @@ public class BankAccountTestUtils {
         List<Long> customersId = new ArrayList<>();
         customersId.add(99L);
         bankAccount.setCustomersId(customersId);
-        HashSet<Transaction> transactionHistory = new HashSet<>();
-        Collections.addAll(transactionHistory, transactions);
+        Set<Transaction> transactionHistory = new HashSet<>();
+        transactionHistory.addAll(List.of(transactions));
         bankAccount.setIssuedTransactions(transactionHistory);
         return bankAccount;
     }

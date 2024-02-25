@@ -2,6 +2,7 @@ package com.cdx.bas.application.bank.account;
 
 import com.cdx.bas.application.bank.customer.CustomerEntity;
 import com.cdx.bas.application.bank.customer.CustomerRepository;
+import com.cdx.bas.application.bank.transaction.TransactionMapper;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.application.bank.transaction.TransactionEntity;
 import com.cdx.bas.domain.bank.account.BankAccount;
@@ -24,7 +25,7 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
     @Inject
     BankAccountRepository bankAccountRepository;
     @Inject
-    DtoEntityMapper<Transaction, TransactionEntity> transactionMapper;
+    TransactionMapper transactionMapper;
 
     @Override
     public BankAccount toDto(BankAccountEntity entity) {
@@ -73,7 +74,7 @@ public class BankAccountMapper implements DtoEntityMapper<BankAccount, BankAccou
         Set<TransactionEntity> newIssuedTransactions = new HashSet<>();
         for (Transaction issuedTransactionDto : dto.getIssuedTransactions()) {
             TransactionEntity newIssuedTransactionEntity = transactionMapper.toEntity(issuedTransactionDto);
-            newIssuedTransactionEntity.setSenderBankAccountEntity(entity);
+            newIssuedTransactionEntity.setEmitterBankAccountEntity(entity);
             newIssuedTransactions.add(newIssuedTransactionEntity);
         }
 

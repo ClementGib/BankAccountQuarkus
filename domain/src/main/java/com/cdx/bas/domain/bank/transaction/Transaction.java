@@ -1,11 +1,11 @@
 package com.cdx.bas.domain.bank.transaction;
 
+import com.cdx.bas.domain.bank.transaction.status.TransactionStatus;
 import com.cdx.bas.domain.bank.transaction.type.TransactionType;
 import com.cdx.bas.domain.bank.transaction.validation.*;
 import com.cdx.bas.domain.currency.validation.ValidCurrency;
-import com.cdx.bas.domain.bank.transaction.status.TransactionStatus;
-import com.cdx.bas.domain.transaction.validation.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
@@ -26,20 +26,20 @@ import static com.cdx.bas.domain.bank.transaction.status.TransactionStatus.UNPRO
 @AllArgsConstructor
 public class Transaction implements Comparable<Transaction> {
 
-    @Min(value = 1, message = "Id must be positive and greater than 0 for existing transaction.", groups = ExistingTransaction.class)
-    @NotNull(message = "Id must not be null for existing transaction.", groups = ExistingTransaction.class)
-    @Null(message = "Id must be null for new transaction.", groups = NewTransaction.class)
+    @Min(value = 1, message = "Id must be positive and greater than 0 for existing transaction.", groups = ExistingTransactionGroup.class)
+    @NotNull(message = "Id must not be null for existing transaction.", groups = ExistingTransactionGroup.class)
+    @Null(message = "Id must be null for new transaction.", groups = NewTransactionGroup.class)
     private Long id;
 
-    @Null(message = "Sender account must be null for cash movement.", groups = CashMovement.class)
-    @NotNull(message = "Sender account id must not be null.", groups = AccountMovement.class)
-    private Long senderAccountId;
+    @Null(message = "Emitter account must be null for cash movement.", groups = CashMovementGroup.class)
+    @NotNull(message = "Emitter account id must not be null.", groups = AccountMovementGroup.class)
+    private Long emitterAccountId;
 
     @NotNull(message = "receiver account id must not be null.")
     private Long receiverAccountId;
 
-    @Min(value = 10, message = "Amount must be greater than 10 for cash movement.", groups = CashMovement.class)
-    @Min(value = 1, message = "Amount must be positive and greater than 0.", groups = AccountMovement.class)
+    @Min(value = 10, message = "Amount must be greater than 10 for cash movement.", groups = CashMovementGroup.class)
+    @Min(value = 1, message = "Amount must be positive and greater than 0.", groups = AccountMovementGroup.class)
     @NotNull(message = "Amount must not be null.")
     private BigDecimal amount;
 
@@ -50,7 +50,7 @@ public class Transaction implements Comparable<Transaction> {
     @NotNull(message = "Type must not be null.")
     private TransactionType type;
 
-    @ValidStatus(expectedStatus = UNPROCESSED, groups = NewTransaction.class)
+    @ValidStatus(expectedStatus = UNPROCESSED, groups = NewTransactionGroup.class)
     @NotNull(message = "Status must not be null.")
     private TransactionStatus status;
 
@@ -60,7 +60,8 @@ public class Transaction implements Comparable<Transaction> {
     @NotNull(message = "Label must not be null.")
     private String label;
 
-    @NotNull(message = "Bill must be define for cash movements.", groups = CashMovement.class)
+    @NotNull(message = "Metadata must not be null for cash movements.", groups = CashMovementGroup.class)
+    @NotEmpty(message = "Bill must be define for cash movements.", groups = CashMovementGroup.class)
     private Map<String, String> metadata = new HashMap<>();
 
     @Override

@@ -25,7 +25,7 @@ public class CustomerResource {
     CustomerPersistencePort customerPersistencePort;
 
     @GET
-    @Transactional(value = REQUIRED)
+    @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Set<Customer> getAll() {
         //TODO use service
@@ -34,7 +34,7 @@ public class CustomerResource {
 
     @GET
     @Path("/{id}")
-    @Transactional(value = REQUIRED)
+    @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Optional<Customer> getCustomer(@PathParam("id") long id) {
         //TODO use service

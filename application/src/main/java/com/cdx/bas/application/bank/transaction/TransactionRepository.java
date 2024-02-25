@@ -8,10 +8,11 @@ import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.jboss.logging.Logger;
 
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -24,20 +25,26 @@ import java.util.stream.Collectors;
  * @author Clément Gibert
  *
  */
+
 @RequestScoped
 public class TransactionRepository implements TransactionPersistencePort, PanacheRepositoryBase<TransactionEntity, Long> {
     
     private static final Logger logger = Logger.getLogger(TransactionRepository.class);
+
+    @PersistenceContext
+    private EntityManager entityManager;
     
     @Inject
     TransactionMapper transactionMapper;
 
     @Override
+    @Transactional
     public Optional<Transaction> findById(long id) {
         return findByIdOptional(id).map(transactionMapper::toDto);
     }
 
     @Override
+    @Transactional
     public Set<Transaction> getAll() {
         return findAll(Sort.by("status")).stream()
                 .map(transactionEntity -> transactionMapper.toDto(transactionEntity))
@@ -46,6 +53,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
 
 
     @Override
+    @Transactional
     public Set<Transaction> findAllByStatus(TransactionStatus transactionStatus) {
         return findAll(Sort.by("status")).stream()
                 .filter(transaction -> transaction.getStatus().equals(transactionStatus))
@@ -54,6 +62,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     }
 
     @Override
+    @Transactional
     public Queue<Transaction> findUnprocessedTransactions() {
         return find("#TransactionEntity.findUnprocessed",
                 Parameters.with("status", TransactionStatus.UNPROCESSED).map())
@@ -63,15 +72,15 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     }
 
     @Override
-    @Transactional(TxType.MANDATORY)
+    @Transactional
     public Transaction create(Transaction transaction) {
-        getEntityManager().persist(transactionMapper.toEntity(transaction));
-        logger.info("Transaction " + transaction.getId() + " created");
+        entityManager.persist(transactionMapper.toEntity(transaction));
+        logger.info("Transaction from " + transaction.getEmitterAccountId() + " to " + transaction.getReceiverAccountId() + " created");
         return transaction;
     }
 
     @Override
-    @Transactional(TxType.MANDATORY)
+    @Transactional
     public Transaction update(Transaction transaction) {
         getEntityManager().merge(transactionMapper.toEntity(transaction));
         logger.info("Transaction " + transaction.getId() + " updated");
@@ -79,7 +88,7 @@ public class TransactionRepository implements TransactionPersistencePort, Panach
     }
 
     @Override
-    @Transactional(TxType.MANDATORY)
+    @Transactional
     public Optional<Transaction> deleteById(long id) {
         Optional<TransactionEntity> entityOptional = findByIdOptional(id);
         if (entityOptional.isPresent()) {

@@ -4,6 +4,8 @@ import com.cdx.bas.domain.bank.customer.gender.Gender;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+import static com.cdx.bas.domain.bank.customer.gender.Gender.*;
+
 @Converter
 public class GenderConverter implements AttributeConverter<Gender, Character> {
 

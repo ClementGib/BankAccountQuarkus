@@ -15,6 +15,7 @@ import java.util.Set;
 
 import static com.cdx.bas.domain.bank.customer.gender.Gender.FEMALE;
 import static com.cdx.bas.domain.bank.customer.gender.Gender.MALE;
+import static com.cdx.bas.domain.bank.customer.maritalstatus.MaritalStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest

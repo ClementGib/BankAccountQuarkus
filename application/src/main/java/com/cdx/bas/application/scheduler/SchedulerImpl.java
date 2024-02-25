@@ -39,20 +39,22 @@ public class SchedulerImpl implements Scheduler {
     @Override
     @Scheduled(every = "{scheduler.every}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     public void processQueue() {
-        if (isActivation()) {
+        if (isActivated()) {
             logger.info("Scheduler start every " + getEvery());
             if (getTransactionQueue().isEmpty()) {
                 getTransactionQueue().addAll(transactionRepository.findUnprocessedTransactions());
-                logger.info("Queue size: " + transactionQueue.size());
-                getTransactionQueue().forEach(transaction -> {
-                    transactionService.process(transaction);
-                });
+            }
+
+            logger.info("Queue size: " + transactionQueue.size());
+            while(!getTransactionQueue().isEmpty()) {
+                Transaction currentTransation = getTransactionQueue().poll();
+                transactionService.process(currentTransation);
             }
             logger.info("Scheduler end");
         }
     }
 
-    public boolean isActivation() {
+    public boolean isActivated() {
         return activation;
     }
 

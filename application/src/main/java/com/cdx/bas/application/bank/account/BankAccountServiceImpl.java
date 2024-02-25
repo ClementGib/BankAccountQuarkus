@@ -32,30 +32,19 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     TransactionServicePort transactionService;
 
     @Override
-    @Transactional(Transactional.TxType.MANDATORY)
+    @Transactional
     public Set<BankAccount> getAll() {
         return bankAccountRepository.getAll();
     }
 
     @Override
-    @Transactional(Transactional.TxType.MANDATORY)
+    @Transactional
     public BankAccount findBankAccount(Long bankAccountId){
         return bankAccountRepository.findById(bankAccountId).orElse(null);
     }
 
     @Override
-    public void transferAmountBetweenAccounts(Transaction transaction, BankAccount emitterBankAccount, BankAccount receiverBankAccount) {
-        BigDecimal euroAmount = ExchangeRateUtils.getEuroAmountFrom(transaction.getCurrency(), transaction.getAmount());
-        if (euroAmount.signum() < 0) {
-            throw new TransactionException("Credit transaction " + transaction.getId() + " should have positive value, actual value: " + euroAmount);
-        }
-        emitterBankAccount.getBalance().minus(Money.of(euroAmount));
-        receiverBankAccount.getBalance().plus(Money.of(euroAmount));
-        logger.debug("add amount " + emitterBankAccount.getBalance() + " " + transaction.getCurrency()
-                + " to bank account" + receiverBankAccount.getId() + " from bank account " + emitterBankAccount.getId());
-    }
-
-    @Override
+    @Transactional
     public BankAccount addTransaction(Transaction transaction, BankAccount bankAccount) {
         Optional<Transaction> optionalStoredTransaction = bankAccount.getIssuedTransactions().stream()
                 .filter(actualTransaction -> actualTransaction.getId().equals(transaction.getId()))
@@ -73,10 +62,22 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
     }
 
     @Override
-    @Transactional(Transactional.TxType.MANDATORY)
+    @Transactional
     public BankAccount updateBankAccount(BankAccount bankAccount) throws BankAccountException {
         logger.debug("update bank account" + bankAccount.getId());
         bankAccountValidator.validateBankAccount(bankAccount);
         return bankAccountRepository.update(bankAccount);
+    }
+
+    @Override
+    public void transferAmountBetweenAccounts(Transaction transaction, BankAccount emitterBankAccount, BankAccount receiverBankAccount) {
+        BigDecimal euroAmount = ExchangeRateUtils.getEuroAmountFrom(transaction.getCurrency(), transaction.getAmount());
+        if (euroAmount.signum() < 0) {
+            throw new TransactionException("Credit transaction " + transaction.getId() + " should have positive value, actual value: " + euroAmount);
+        }
+        emitterBankAccount.getBalance().minus(Money.of(euroAmount));
+        receiverBankAccount.getBalance().plus(Money.of(euroAmount));
+        logger.debug("add amount " + emitterBankAccount.getBalance() + " " + transaction.getCurrency()
+                + " to bank account" + receiverBankAccount.getId() + " from bank account " + emitterBankAccount.getId());
     }
 }

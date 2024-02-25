@@ -29,7 +29,7 @@ public class BankAccountEntity extends PanacheEntityBase {
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<CustomerEntity> customers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "senderBankAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "emitterBankAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("date")
     private Set<TransactionEntity> issuedTransactions = new HashSet<>();
 
@@ -76,7 +76,7 @@ public class BankAccountEntity extends PanacheEntityBase {
 
     public void addTransaction(TransactionEntity transaction) {
         this.issuedTransactions.add(transaction);
-        transaction.setSenderBankAccountEntity(this);
+        transaction.setEmitterBankAccountEntity(this);
     }
 
     @Override

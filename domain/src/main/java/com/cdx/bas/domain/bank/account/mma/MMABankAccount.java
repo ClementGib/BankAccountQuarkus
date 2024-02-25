@@ -1,36 +1,35 @@
 package com.cdx.bas.domain.bank.account.mma;
 
-import jakarta.validation.constraints.NotNull;
-
-import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
+import com.cdx.bas.domain.bank.account.type.AccountType;
+import com.cdx.bas.domain.bank.transaction.Transaction;
 import com.cdx.bas.domain.money.Amount;
 import com.cdx.bas.domain.money.Money;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.util.List;
+import java.util.Set;
+
+import static com.cdx.bas.domain.bank.account.type.AccountType.*;
 
 /**
  * Money Market Account
  */
 public class MMABankAccount extends BankAccount {
-    
-    @NotNull(message="balance must not be null.")
+
     @Amount(min=1000, max=250000, message="balance amount must be between 1000 and 250000.")
-    protected Money balance;
+    public Money getBalance() {
+        return super.balance;
+    }
     
     public MMABankAccount() {
-        super(AccountType.MMA);
+        super(MMA);
     }
 
-//    public MMABankAccount(Long id, Money balance, List<Long> customersId, Set<Transaction> transactions) {
-//        super(id, AccountType.MMA, balance, customersId, transactions);
-//        this.balance = balance;
-//    }
-    
-    public Money getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Money balance) {
-        super.balance = balance;
-        this.balance = balance;
+    public MMABankAccount(Long id, Money balance, List<Long> customersId, Set<Transaction> issuedTransactions) {
+        super(id, MMA, balance, customersId, issuedTransactions);
     }
 }

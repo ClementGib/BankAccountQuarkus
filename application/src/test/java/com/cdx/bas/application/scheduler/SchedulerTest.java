@@ -4,7 +4,6 @@ import com.cdx.bas.application.bank.transaction.TransactionTestUtils;
 import com.cdx.bas.domain.bank.transaction.Transaction;
 import com.cdx.bas.domain.bank.transaction.TransactionPersistencePort;
 import com.cdx.bas.domain.bank.transaction.TransactionServicePort;
-import com.cdx.bas.domain.transaction.*;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
@@ -62,7 +61,7 @@ public class SchedulerTest {
         assertThat(queue.peek()).usingRecursiveComparison().isEqualTo (TransactionTestUtils.createTransactionUtils(5L, 59L, Instant.MIN, "Fifth transaction"));
         verify(transactionService).process(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-06T10:14:00Z"), ZoneId.of("UTC"));
-        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo (TransactionTestUtils.createTransactionUtils(3L, 150, Instant.now(clock), "Third transaction"));
+        assertThat(queue.peek()).usingRecursiveComparison().isEqualTo (TransactionTestUtils.createTransactionUtils(3L, 150L, Instant.now(clock), "Third transaction"));
         verify(transactionService).process(queue.poll());
         clock = Clock.fixed(Instant.parse("2022-12-07T10:14:00Z"), ZoneId.of("UTC"));
         assertThat(queue.peek()).usingRecursiveComparison().isEqualTo (TransactionTestUtils.createTransactionUtils(2L, 399L, Instant.now(clock), "Second transaction"));
@@ -83,7 +82,7 @@ public class SchedulerTest {
         clock = Clock.fixed(Instant.parse("2022-12-07T10:14:00Z"), ZoneId.of("UTC"));
         queue.add (TransactionTestUtils.createTransactionUtils(2L, 399L, Instant.now(clock), "Second transaction"));
         clock = Clock.fixed(Instant.parse("2022-12-06T10:14:00Z"), ZoneId.of("UTC"));
-        queue.add (TransactionTestUtils.createTransactionUtils(3L, 150, Instant.now(clock), "Third transaction"));
+        queue.add (TransactionTestUtils.createTransactionUtils(3L, 150L, Instant.now(clock), "Third transaction"));
         clock = Clock.fixed(Instant.parse("2022-12-07T10:18:00Z"), ZoneId.of("UTC"));
         queue.add (TransactionTestUtils.createTransactionUtils(4L, 1000L, Instant.now(clock), "Fourth transaction"));
         queue.add (TransactionTestUtils.createTransactionUtils(5L, 59L, Instant.MIN, "Fifth transaction"));

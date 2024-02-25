@@ -14,6 +14,7 @@ import static com.cdx.bas.domain.bank.transaction.status.TransactionStatus.ERROR
 import static com.cdx.bas.domain.bank.transaction.status.TransactionStatus.UNPROCESSED;
 import static com.cdx.bas.domain.bank.transaction.type.TransactionType.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @QuarkusTest
 class TransactionValidatorTest {
@@ -25,7 +26,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldDoNothing_whenNewCreditTransactionIsValid(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("1"))
                 .currency("EUR")
@@ -43,10 +44,11 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class);
             String[] lines = transactionException.getMessage().split("\\r?\\n");
-            assertThat(lines).hasSize(10);
+            assertThat(lines).hasSize(9);
         }
     }
 
@@ -54,7 +56,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldTrowTransactionException_whenNewTransactionHasId(){
         Transaction creditTransaction = Transaction.builder()
                 .id(99L)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("1"))
                 .currency("EUR")
@@ -65,6 +67,7 @@ class TransactionValidatorTest {
                 .build();
        try {
            transactionValidator.validateNewTransaction(creditTransaction);
+           fail();
        } catch (TransactionException transactionException) {
            assertThat(transactionException).isInstanceOf(TransactionException.class)
                    .hasMessage("Id must be null for new transaction.\n");
@@ -75,7 +78,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldTrowTransactionException_whenNewCreditTransactionAmountIsLowerThanMin(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("0"))
                 .currency("EUR")
@@ -86,6 +89,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Amount must be positive and greater than 0.\n");
@@ -96,7 +100,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldDoNothing_whenNewDebitTransactionIsValid(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("1"))
                 .currency("EUR")
@@ -112,7 +116,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldTrowTransactionException_whenNewDebitTransactionHasId(){
         Transaction creditTransaction = Transaction.builder()
                 .id(99L)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("1"))
                 .currency("EUR")
@@ -123,6 +127,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Id must be null for new transaction.\n");
@@ -133,7 +138,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldTrowTransactionException_whenNewDebitTransactionAmountIsLowerThanMin(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("0"))
                 .currency("EUR")
@@ -144,6 +149,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Amount must be positive and greater than 0.\n");
@@ -154,7 +160,7 @@ class TransactionValidatorTest {
     public void validateExistingTransaction_shouldDoNothing_whenExistingCreditTransactionIsValid(){
         Transaction creditTransaction = Transaction.builder()
                 .id(100L)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("1"))
                 .currency("EUR")
@@ -172,10 +178,11 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateExistingTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class);
             String[] lines = transactionException.getMessage().split("\\r?\\n");
-            assertThat(lines).hasSize(10);
+            assertThat(lines).hasSize(9);
         }
     }
 
@@ -183,7 +190,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldTrowTransactionException_whenExistingCreditTransactionAmountIsLowerThanMin(){
         Transaction creditTransaction = Transaction.builder()
                 .id(99L)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("0"))
                 .currency("EUR")
@@ -194,6 +201,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateExistingTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Amount must be positive and greater than 0.\n");
@@ -204,7 +212,7 @@ class TransactionValidatorTest {
     public void validateExistingTransaction_shouldDoNothing_whenExistingDebitTransactionIsValid(){
         Transaction creditTransaction = Transaction.builder()
                 .id(100L)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("1"))
                 .currency("EUR")
@@ -220,7 +228,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldTrowTransactionException_whenExistingDebitTransactionAmountIsLowerThanMin(){
         Transaction creditTransaction = Transaction.builder()
                 .id(99L)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("0"))
                 .currency("EUR")
@@ -231,6 +239,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateExistingTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Amount must be positive and greater than 0.\n");
@@ -241,7 +250,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldDoNothing_whenNewDepositTransactionIsValid(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("20"))
                 .currency("EUR")
@@ -257,8 +266,8 @@ class TransactionValidatorTest {
     @Test
     public void validateNewTransaction_shouldThrowTransactionException_whenNewDepositTransactionHasSendAccountId(){
         Transaction creditTransaction = Transaction.builder()
-                .id(99L)
-                .senderAccountId(null)
+                .id(null)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("20"))
                 .currency("EUR")
@@ -269,10 +278,11 @@ class TransactionValidatorTest {
                 .metadata(Map.of("bill", "10,10"))
                 .build();
         try {
-            transactionValidator.validateExistingTransaction(creditTransaction);
+            transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
-                    .hasMessage("Sender account must be null for cash movement.\n");
+                    .hasMessageContaining("Emitter account must be null for cash movement.\n");
         }
     }
 
@@ -280,7 +290,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldThrowTransactionException_whenNewDepositTransactionHasAmountLowerThanMin(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("5"))
                 .currency("EUR")
@@ -292,6 +302,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Amount must be greater than 10 for cash movement.\n");
@@ -302,7 +313,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldThrowTransactionException_whenNewDepositTransactionHasEmptyMetadata(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("10"))
                 .currency("EUR")
@@ -314,6 +325,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Bill must be define for cash movements.\n");
@@ -324,7 +336,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldThrowTransactionException_whenNewDepositTransactionHasWrongStatus(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("10"))
                 .currency("EUR")
@@ -336,6 +348,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Unexpected transaction status.\n");
@@ -346,7 +359,7 @@ class TransactionValidatorTest {
     public void validateNewTransaction_shouldThrowTransactionException_whenNewDepositTransactionHasNullMetadata(){
         Transaction creditTransaction = Transaction.builder()
                 .id(null)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("10"))
                 .currency("EUR")
@@ -358,9 +371,11 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateNewTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
-                    .hasMessage("Bill must be define for cash movements.\n");
+                    .hasMessageContaining("Metadata must not be null for cash movements.\n")
+                    .hasMessageContaining("Bill must be define for cash movements.\n");
         }
     }
 
@@ -368,7 +383,7 @@ class TransactionValidatorTest {
     public void validateExistingTransaction_shouldDoNothing_whenExistingDepositTransactionIsValid(){
         Transaction creditTransaction = Transaction.builder()
                 .id(100L)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("20"))
                 .currency("EUR")
@@ -385,7 +400,7 @@ class TransactionValidatorTest {
     public void validateExistingTransaction_shouldThrowTransactionException_whenExistingDepositTransactionHasAmountLowerThanMin(){
         Transaction creditTransaction = Transaction.builder()
                 .id(99L)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("5"))
                 .currency("EUR")
@@ -397,6 +412,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateExistingTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Amount must be greater than 10 for cash movement.\n");
@@ -407,7 +423,7 @@ class TransactionValidatorTest {
     public void validateExistingTransaction_shouldThrowTransactionException_whenExistingDepositTransactionHasEmptyMetadata(){
         Transaction creditTransaction = Transaction.builder()
                 .id(99L)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("10"))
                 .currency("EUR")
@@ -419,6 +435,7 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateExistingTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
                     .hasMessage("Bill must be define for cash movements.\n");
@@ -429,7 +446,7 @@ class TransactionValidatorTest {
     public void validateExistingTransaction_shouldThrowTransactionException_whenExistingDepositTransactionHasNullMetadata(){
         Transaction creditTransaction = Transaction.builder()
                 .id(99L)
-                .senderAccountId(null)
+                .emitterAccountId(null)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("10"))
                 .currency("EUR")
@@ -441,9 +458,11 @@ class TransactionValidatorTest {
                 .build();
         try {
             transactionValidator.validateExistingTransaction(creditTransaction);
+            fail();
         } catch (TransactionException transactionException) {
             assertThat(transactionException).isInstanceOf(TransactionException.class)
-                    .hasMessage("Bill must be define for cash movements.\n");
+                    .hasMessageContaining("Metadata must not be null for cash movements.\n")
+                    .hasMessageContaining("Bill must be define for cash movements.\n");
         }
     }
 }

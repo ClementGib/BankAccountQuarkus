@@ -23,12 +23,19 @@ public interface TransactionControllerPort {
     public Set<Transaction> getAllByStatus(@PathParam("status") String status) ;
 
     /**
-     * Make a deposit on bank account
+     * Find Transaction from its id
      *
-     * @param id of BankAccount
-     * @param depositTransaction to add to the BankAccount
+     * @param id of Transaction
+     * @return Transaction corresponding to the id
+     */
+    public Transaction findById(long id);
+
+    /**
+     * Create a new transaction
+     *
+     * @param newTransaction to add to the BankAccount
      * @return Response with status corresponding to transaction validation or not
      */
-    public Response deposit(Long id, Transaction depositTransaction);
+    public Response create(NewTransaction newTransaction);
 
 }

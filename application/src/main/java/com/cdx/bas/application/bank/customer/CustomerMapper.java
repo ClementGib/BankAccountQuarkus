@@ -1,6 +1,7 @@
 package com.cdx.bas.application.bank.customer;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
+import com.cdx.bas.application.bank.account.BankAccountMapper;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.customer.Customer;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 public class CustomerMapper implements DtoEntityMapper<Customer, CustomerEntity> {
 
     @Inject
-    DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
+    BankAccountMapper bankAccountMapper;
     
     @Inject
     ObjectMapper objectMapper;

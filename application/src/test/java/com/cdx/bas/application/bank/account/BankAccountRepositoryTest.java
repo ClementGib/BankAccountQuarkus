@@ -12,6 +12,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -34,6 +35,7 @@ public class BankAccountRepositoryTest {
 
 
     @Test
+    @Transactional
     public void findById_shouldReturnBankAccount_whenAccountIsFound() {
         long accountId = 1L;
         Instant date = Instant.now();
@@ -48,6 +50,7 @@ public class BankAccountRepositoryTest {
     }
     
     @Test
+    @Transactional
     public void findById_shouldReturnEmptyOptional_whenAccountIsNotFound() {
         Optional<BankAccount> optionalBankAccount = bankAccountRepository.findById(99999L);
         

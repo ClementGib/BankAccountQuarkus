@@ -44,7 +44,7 @@ SET TIME ZONE 'Europe/Paris';
 	CREATE TABLE basapp.transactions
 	(
 	transaction_id BIGSERIAL UNIQUE NOT NULL,
-    sender_account_id bigint,
+    emitter_account_id bigint,
     receiver_account_id bigint NOT NULL,
 	type VARCHAR(25) NOT NULL,
 	amount DECIMAL NOT NULL,
@@ -54,7 +54,7 @@ SET TIME ZONE 'Europe/Paris';
 	label text NOT NULL,
 	metadata jsonb,
 	CONSTRAINT pk_transaction PRIMARY KEY (transaction_id),
-    CONSTRAINT fk_sender_account_id FOREIGN KEY(sender_account_id) REFERENCES basapp.bank_accounts(account_id),
+    CONSTRAINT fk_emitter_account_id FOREIGN KEY(emitter_account_id) REFERENCES basapp.bank_accounts(account_id),
     CONSTRAINT fk_receiver_account_id FOREIGN KEY(receiver_account_id) REFERENCES basapp.bank_accounts(account_id)
 	);
 	

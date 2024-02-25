@@ -40,7 +40,7 @@ class TransactionRepositoryTest {
                 ZoneOffset.ofHours(1)).toInstant();
         Optional<Transaction> expectedTransaction = Optional.of(Transaction.builder()
                 .id(1L)
-                .senderAccountId(1L)
+                .emitterAccountId(1L)
                 .receiverAccountId(2L)
                 .amount(new BigDecimal("1600.00"))
                 .currency("EUR")
@@ -48,7 +48,7 @@ class TransactionRepositoryTest {
                 .status(COMPLETED)
                 .date(expectedInstant)
                 .label("transaction 1")
-                .metadata(Map.of("sender_amount_before", "2000", "receiver_amount_before", "0", "sender_amount_after", "400", "receiver_amount_after", "1600"))
+                .metadata(Map.of("emitter_amount_before", "2000", "receiver_amount_before", "0", "emitter_amount_after", "400", "receiver_amount_after", "1600"))
                 .build());
         Optional<Transaction> actualTransaction = transactionRepository.findById(1);
 
@@ -103,7 +103,7 @@ class TransactionRepositoryTest {
         Transaction expectedTransaction = new Transaction(2L, 6L, 3L,
                 new BigDecimal("9200.00"), "EUR", CREDIT, UNPROCESSED,
                 Instant.parse("2024-11-10T15:00:00+02:00"),
-                "transaction to process", Map.of("sender_amount_before", "9200", "receiver_amount_before", "10000", "sender_amount_after", "0", "receiver_amount_after", "19200"));
+                "transaction to process", Map.of("emitter_amount_before", "9200", "receiver_amount_before", "10000", "emitter_amount_after", "0", "receiver_amount_after", "19200"));
         Optional<Transaction> optionalExpectedTransaction = Optional.of(expectedTransaction);
 
         Transaction updatedTransaction =  transactionRepository.update(expectedTransaction);

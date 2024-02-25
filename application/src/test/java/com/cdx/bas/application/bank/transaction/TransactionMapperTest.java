@@ -15,7 +15,10 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -32,11 +35,11 @@ public class TransactionMapperTest {
     TransactionMapper transactionMapper;
 
     @Test
-    public void toDto_shouldThrowException_whenTransactionDtoDoesNotHaveSenderBankAccount() {
+    public void toDto_shouldThrowException_whenTransactionDtoDoesNotHaveReceiverBankAccount() {
         try {
             BankAccountEntity bankAccountEntity = new BankAccountEntity();
             TransactionEntity transactionEntity = new TransactionEntity();
-            transactionEntity.setSenderBankAccountEntity(bankAccountEntity);
+            transactionEntity.setEmitterBankAccountEntity(bankAccountEntity);
             bankAccountEntity.setId(10L);
             transactionMapper.toDto(transactionEntity);
             fail();
@@ -46,27 +49,27 @@ public class TransactionMapperTest {
     }
 
     @Test
-    public void toDto_shouldThrowException_whenTransactionDto_doesNotHave_receiverBankAccount() {
+    public void toDto_shouldThrowException_whenTransactionDtoDoesNotHaveEmitterBankAccount() {
         try {
             transactionMapper.toDto(new TransactionEntity());
             fail();
         } catch (NoSuchElementException exception) {
-            assertThat(exception.getMessage()).hasToString("Transaction does not have sender bank account.");
+            assertThat(exception.getMessage()).hasToString("Transaction does not have emitter bank account.");
         }
     }
 
     @Test
-    public void toEntity_shouldThrowException_whenTransactionDto_doesNotHave_senderBankAccount() {
+    public void toEntity_shouldThrowException_whenTransactionDtoDoesNotHaveEmitterBankAccount() {
 
         try {
             Transaction transaction = Transaction.builder()
                     .id(10L)
-                    .senderAccountId(null)
+                    .emitterAccountId(null)
                     .build();
             transactionMapper.toEntity(transaction);
             fail();
         } catch (NoSuchElementException exception) {
-            assertThat(exception.getMessage()).hasToString("Transaction does not have sender bank account entity.");
+            assertThat(exception.getMessage()).hasToString("Transaction does not have emitter bank account entity.");
         }
     }
 
@@ -76,7 +79,7 @@ public class TransactionMapperTest {
         try {
             Transaction transaction = Transaction.builder()
                     .id(10L)
-                    .senderAccountId(99L)
+                    .emitterAccountId(99L)
                     .receiverAccountId(null)
                     .build();
 
@@ -92,15 +95,15 @@ public class TransactionMapperTest {
     @Test
     public void toDto_shouldMapEntityValues_whenEntityHasValues() {
         Instant date = Instant.now();
-        long senderAccountId = 99L;
+        long emitterAccountId = 99L;
         long receiverAccountId = 77L;
         Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "100");
-        TransactionEntity transactionEntity = TransactionTestUtils.createTransactionEntityUtils(senderAccountId, receiverAccountId, date);
+        TransactionEntity transactionEntity = TransactionTestUtils.createTransactionEntityUtils(emitterAccountId, receiverAccountId, date);
 
         Transaction dto = transactionMapper.toDto(transactionEntity);
 
         assertThat(dto.getId()).isEqualTo(10L);
-        assertThat(dto.getSenderAccountId()).isEqualTo(senderAccountId);
+        assertThat(dto.getEmitterAccountId()).isEqualTo(emitterAccountId);
         assertThat(dto.getReceiverAccountId()).isEqualTo(receiverAccountId);
         assertThat(dto.getAmount()).isEqualTo(new BigDecimal("100"));
         assertThat(dto.getCurrency()).isEqualTo("EUR");
@@ -114,24 +117,24 @@ public class TransactionMapperTest {
     @Test
     public void toEntity_shouldMapEntityValues_whenDtoHasValues() {
         Instant date = Instant.now();
-        long senderAccountId = 99L;
+        long emitterAccountId = 99L;
         long receiverAccountId = 77L;
         String strMetadata = "{\"amount_after\":\"100\",\"amount_before\":\"0\"}";
         Map<String, String> metadata = new HashMap<>();
         metadata.put("amount_before", "0");
         metadata.put("amount_after", "100");
-        BankAccountEntity senderBankAccountEntity = BankAccountTestUtils.createBankAccountEntity(senderAccountId);
+        BankAccountEntity emitterBankAccountEntity = BankAccountTestUtils.createBankAccountEntity(emitterAccountId);
         BankAccountEntity receiverBankAccountEntity = BankAccountTestUtils.createBankAccountEntity(receiverAccountId);
-        Transaction transaction = TransactionTestUtils.createTransactionUtils(senderAccountId, receiverAccountId, date);
+        Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, date);
         transaction.setMetadata(metadata);
 
-        when(bankAccountRepository.findByIdOptional(99L)).thenReturn(Optional.of(senderBankAccountEntity));
+        when(bankAccountRepository.findByIdOptional(99L)).thenReturn(Optional.of(emitterBankAccountEntity));
         when(bankAccountRepository.findByIdOptional(77L)).thenReturn(Optional.of(receiverBankAccountEntity));
         
         TransactionEntity entity = transactionMapper.toEntity(transaction);
         
         assertThat(entity.getId()).isEqualTo(10L);
-        assertThat(entity.getSenderBankAccountEntity()).usingRecursiveComparison().isEqualTo(senderBankAccountEntity);
+        assertThat(entity.getEmitterBankAccountEntity()).usingRecursiveComparison().isEqualTo(emitterBankAccountEntity);
         assertThat(entity.getReceiverBankAccountEntity()).usingRecursiveComparison().isEqualTo(receiverBankAccountEntity);
         assertThat(entity.getAmount()).usingRecursiveComparison().isEqualTo(new BigDecimal(100));
         assertThat(entity.getCurrency()).isEqualTo("EUR");

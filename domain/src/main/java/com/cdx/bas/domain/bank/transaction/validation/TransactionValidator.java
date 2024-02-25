@@ -10,7 +10,7 @@ import jakarta.validation.Validator;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.cdx.bas.domain.bank.transaction.type.TransactionType.DEPOSIT;
+import static com.cdx.bas.domain.bank.transaction.type.TransactionType.*;
 
 
 @RequestScoped
@@ -20,19 +20,20 @@ public class TransactionValidator {
     Validator validator;
 
     public void validateNewTransaction(Transaction transaction) throws TransactionException {
-        validateTransaction(transaction, NewTransaction.class);
+        validateTransaction(transaction, NewTransactionGroup.class);
     }
 
     public void validateExistingTransaction(Transaction transaction) throws TransactionException {
-        validateTransaction(transaction, ExistingTransaction.class);
+        validateTransaction(transaction, ExistingTransactionGroup.class);
     }
 
-    private void validateTransaction(Transaction transaction, Class<?> group) throws TransactionException {
+    private void validateTransaction(Transaction transaction, Class<?> stateGroup) throws TransactionException {
         Set<ConstraintViolation<Transaction>> violations = new HashSet<>(validator.validate(transaction));
-        if (DEPOSIT.equals(transaction.getType())) {
-            violations.addAll(validator.validate(transaction, CashMovement.class, group));
-        } else {
-            violations.addAll(validator.validate(transaction, AccountMovement.class, group));
+        violations.addAll(validator.validate(transaction, stateGroup));
+        if (DEPOSIT.equals(transaction.getType()) || WITHDRAW.equals(transaction.getType())) {
+            violations.addAll(validator.validate(transaction, CashMovementGroup.class));
+        } else if(CREDIT.equals(transaction.getType()) || DEBIT.equals(transaction.getType())) {
+            violations.addAll(validator.validate(transaction, AccountMovementGroup.class));
         }
         checkConstraintViolation(violations);
     }

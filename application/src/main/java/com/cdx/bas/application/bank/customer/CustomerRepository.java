@@ -28,7 +28,7 @@ public class CustomerRepository implements CustomerPersistencePort, PanacheRepos
     private static final Logger logger = Logger.getLogger(CustomerRepository.class);
     
     @Inject
-    private DtoEntityMapper<Customer, CustomerEntity> customerMapper;
+    CustomerMapper customerMapper;
 
     @Override
     @Transactional(value = MANDATORY)
