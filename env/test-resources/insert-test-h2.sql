@@ -30,12 +30,13 @@ VALUES (1, 1),
        (4, 3),
        (5, 1),
        (6, 5),
-       (7, 6);
+       (7, 6),
+       (8, 6);
 
-INSERT INTO basapp.transactions (transaction_id, sender_account_id, receiver_account_id, type, amount, currency, status, date, label, metadata)
-VALUES (1, 1, 2, 'CREDIT', 1600.00, 'EUR', 'COMPLETED', TIMESTAMP WITH TIME ZONE '2024-06-06 12:00:00+01:00', 'transaction 1', '{"sender_amount_before" : "2000", "receiver_amount_before" : "0", "sender_amount_after" : "400", "receiver_amount_after" : "1600"}'),
+INSERT INTO basapp.transactions (transaction_id, emitter_account_id, receiver_account_id, type, amount, currency, status, date, label, metadata)
+VALUES (1, 1, 2, 'CREDIT', 1600.00, 'EUR', 'COMPLETED', TIMESTAMP WITH TIME ZONE '2024-06-06 12:00:00+01:00', 'transaction 1', '{"emitter_amount_before" : "2000", "receiver_amount_before" : "0", "emitter_amount_after" : "400", "receiver_amount_after" : "1600"}'),
        (2, 6, 3, 'CREDIT', 9200.00, 'EUR', 'ERROR', TIMESTAMP WITH TIME ZONE '2024-07-10 15:00:00+01:00', 'transaction 2', '{"error" : "Transaction 2 deposit error for amount 9200 ..."}'),
-       (3, 6, 3, 'CREDIT', 9200.00, 'EUR', 'COMPLETED', TIMESTAMP WITH TIME ZONE '2024-07-10 15:00:00+01:00', 'transaction 3', '{"sender_amount_before" : "9200", "receiver_amount_before" : "10000", "sender_amount_after" : "0", "receiver_amount_after" : "19200"}'),
+       (3, 6, 3, 'CREDIT', 9200.00, 'EUR', 'COMPLETED', TIMESTAMP WITH TIME ZONE '2024-07-10 15:00:00+01:00', 'transaction 3', '{"emitter_amount_before" : "9200", "receiver_amount_before" : "10000", "emitter_amount_after" : "0", "receiver_amount_after" : "19200"}'),
        (4, 5, 1, 'CREDIT', 100000.00, 'EUR', 'REFUSED', TIMESTAMP WITH TIME ZONE '2024-07-10 15:00:00+01:00', 'transaction 4', '{"error" : "Transaction 4 deposit error for amount 100000 ..."}'),
        (5, 2, 1, 'CREDIT', 600.99, 'EUR', 'UNPROCESSED', TIMESTAMP WITH TIME ZONE '2024-11-06 18:00:00+01:00', 'transaction 5', null),
        (6, 1, 7, 'DEBIT', 2000.00, 'EUR', 'UNPROCESSED', TIMESTAMP WITH TIME ZONE '2024-11-06 18:30:00+01:00', 'transaction 6', null),

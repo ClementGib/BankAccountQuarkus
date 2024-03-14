@@ -4,13 +4,17 @@ import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static jakarta.transaction.Transactional.TxType.MANDATORY;
 
@@ -20,27 +24,37 @@ import static jakarta.transaction.Transactional.TxType.MANDATORY;
  * @author Clément Gibert
  *
  */
-@ApplicationScoped
+@RequestScoped
 public class BankAccountRepository implements BankAccountPersistencePort, PanacheRepositoryBase<BankAccountEntity, Long> {
     
     private static final Logger logger = LoggerFactory.getLogger(BankAccountRepository.class);
     
     @Inject
-    private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
+    BankAccountMapper bankAccountMapper;
 
     @Override
+    @Transactional
+    public Set<BankAccount> getAll() {
+        return findAll(Sort.by("id")).stream()
+                .map(bankAccountEntity -> bankAccountMapper.toDto(bankAccountEntity))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    @Transactional
     public Optional<BankAccount> findById(long id) {
         return findByIdOptional(id).map(bankAccountMapper::toDto);
     }
     
     @Override
+    @Transactional
     public BankAccount create(BankAccount bankAccount) {
         getEntityManager().persist(bankAccountMapper.toEntity(bankAccount));
         logger.info("BankAccount " + bankAccount.getId() + " created");
         return bankAccount;
     }
     @Override
-    @Transactional(value = MANDATORY)
+    @Transactional
     public BankAccount update(BankAccount bankAccount) {
         bankAccount = bankAccountMapper.toDto(getEntityManager().merge(bankAccountMapper.toEntity(bankAccount)));
         logger.info("BankAccount " + bankAccount.getId() + " updated");
@@ -48,6 +62,7 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
     }
     
     @Override
+    @Transactional
     public Optional<BankAccount> deleteById(long id) {
         Optional<BankAccountEntity> entityOptional = findByIdOptional(id);
         if (entityOptional.isPresent()) {

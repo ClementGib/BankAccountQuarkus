@@ -1,19 +1,18 @@
 package com.cdx.bas.application.bank.account;
 
-import com.cdx.bas.application.customer.CustomerEntity;
-import com.cdx.bas.application.customer.CustomerRepository;
+import com.cdx.bas.application.bank.customer.CustomerEntity;
+import com.cdx.bas.application.bank.customer.CustomerRepository;
 import com.cdx.bas.application.mapper.DtoEntityMapper;
-import com.cdx.bas.application.transaction.TransactionEntity;
-import com.cdx.bas.domain.bank.account.AccountType;
+import com.cdx.bas.application.bank.transaction.TransactionEntity;
+import com.cdx.bas.application.bank.transaction.TransactionTestUtils;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
-import com.cdx.bas.domain.customer.Customer;
-import com.cdx.bas.domain.customer.Gender;
-import com.cdx.bas.domain.customer.MaritalStatus;
+import com.cdx.bas.domain.bank.customer.Customer;
+import com.cdx.bas.domain.bank.customer.gender.Gender;
+import com.cdx.bas.domain.bank.customer.maritalstatus.MaritalStatus;
 import com.cdx.bas.domain.money.Money;
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionStatus;
-import com.cdx.bas.domain.transaction.TransactionType;
+import com.cdx.bas.domain.bank.transaction.Transaction;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -118,14 +117,14 @@ public class BankAccountMapperTest {
         customers.add(customerEntity);
         entity.setCustomers(customers);
         Set<TransactionEntity> transactionEntities = new HashSet<>();
-        TransactionEntity transactionEntity1 = createTransactionEntity(2000L, date);
+        TransactionEntity transactionEntity1 = TransactionTestUtils.createTransactionEntity(2000L, date);
         transactionEntities.add(transactionEntity1);
-        TransactionEntity transactionEntity2 = createTransactionEntity(5000L, date);
+        TransactionEntity transactionEntity2 = TransactionTestUtils.createTransactionEntity(5000L, date);
         transactionEntities.add(transactionEntity2);
         entity.setIssuedTransactions(transactionEntities);
 
-        Transaction transaction1 = createTransactionUtils(2000L, date);
-        Transaction transaction2 = createTransactionUtils(5000L, date);
+        Transaction transaction1 = TransactionTestUtils.createTransactionUtils(2000L, date);
+        Transaction transaction2 = TransactionTestUtils.createTransactionUtils(5000L, date);
         when(transactionMapper.toDto(transactionEntity1)).thenReturn(transaction1);
         when(transactionMapper.toDto(transactionEntity2)).thenReturn(transaction2);
         BankAccount dto = bankAccountMapper.toDto(entity);
@@ -156,9 +155,9 @@ public class BankAccountMapperTest {
         customers.add(customer.getId());
         dto.setCustomersId(customers);
         Set<Transaction> transactions = new HashSet<>();
-        Transaction transaction1 = createTransactionUtils(2000L, date);
+        Transaction transaction1 = TransactionTestUtils.createTransactionUtils(2000L, date);
         transactions.add(transaction1);
-        Transaction transaction2 = createTransactionUtils(5000L, date);
+        Transaction transaction2 = TransactionTestUtils.createTransactionUtils(5000L, date);
         transactions.add(transaction2);
         dto.setIssuedTransactions(transactions);
 
@@ -188,18 +187,18 @@ public class BankAccountMapperTest {
         customers.add(customer.getId());
         dto.setCustomersId(customers);
         Set<Transaction> transactions = new HashSet<>();
-        Transaction transaction1 = createTransactionUtils(2000L, date);
+        Transaction transaction1 = TransactionTestUtils.createTransactionUtils(2000L, date);
         transactions.add(transaction1);
-        Transaction transaction2 = createTransactionUtils(5000L, date);
+        Transaction transaction2 = TransactionTestUtils.createTransactionUtils(5000L, date);
         transactions.add(transaction2);
         dto.setIssuedTransactions(transactions);
 
         CustomerEntity customerEntity = createCustomerEntityUtils();
         when(customerRepository.findByIdOptional(anyLong())).thenReturn(Optional.of(customerEntity));
         when(customerMapper.toEntity(customer)).thenReturn(customerEntity);
-        TransactionEntity transactionEntity1 = createTransactionEntity(2000L, date);
+        TransactionEntity transactionEntity1 = TransactionTestUtils.createTransactionEntity(2000L, date);
         when(transactionMapper.toEntity(transaction1)).thenReturn(transactionEntity1);
-        TransactionEntity transactionEntity2 = createTransactionEntity(5000L, date);
+        TransactionEntity transactionEntity2 = TransactionTestUtils.createTransactionEntity(5000L, date);
         when(transactionMapper.toEntity(transaction2)).thenReturn(transactionEntity2);
 
 
@@ -250,31 +249,5 @@ public class BankAccountMapperTest {
         customerEntity.setEmail("jean.dupont@yahoo.fr");
         customerEntity.setPhoneNumber("+33642645678");
         return customerEntity;
-    }
-
-    private Transaction createTransactionUtils(long id, Instant instantDate) {
-        return Transaction.builder()
-                .id(id)
-                .senderAccountId(10L)
-                .receiverAccountId(77L)
-                .amount(new BigDecimal("100.00"))
-                .type(TransactionType.CREDIT)
-                .status(TransactionStatus.ERROR)
-                .date(instantDate)
-                .label("transaction test")
-                .build();
-    }
-
-    private TransactionEntity createTransactionEntity(long id, Instant instantDate) {
-        TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(id);
-        transactionEntity.setSenderBankAccountEntity(null);
-        transactionEntity.setReceiverBankAccountEntity(null);
-        transactionEntity.setAmount(new BigDecimal("100"));
-        transactionEntity.setType(TransactionType.CREDIT);
-        transactionEntity.setStatus(TransactionStatus.ERROR);
-        transactionEntity.setDate(instantDate);
-        transactionEntity.setLabel("transaction test");
-        return transactionEntity;
     }
 }

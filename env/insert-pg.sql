@@ -29,15 +29,16 @@ VALUES (1, 1),
        (4, 3),
        (5, 1),
        (6, 5),
-       (7, 6);
+       (7, 6),
+       (8, 6);
 
-INSERT INTO basapp.transactions (transaction_id, sender_account_id, receiver_account_id, type, amount, currency, status, date, label, metadata)
-VALUES (1, 1, 2, 'CREDIT', 1600.00, 'EUR', 'COMPLETED', '2022-06-06T12:00:00+01:00', 'transaction 1', '{"sender_amount_before" : "2000", "receiver_amount_before" : "0", "sender_amount_after" : "400", "receiver_amount_after" : "1600"}'::jsonb),
-       (2, 6, 3, 'CREDIT', 9200.00, 'EUR', 'ERROR', '2022-07-10T15:00:00+01:00', 'transaction 2', '{"error" : "Transaction 2 deposit error for amount 9200 ..."}'::jsonb),
-       (3, 6, 3, 'CREDIT', 9200.00, 'EUR', 'COMPLETED', '2022-07-10T15:00:00+01:00', 'transaction 3', '{"sender_amount_before" : "9200", "receiver_amount_before" : "10000", "sender_amount_after" : "0", "receiver_amount_after" : "19200"}'::jsonb),
-       (4, 5, 1, 'CREDIT', 100000.00, 'EUR', 'REFUSED', '2022-07-10T15:00:00+01:00', 'transaction 4', '{"error" : "Transaction 4 deposit error for amount 100000 ..."}'::jsonb),
-       (5, 2, 1, 'CREDIT', 600.99, 'EUR', 'UNPROCESSED', '2022-11-06 18:00:00+01:00', 'transaction 3', null::jsonb),
-       (6, 1, 7, 'DEBIT', 2000.00, 'EUR', 'UNPROCESSED', '2022-11-06 18:30:00+01:00', 'transaction 4', null::jsonb),
-       (7, 3, 1, 'CREDIT', 1000.00, 'EUR', 'UNPROCESSED', '2022-12-06 18:00:00+01:00', 'transaction 5', null::jsonb),
-       (8, 4, 2, 'CREDIT', 300.80, 'EUR', 'UNPROCESSED', '2022-12-06 19:00:00+01:00', 'transaction 6', null::jsonb),
-       (9, 8, 7, 'DEBIT', 5000.00, 'EUR', 'UNPROCESSED', '2022-12-06 19:00:10+01:00', 'transaction 7', null::jsonb);
+INSERT INTO basapp.transactions (transaction_id, emitter_account_id, receiver_account_id, type, amount, currency, status, date, label, metadata)
+VALUES (1, 1, 2, 'CREDIT', 1600.00, 'EUR', 'COMPLETED', '2024-06-06T12:00:00+01:00', 'transaction 1', '{"emitter_amount_before" : "2000", "receiver_amount_before" : "0", "emitter_amount_after" : "400", "receiver_amount_after" : "1600"}'::jsonb),
+       (2, 6, 3, 'CREDIT', 9200.00, 'EUR', 'ERROR', '2024-07-10T15:00:00+01:00', 'transaction 2', '{"error" : "Transaction 2 deposit error for amount 9200 ..."}'::jsonb),
+       (3, 6, 3, 'CREDIT', 9200.00, 'EUR', 'COMPLETED', '2024-07-10T15:00:00+01:00', 'transaction 3', '{"emitter_amount_before" : "9200", "receiver_amount_before" : "10000", "emitter_amount_after" : "0", "receiver_amount_after" : "19200"}'::jsonb),
+       (4, 5, 1, 'CREDIT', 100000.00, 'EUR', 'REFUSED', '2024-07-10T15:00:00+01:00', 'transaction 4', '{"error" : "Transaction 4 deposit error for amount 100000 ..."}'::jsonb),
+       (5, 2, 1, 'CREDIT', 600.99, 'EUR', 'UNPROCESSED', '2024-11-06 18:00:00+01:00', 'transaction 3', null::jsonb),
+       (6, 1, 7, 'DEBIT', 2000.00, 'EUR', 'UNPROCESSED', '2024-11-06 18:30:00+01:00', 'transaction 4', null::jsonb),
+       (7, 3, 1, 'CREDIT', 1000.00, 'EUR', 'UNPROCESSED', '2024-12-06 18:00:00+01:00', 'transaction 5', null::jsonb),
+       (8, 4, 2, 'CREDIT', 300.80, 'EUR', 'UNPROCESSED', '2024-12-06 19:00:00+01:00', 'transaction 6', null::jsonb),
+       (9, 8, 7, 'DEBIT', 5000.00, 'EUR', 'UNPROCESSED', '2024-12-06 19:00:10+01:00', 'transaction 7', null::jsonb);

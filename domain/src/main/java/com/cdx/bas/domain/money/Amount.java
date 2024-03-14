@@ -1,6 +1,7 @@
 package com.cdx.bas.domain.money;
 
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -13,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
 
 @NotNull
 @Documented
-@Target({ FIELD })
+@Target({ FIELD, METHOD })
 @Retention(RUNTIME)
 @Constraint(validatedBy = AmountValidator.class)
 public @interface Amount {

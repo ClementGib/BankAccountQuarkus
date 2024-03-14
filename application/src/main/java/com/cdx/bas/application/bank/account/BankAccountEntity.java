@@ -1,8 +1,8 @@
 package com.cdx.bas.application.bank.account;
 
-import com.cdx.bas.application.customer.CustomerEntity;
-import com.cdx.bas.application.transaction.TransactionEntity;
-import com.cdx.bas.domain.bank.account.AccountType;
+import com.cdx.bas.application.bank.customer.CustomerEntity;
+import com.cdx.bas.application.bank.transaction.TransactionEntity;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
@@ -29,7 +29,7 @@ public class BankAccountEntity extends PanacheEntityBase {
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private List<CustomerEntity> customers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "senderBankAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "emitterBankAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("date")
     private Set<TransactionEntity> issuedTransactions = new HashSet<>();
 
@@ -76,7 +76,7 @@ public class BankAccountEntity extends PanacheEntityBase {
 
     public void addTransaction(TransactionEntity transaction) {
         this.issuedTransactions.add(transaction);
-        transaction.setSenderBankAccountEntity(this);
+        transaction.setEmitterBankAccountEntity(this);
     }
 
     @Override

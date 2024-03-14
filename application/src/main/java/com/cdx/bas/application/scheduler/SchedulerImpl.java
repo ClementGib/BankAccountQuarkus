@@ -1,8 +1,8 @@
 package com.cdx.bas.application.scheduler;
 
-import com.cdx.bas.domain.transaction.Transaction;
-import com.cdx.bas.domain.transaction.TransactionPersistencePort;
-import com.cdx.bas.domain.transaction.TransactionServicePort;
+import com.cdx.bas.domain.bank.transaction.Transaction;
+import com.cdx.bas.domain.bank.transaction.TransactionPersistencePort;
+import com.cdx.bas.domain.bank.transaction.TransactionServicePort;
 import io.quarkus.runtime.Startup;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.inject.Inject;
@@ -39,20 +39,22 @@ public class SchedulerImpl implements Scheduler {
     @Override
     @Scheduled(every = "{scheduler.every}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     public void processQueue() {
-        if (isActivation()) {
+        if (isActivated()) {
             logger.info("Scheduler start every " + getEvery());
             if (getTransactionQueue().isEmpty()) {
                 getTransactionQueue().addAll(transactionRepository.findUnprocessedTransactions());
-                logger.info("Queue size: " + transactionQueue.size());
-                getTransactionQueue().forEach(transaction -> {
-                    transactionService.process(transaction);
-                });
+            }
+
+            logger.info("Queue size: " + transactionQueue.size());
+            while(!getTransactionQueue().isEmpty()) {
+                Transaction currentTransation = getTransactionQueue().poll();
+                transactionService.process(currentTransation);
             }
             logger.info("Scheduler end");
         }
     }
 
-    public boolean isActivation() {
+    public boolean isActivated() {
         return activation;
     }
 

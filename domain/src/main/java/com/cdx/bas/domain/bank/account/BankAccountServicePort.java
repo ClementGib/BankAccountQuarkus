@@ -1,13 +1,49 @@
 package com.cdx.bas.domain.bank.account;
 
-import com.cdx.bas.domain.transaction.Transaction;
+import com.cdx.bas.domain.bank.transaction.Transaction;
 
-/**
- * Make a deposit from a transaction
- *
- * @param transaction for deposit
- * @return transaction processing status
- */
+import java.util.Set;
+
 public interface BankAccountServicePort {
-    public Transaction deposit(Transaction transaction);
+
+    /**
+     * find all accounts
+     *
+     * @return Set with all BankAccount
+     */
+    public Set<BankAccount> getAll();
+
+
+    /**
+     * find bank account from id
+     *
+     * @param bankAccountId
+     * @return bank account found
+     */
+    BankAccount findBankAccount(Long bankAccountId);
+
+    /**
+     * add transaction to bank account
+     *
+     * @param transaction to add
+     * @return bank account
+     */
+    BankAccount addTransaction(Transaction transaction, BankAccount bankAccount);
+
+    /**
+     * add transaction to bank account
+     *
+     * @param transaction to post with amount and currency
+     * @param emitterBankAccount which emits transaction
+     * @param receiverBankAccount which receives transaction
+     */
+    void transferAmountBetweenAccounts(Transaction transaction, BankAccount emitterBankAccount, BankAccount receiverBankAccount) ;
+
+    /**
+     * updated bank account
+     *
+     * @param bankAccount
+     * @return bank account updated
+     */
+    BankAccount updateBankAccount(BankAccount bankAccount);
 }
