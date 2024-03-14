@@ -4,10 +4,10 @@ import com.cdx.bas.application.bank.transaction.TransactionTestUtils;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
+import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
 import com.cdx.bas.domain.bank.account.validation.BankAccountValidator;
 import com.cdx.bas.domain.bank.transaction.Transaction;
 import com.cdx.bas.domain.bank.transaction.TransactionServicePort;
-import com.cdx.bas.domain.bank.transaction.status.TransactionStatusServicePort;
 import com.cdx.bas.domain.money.Money;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -15,17 +15,16 @@ import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
-import static com.cdx.bas.domain.bank.transaction.status.TransactionStatus.UNPROCESSED;
-import static com.cdx.bas.domain.bank.transaction.type.TransactionType.CREDIT;
+import static com.cdx.bas.domain.bank.account.type.AccountType.CHECKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -45,11 +44,20 @@ public class BankAccountServiceImplTest {
 
     @Test
     public void findBankAccount_shouldFindBankAccount_whenBankAccountExists() {
-        BankAccount bankAccount = BankAccountTestUtils.createBankAccountUtils(99L, Money.of(new BigDecimal("100")));
+        // Arrange
+        BankAccount bankAccount = CheckingBankAccount.builder()
+                .id(99L)
+                .type(CHECKING)
+                .balance(Money.of(new BigDecimal("100")))
+                .customersId(List.of(99L))
+                .build();
 
         when(bankAccountRepository.findById(1L)).thenReturn(Optional.of(bankAccount));
 
+        // Act
         BankAccount actualBankAccount = bankAccountService.findBankAccount(1L);
+
+        // Assert
         assertThat(actualBankAccount).isEqualTo(bankAccount);
         verify(bankAccountRepository).findById(1L);
         verifyNoMoreInteractions(bankAccountRepository);
@@ -58,9 +66,13 @@ public class BankAccountServiceImplTest {
 
     @Test
     public void findBankAccount_shouldReturnNull_whenBankAccountDoesNotExist() {
+        // Arrange
         when(bankAccountRepository.findById(1L)).thenReturn(Optional.empty());
 
+        // Act
         BankAccount actualBankAccount = bankAccountService.findBankAccount(1L);
+
+        // Assert
         assertThat(actualBankAccount).isNull();
         verify(bankAccountRepository).findById(1L);
         verifyNoMoreInteractions(bankAccountRepository, bankAccountValidator);
@@ -69,11 +81,20 @@ public class BankAccountServiceImplTest {
 
     @Test
     public void addTransaction_shouldAddTransactionToBankAccount_whenTransactionDoesNotExist() {
+        // Arrange
         Instant timestamp = Instant.now();
-        BankAccount bankAccount = BankAccountTestUtils.createBankAccountUtils(99L, Money.of(new BigDecimal("100")));
+        BankAccount bankAccount = CheckingBankAccount.builder()
+                .id(99L)
+                .type(CHECKING)
+                .balance(Money.of(new BigDecimal("100")))
+                .customersId(List.of(99L))
+                .issuedTransactions(new HashSet<>())
+                .build();
+
+        // Act
         Transaction transaction = TransactionTestUtils.createTransaction(10L, 99L, timestamp);
 
-
+        // Assert
         BankAccount actualBankAccount = bankAccountService.addTransaction(transaction, bankAccount);
         assertThat(actualBankAccount.getIssuedTransactions().size()).isEqualTo(1);
         assertThat(actualBankAccount.getIssuedTransactions()).contains(transaction);
@@ -83,17 +104,26 @@ public class BankAccountServiceImplTest {
 
     @Test
     public void addTransaction_shouldUpdateTransactionToBankAccount_whenTransactionExists() {
+        // Arrange
         Instant timestamp = Instant.now();
-        BankAccount bankAccount = BankAccountTestUtils.createBankAccountUtils(99L, Money.of(new BigDecimal("100")));
+        BankAccount bankAccount = CheckingBankAccount.builder()
+                .id(99L)
+                .type(CHECKING)
+                .balance(Money.of(new BigDecimal("100")))
+                .customersId(List.of(99L))
+                .issuedTransactions(new HashSet<>())
+                .build();
         Transaction transaction = TransactionTestUtils.createTransaction(10L, 99L, timestamp);
         bankAccount.getIssuedTransactions().add(transaction);
 
         when(transactionService.mergeTransactions(transaction, transaction)).thenReturn(transaction);
 
+        // Act
         BankAccount actualBankAccount = bankAccountService.addTransaction(transaction, bankAccount);
+
+        // Assert
         assertThat(actualBankAccount.getIssuedTransactions().size()).isEqualTo(1);
         assertThat(actualBankAccount.getIssuedTransactions()).contains(transaction);
-
         verify(transactionService).mergeTransactions(transaction, transaction);
         verifyNoMoreInteractions(transactionService);
         verifyNoInteractions(bankAccountValidator, bankAccountRepository);
@@ -101,9 +131,18 @@ public class BankAccountServiceImplTest {
 
     @Test
     public void updateBankAccount_shouldUpdateBankAccount_whenHasValidBankAccount() {
-        BankAccount bankAccount = BankAccountTestUtils.createBankAccountUtils(99L, Money.of(new BigDecimal("100")));
+        // Arrange
+        BankAccount bankAccount = CheckingBankAccount.builder()
+                .id(99L)
+                .type(CHECKING)
+                .balance(Money.of(new BigDecimal("100")))
+                .customersId(List.of(99L))
+                .build();
 
+        // Act
         BankAccount actualBankAccount = bankAccountService.updateBankAccount(bankAccount);
+
+        // Assert
         assertThat(actualBankAccount).isNull();
         verify(bankAccountValidator).validateBankAccount(bankAccount);
         verify(bankAccountRepository).update(bankAccount);
@@ -113,12 +152,25 @@ public class BankAccountServiceImplTest {
 
     @Test
     public void transferAmountBetweenAccounts_shouldAddAmountOfMoneyCorrespondingToTransactionAmount_whenTransactionHasAmount() {
+        // Arrange
         Transaction transaction = TransactionTestUtils.createTransaction(10L, 99L, Instant.now());
-        BankAccount bankAccountEmitter = BankAccountTestUtils.createBankAccountUtils(99L, Money.of(new BigDecimal("100")));
-        BankAccount bankAccountReceiver = BankAccountTestUtils.createBankAccountUtils(100L, Money.of(new BigDecimal("0")));
+        BankAccount bankAccountEmitter = CheckingBankAccount.builder()
+                .id(99L)
+                .type(CHECKING)
+                .balance(Money.of(new BigDecimal("100")))
+                .customersId(List.of(99L))
+                .build();
+        BankAccount bankAccountReceiver = CheckingBankAccount.builder()
+                .id(100L)
+                .type(CHECKING)
+                .balance(Money.of(new BigDecimal("0")))
+                .customersId(List.of(99L))
+                .build();
 
+        // Act
         bankAccountService.transferAmountBetweenAccounts(transaction, bankAccountEmitter, bankAccountReceiver);
 
+        // Assert
         assertThat(bankAccountEmitter.getBalance().getAmount()).isEqualTo(new BigDecimal("0"));
         assertThat(bankAccountReceiver.getBalance().getAmount()).isEqualTo(new BigDecimal("100"));
         verifyNoInteractions(transactionService, bankAccountValidator, bankAccountRepository);

@@ -1,6 +1,6 @@
 package com.cdx.bas.application.bank.transaction;
 
-import com.cdx.bas.application.bank.account.BankAccountTestUtils;
+import com.cdx.bas.application.bank.account.BankAccountEntityUtils;
 import com.cdx.bas.domain.bank.transaction.NewTransaction;
 import com.cdx.bas.domain.bank.transaction.Transaction;
 import com.cdx.bas.domain.bank.transaction.status.TransactionStatus;
@@ -114,8 +114,8 @@ public class TransactionTestUtils {
     public static TransactionEntity createTransactionEntityUtils(long emitterAccountId, long receiverAccountId, Instant instantDate) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setId(10L);
-        transactionEntity.setEmitterBankAccountEntity(BankAccountTestUtils.createBankAccountEntity(emitterAccountId));
-        transactionEntity.setReceiverBankAccountEntity(BankAccountTestUtils.createBankAccountEntity(receiverAccountId));
+        transactionEntity.setEmitterBankAccountEntity(BankAccountEntityUtils.createBankAccountEntity(emitterAccountId));
+        transactionEntity.setReceiverBankAccountEntity(BankAccountEntityUtils.createBankAccountEntity(receiverAccountId));
         transactionEntity.setAmount(new BigDecimal("100"));
         transactionEntity.setCurrency("EUR");
         transactionEntity.setType(TransactionType.CREDIT);

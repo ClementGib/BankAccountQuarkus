@@ -8,10 +8,8 @@ import com.cdx.bas.domain.bank.transaction.type.TransactionType;
 import com.cdx.bas.domain.money.Amount;
 import com.cdx.bas.domain.money.Money;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,6 +20,7 @@ import static com.cdx.bas.domain.bank.account.type.AccountType.*;
 /**
  * Saving Account (French Livret A)
  */
+@SuperBuilder
 public class SavingBankAccount extends BankAccount {
 
     @Amount(min=1, max=22950, message="balance amount must be between 1 and 22950.")

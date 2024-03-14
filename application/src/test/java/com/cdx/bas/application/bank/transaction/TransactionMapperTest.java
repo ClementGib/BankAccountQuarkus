@@ -2,7 +2,7 @@ package com.cdx.bas.application.bank.transaction;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.bank.account.BankAccountRepository;
-import com.cdx.bas.application.bank.account.BankAccountTestUtils;
+import com.cdx.bas.application.bank.account.BankAccountEntityUtils;
 import com.cdx.bas.domain.bank.transaction.Transaction;
 import com.cdx.bas.domain.bank.transaction.status.TransactionStatus;
 import com.cdx.bas.domain.bank.transaction.type.TransactionType;
@@ -123,8 +123,8 @@ public class TransactionMapperTest {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("amount_before", "0");
         metadata.put("amount_after", "100");
-        BankAccountEntity emitterBankAccountEntity = BankAccountTestUtils.createBankAccountEntity(emitterAccountId);
-        BankAccountEntity receiverBankAccountEntity = BankAccountTestUtils.createBankAccountEntity(receiverAccountId);
+        BankAccountEntity emitterBankAccountEntity = BankAccountEntityUtils.createBankAccountEntity(emitterAccountId);
+        BankAccountEntity receiverBankAccountEntity = BankAccountEntityUtils.createBankAccountEntity(receiverAccountId);
         Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, date);
         transaction.setMetadata(metadata);
 
