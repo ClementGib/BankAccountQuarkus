@@ -164,12 +164,12 @@ class TransactionResourceTest {
     @Test
     @Order(10)
     public void deposit_shouldReturnError400Response_whenTransactionIsInvalid() {
-        NewTransaction invalidNewTransaction =  new NewTransaction();
+        NewTransaction invalidNewTransaction = new NewTransaction(null, null, null, null, null, null, null);
         List<String> expectedLines = Arrays.asList(
                 "Label must not be null.",
                 "Type must not be null.",
-                "receiver account id must not be null.",
-                "currency should be in the exchange rate map.",
+                "Receiver account id must not be null.",
+                "Currency should be in the exchange rate map.",
                 "Currency must not be null.",
                 "Amount must not be null.");
 

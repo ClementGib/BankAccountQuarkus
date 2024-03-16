@@ -14,6 +14,14 @@ public class StatusValidator implements ConstraintValidator<ValidStatus, Transac
 
     @Override
     public boolean isValid(TransactionStatus value, ConstraintValidatorContext context) {
-        return value != null && value == expectedStatus;
+        if (value != null && value != expectedStatus) {
+            String message = "Unexpected transaction status " + value +
+                    ", expected status: " + expectedStatus + ".";
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(message)
+                    .addConstraintViolation();
+            return false;
+        };
+        return true;
     }
 }

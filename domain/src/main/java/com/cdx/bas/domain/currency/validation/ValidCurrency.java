@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = CurrencyValidator.class)
 @Documented
 public @interface ValidCurrency {
-    String message() default "currency should be in the exchange rate map.";
+    String message() default "Currency should be in the exchange rate map.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
