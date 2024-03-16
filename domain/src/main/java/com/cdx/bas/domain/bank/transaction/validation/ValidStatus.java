@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 public @interface ValidStatus {
 
     TransactionStatus expectedStatus() default TransactionStatus.UNPROCESSED;
-    String message() default "Unexpected transaction status.";
+    String message() default "Transaction status is invalid.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

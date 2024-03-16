@@ -53,15 +53,15 @@ public class TransactionServiceImpl implements TransactionServicePort {
     @Transactional
     public void createTransaction(NewTransaction newTransaction) throws TransactionException {
         Transaction transactionToCreate = Transaction.builder()
-                .emitterAccountId(newTransaction.getEmitterAccountId())
-                .receiverAccountId(newTransaction.getReceiverAccountId())
-                .amount(newTransaction.getAmount())
-                .currency(newTransaction.getCurrency())
-                .type(newTransaction.getType())
+                .emitterAccountId(newTransaction.emitterAccountId())
+                .receiverAccountId(newTransaction.receiverAccountId())
+                .amount(newTransaction.amount())
+                .currency(newTransaction.currency())
+                .type(newTransaction.type())
                 .status(TransactionStatus.UNPROCESSED)
                 .date(clock.instant())
-                .label(newTransaction.getLabel())
-                .metadata(newTransaction.getMetadata())
+                .label(newTransaction.label())
+                .metadata(newTransaction.metadata())
                 .build();
         transactionValidator.validateNewTransaction(transactionToCreate);
         transactionRepository.create(transactionToCreate);

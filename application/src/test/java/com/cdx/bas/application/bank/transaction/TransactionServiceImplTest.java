@@ -4,7 +4,6 @@ import com.cdx.bas.domain.bank.transaction.NewTransaction;
 import com.cdx.bas.domain.bank.transaction.Transaction;
 import com.cdx.bas.domain.bank.transaction.TransactionException;
 import com.cdx.bas.domain.bank.transaction.TransactionPersistencePort;
-import com.cdx.bas.domain.bank.transaction.type.TransactionType;
 import com.cdx.bas.domain.bank.transaction.type.TransactionTypeProcessingServicePort;
 import com.cdx.bas.domain.bank.transaction.validation.TransactionValidator;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -16,6 +15,7 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 
@@ -88,25 +88,23 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void createTransaction_shouldCreateTransaction_whenTransactionIsValid() {
+    public void createTransaction_shouldCreateTransaction_whenNewTransactionIsValid() {
         // Arrange
         Instant timestamp = Instant.parse("2024-03-14T12:00:00Z");
-        NewTransaction newTransaction = NewTransaction.builder()
-                .amount(new BigDecimal("100"))
-                .emitterAccountId(99L)
-                .receiverAccountId(77L)
-                .type(TransactionType.CREDIT)
-                .label("transaction test")
-                .build();
+        NewTransaction newTransaction = new NewTransaction(99L, 77L,
+                new BigDecimal("100"), "EUR",
+                CREDIT, "transaction test", new HashMap<>());
         Transaction transactionToCreate = Transaction.builder()
                 .id(null)
                 .emitterAccountId(99L)
                 .receiverAccountId(77L)
                 .amount(new BigDecimal("100"))
+                .currency("EUR")
                 .label("transaction test")
-                .type(TransactionType.CREDIT)
+                .type(CREDIT)
                 .status(UNPROCESSED)
                 .date(timestamp)
+                .metadata(new HashMap<>())
                 .build();
         when(clock.instant()).thenReturn(timestamp);
 
@@ -120,19 +118,20 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void createTransaction_shouldThrowException_whenTransactionIsInvalid() {
+    public void createTransaction_shouldThrowException_whenNewTransactionIsInvalid() {
         // Arrange
         Instant timestamp = Instant.parse("2024-03-14T12:00:00Z");
         Transaction invalidTransaction = new Transaction();
         invalidTransaction.setDate(timestamp);
         invalidTransaction.setStatus(UNPROCESSED);
+        invalidTransaction.setMetadata(null);
 
         when(clock.instant()).thenReturn(timestamp);
         doThrow(new TransactionException("invalid transaction...")).when(transactionValidator).validateNewTransaction(invalidTransaction);
 
         try {
             // Act
-            transactionService.createTransaction(new NewTransaction());
+            transactionService.createTransaction(new NewTransaction(null, null, null, null, null, null, null));
         } catch (TransactionException exception) {
             // Assert
             assertThat(exception.getMessage()).isEqualTo("invalid transaction...");

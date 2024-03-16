@@ -4,10 +4,7 @@ import com.cdx.bas.domain.bank.transaction.status.TransactionStatus;
 import com.cdx.bas.domain.bank.transaction.type.TransactionType;
 import com.cdx.bas.domain.bank.transaction.validation.*;
 import com.cdx.bas.domain.currency.validation.ValidCurrency;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,16 +23,19 @@ import static com.cdx.bas.domain.bank.transaction.status.TransactionStatus.UNPRO
 @AllArgsConstructor
 public class Transaction implements Comparable<Transaction> {
 
+    @Positive(message = "Id must be positive")
     @Min(value = 1, message = "Id must be positive and greater than 0 for existing transaction.", groups = ExistingTransactionGroup.class)
     @NotNull(message = "Id must not be null for existing transaction.", groups = ExistingTransactionGroup.class)
     @Null(message = "Id must be null for new transaction.", groups = NewTransactionGroup.class)
     private Long id;
 
-    @Null(message = "Emitter account must be null for cash movement.", groups = CashMovementGroup.class)
+    @Positive(message = "Emitter account id  must be positive")
+    @Null(message = "Emitter account id must be null for cash movement.", groups = CashMovementGroup.class)
     @NotNull(message = "Emitter account id must not be null.", groups = AccountMovementGroup.class)
     private Long emitterAccountId;
 
-    @NotNull(message = "receiver account id must not be null.")
+    @Positive(message = "Receiver account id  must be positive")
+    @NotNull(message = "Receiver account id must not be null.")
     private Long receiverAccountId;
 
     @Min(value = 10, message = "Amount must be greater than 10 for cash movement.", groups = CashMovementGroup.class)
