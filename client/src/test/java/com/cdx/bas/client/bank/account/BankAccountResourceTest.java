@@ -32,7 +32,7 @@ class BankAccountResourceTest {
 
     @Test
     public void getAll_shouldReturnAllBankAccount() {
-        Set<BankAccount> expectedCustomers = Set.of(
+        List<BankAccount> expectedCustomers = List.of(
                 new CheckingBankAccount(1L, Money.of(new BigDecimal("400.00")), List.of(1L), new HashSet<>()),
                 new CheckingBankAccount(2L, Money.of(new BigDecimal("1600.00")), List.of(2L, 3L), new HashSet<>()),
                 new SavingBankAccount(3L, Money.of(new BigDecimal("19200.00")), List.of(4L), new HashSet<>()),
@@ -43,7 +43,7 @@ class BankAccountResourceTest {
                 new SavingBankAccount(8L, Money.of(new BigDecimal("200000.00")), List.of(6L), new HashSet<>())
         );
 
-        Set<BankAccount> actualTransactions = bankAccountResource.getAll();
+        List<BankAccount> actualTransactions = bankAccountResource.getAll();
         assertThat(actualTransactions)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()

@@ -2,16 +2,16 @@ package com.cdx.bas.domain.bank.account;
 
 import com.cdx.bas.domain.bank.transaction.Transaction;
 
-import java.util.Set;
+import java.util.List;
 
 public interface BankAccountServicePort {
 
     /**
      * find all accounts
      *
-     * @return Set with all BankAccount
+     * @return List with all BankAccount
      */
-    public Set<BankAccount> getAll();
+    public List<BankAccount> getAll();
 
 
     /**

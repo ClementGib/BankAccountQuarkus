@@ -1,7 +1,7 @@
 package com.cdx.bas.domain.bank.account;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface BankAccountPersistencePort {
 
@@ -11,7 +11,7 @@ public interface BankAccountPersistencePort {
      *
      * @return Set with all BankAccount
      */
-    public Set<BankAccount> getAll();
+    public List<BankAccount> getAll();
     
     /**
      * find BankAccount from its id

@@ -1,22 +1,18 @@
 package com.cdx.bas.application.bank.account;
 
-import com.cdx.bas.application.mapper.DtoEntityMapper;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import io.quarkus.panache.common.Sort;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import static jakarta.transaction.Transactional.TxType.MANDATORY;
 
 /***
  * persistence implementation for BankAccount entities
@@ -34,10 +30,10 @@ public class BankAccountRepository implements BankAccountPersistencePort, Panach
 
     @Override
     @Transactional
-    public Set<BankAccount> getAll() {
+    public List<BankAccount> getAll() {
         return findAll(Sort.by("id")).stream()
                 .map(bankAccountEntity -> bankAccountMapper.toDto(bankAccountEntity))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     @Override
