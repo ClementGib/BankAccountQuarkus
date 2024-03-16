@@ -8,9 +8,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.*;
 @Data
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class BankAccount {

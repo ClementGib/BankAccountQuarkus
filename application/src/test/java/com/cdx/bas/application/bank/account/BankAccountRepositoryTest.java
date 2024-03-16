@@ -1,12 +1,13 @@
 package com.cdx.bas.application.bank.account;
 
 import com.cdx.bas.application.mapper.DtoEntityMapper;
-import com.cdx.bas.application.bank.transaction.TransactionTestUtils;
-import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
-import com.cdx.bas.domain.money.Money;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.transaction.Transaction;
+import com.cdx.bas.domain.bank.transaction.status.TransactionStatus;
+import com.cdx.bas.domain.bank.transaction.type.TransactionType;
+import com.cdx.bas.domain.money.Money;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -37,13 +38,17 @@ public class BankAccountRepositoryTest {
     @Test
     @Transactional
     public void findById_shouldReturnBankAccount_whenAccountIsFound() {
+        // Arrange
         long accountId = 1L;
         Instant date = Instant.now();
         BankAccount bankAccount = createBankAccountUtils(accountId, date);
 
         when(bankAccountMapper.toDto(any())).thenReturn(bankAccount);
+
+        // Act
         Optional<BankAccount> optionalBankAccount = bankAccountRepository.findById(accountId);
-        
+
+        // Assert
         assertThat(optionalBankAccount).contains(bankAccount);
         verify(bankAccountMapper).toDto(any(BankAccountEntity.class));
         verifyNoMoreInteractions(bankAccountMapper);
@@ -52,13 +57,15 @@ public class BankAccountRepositoryTest {
     @Test
     @Transactional
     public void findById_shouldReturnEmptyOptional_whenAccountIsNotFound() {
+        // Act
         Optional<BankAccount> optionalBankAccount = bankAccountRepository.findById(99999L);
-        
+
+        // Assert
         assertThat(optionalBankAccount).isEmpty();
         verifyNoInteractions(bankAccountMapper);
     }
     
-    private BankAccount createBankAccountUtils(long accountId, Instant instantDate) {
+    private BankAccount createBankAccountUtils(long accountId, Instant timestamp) {
         BankAccount bankAccount = new CheckingBankAccount();
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
@@ -67,7 +74,17 @@ public class BankAccountRepositoryTest {
         customersId.add(1L);
         bankAccount.setCustomersId(customersId);
         HashSet<Transaction> transactionHistory = new HashSet<>();
-        transactionHistory.add(TransactionTestUtils.createTransactionUtils(accountId, instantDate));
+        transactionHistory.add(Transaction.builder()
+                .id(2L)
+                .emitterAccountId(5000L)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal(100))
+                .type(TransactionType.CREDIT)
+                .status(TransactionStatus.ERROR)
+                .date(timestamp)
+                .label("transaction test")
+                .metadata(Map.of("amount_before", "0", "amount_after", "350"))
+                .build());
         bankAccount.setIssuedTransactions(transactionHistory);
         return bankAccount;
     }

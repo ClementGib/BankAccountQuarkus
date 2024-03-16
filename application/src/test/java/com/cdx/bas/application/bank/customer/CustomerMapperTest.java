@@ -1,19 +1,18 @@
 package com.cdx.bas.application.bank.customer;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
-import com.cdx.bas.application.mapper.DtoEntityMapper;
+import com.cdx.bas.application.bank.account.BankAccountMapper;
 import com.cdx.bas.application.bank.transaction.TransactionEntity;
-import com.cdx.bas.application.bank.transaction.TransactionTestUtils;
-import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.checking.CheckingBankAccount;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.customer.Customer;
 import com.cdx.bas.domain.bank.customer.gender.Gender;
 import com.cdx.bas.domain.bank.customer.maritalstatus.MaritalStatus;
-import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.bank.transaction.Transaction;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.cdx.bas.domain.bank.transaction.status.TransactionStatus;
+import com.cdx.bas.domain.bank.transaction.type.TransactionType;
+import com.cdx.bas.domain.money.Money;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -29,6 +28,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.cdx.bas.domain.bank.transaction.status.TransactionStatus.ERROR;
+import static com.cdx.bas.domain.bank.transaction.type.TransactionType.CREDIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -36,36 +37,38 @@ import static org.mockito.Mockito.*;
 @QuarkusTestResource(H2DatabaseTestResource.class)
 public class CustomerMapperTest {
 
+    @InjectMock
+    BankAccountMapper bankAccountMapper;
+
     @Inject
     CustomerMapper customerMapper;
     
-    @InjectMock
-    private DtoEntityMapper<BankAccount, BankAccountEntity> bankAccountMapper;
-    
     @Test
     public void toDto_shouldReturnNullDto_whenEntityIsNull() {
+        // Act
         Customer dto = customerMapper.toDto(null);
-        
+
+        // Assert
         assertThat(dto).isNull();
-        
         verifyNoInteractions(bankAccountMapper);
     }
 
     @Test
     public void toEntity_shouldReturnNullEntity_whenDtoIsNull() {
-        Customer dto = null;
+        // Act
+        CustomerEntity entity = customerMapper.toEntity(null);
 
-        CustomerEntity entity = customerMapper.toEntity(dto);
-        
+        // Assert
         assertThat(entity).isNull();
-        
         verifyNoInteractions(bankAccountMapper);
     }
     
 	@Test
-	public void toDto_shouldMapNullValues_whenEntityValuesNotDefined() throws JsonMappingException, JsonProcessingException {
+	public void toDto_shouldMapNullValues_whenEntityValuesNotDefined() {
+        // Act
         Customer dto = customerMapper.toDto(new CustomerEntity());
-        
+
+        // Assert
         assertThat(dto.getId()).isNull();
         assertThat(dto.getFirstName()).isNull();
         assertThat(dto.getLastName()).isNull();
@@ -85,9 +88,11 @@ public class CustomerMapperTest {
     }
     
     @Test
-    public void toEntity_shouldMapNullValues_whenDtoValuesNotDefined() throws JsonProcessingException {
+    public void toEntity_shouldMapNullValues_whenDtoValuesNotDefined() {
+        // Act
         CustomerEntity entity = customerMapper.toEntity(new Customer());
-        
+
+        // Assert
         assertThat(entity.getId()).isNull();
         assertThat(entity.getFirstName()).isNull();
         assertThat(entity.getLastName()).isNull();
@@ -102,12 +107,12 @@ public class CustomerMapperTest {
         assertThat(entity.getPhoneNumber()).isNull();
         assertThat(entity.getAccounts()).isEmpty();
         assertThat(entity.getMetadata()).isNull();
-
         verifyNoInteractions(bankAccountMapper);
     }
     
 	@Test
 	public void toDto_shouldMapDtoValues_whenEntityHasValues() {
+        // Arrange
         CustomerEntity entity = new CustomerEntity();
         entity.setId(1L);
         entity.setFirstName("Paul");
@@ -124,7 +129,7 @@ public class CustomerMapperTest {
         Instant instantDate = Instant.now();
         BankAccountEntity accountEntity1 = createBankAccountEntity(10L, instantDate);
         BankAccountEntity accountEntity2 = createBankAccountEntity(11L, instantDate);
-        List<BankAccountEntity> accounts = new ArrayList<BankAccountEntity>();
+        List<BankAccountEntity> accounts = new ArrayList<>();
         accounts.add(accountEntity1);
         accounts.add(accountEntity2);
         entity.setAccounts(accounts);
@@ -136,9 +141,11 @@ public class CustomerMapperTest {
         BankAccount account2 = createBankAccount(11L, instantDate);
         when(bankAccountMapper.toDto(accountEntity1)).thenReturn(account1);
         when(bankAccountMapper.toDto(accountEntity2)).thenReturn(account2);
-        
+
+        // Act
         Customer dto = customerMapper.toDto(entity);
-        
+
+        // Assert
         assertThat(dto.getId()).isEqualTo(1L);
         assertThat(dto.getFirstName()).hasToString("Paul");
         assertThat(dto.getLastName()).hasToString("Martin");
@@ -152,11 +159,10 @@ public class CustomerMapperTest {
         assertThat(dto.getEmail()).hasToString("jean.dupont@yahoo.fr");
         assertThat(dto.getPhoneNumber()).hasToString("+33642645678");
         assertThat(dto.getAccounts()).hasSize(2);
-        Set<BankAccount> accoutsToCompar = Stream.of(account1, account2).collect(Collectors.toSet());
-        assertThat(dto.getAccounts()).containsExactlyInAnyOrderElementsOf(accoutsToCompar);
+        Set<BankAccount> accountsToCompare = Stream.of(account1, account2).collect(Collectors.toSet());
+        assertThat(dto.getAccounts()).containsExactlyInAnyOrderElementsOf(accountsToCompare);
         assertThat(dto.getMetadata().get("contact_preferences")).isEqualTo("email");
         assertThat(dto.getMetadata().get("annual_salary")).isEqualTo("52000");
-        
         verify(bankAccountMapper).toDto(accountEntity1);
         verify(bankAccountMapper).toDto(accountEntity2);
         verifyNoMoreInteractions(bankAccountMapper);
@@ -164,6 +170,7 @@ public class CustomerMapperTest {
     
     @Test
     public void toEntity_shouldMapEntityValues_whenDtoHasValues() {
+        // Arrange
         Customer model = new Customer();
         model.setId(1L);
         model.setFirstName("Paul");
@@ -180,7 +187,7 @@ public class CustomerMapperTest {
         Instant instantDate = Instant.now();
         BankAccount account1 = createBankAccount(10L, instantDate);
         BankAccount account2 = createBankAccount(11L, instantDate);
-        List<BankAccount> accounts = new ArrayList<BankAccount>();
+        List<BankAccount> accounts = new ArrayList<>();
         accounts.add(account1);
         accounts.add(account2);
         model.setAccounts(accounts);
@@ -194,9 +201,11 @@ public class CustomerMapperTest {
         BankAccountEntity accountEntity2 = createBankAccountEntity(11L, instantDate);
         when(bankAccountMapper.toEntity(account1)).thenReturn(accountEntity1);
         when(bankAccountMapper.toEntity(account2)).thenReturn(accountEntity2);
-        
+
+        // Act
         CustomerEntity entity = customerMapper.toEntity(model);
-        
+
+        // Assert
         assertThat(entity.getId()).isEqualTo(1L);
         assertThat(entity.getFirstName()).hasToString("Paul");
         assertThat(entity.getLastName()).hasToString("Martin");
@@ -210,16 +219,15 @@ public class CustomerMapperTest {
         assertThat(entity.getEmail()).hasToString("jean.dupont@yahoo.fr");
         assertThat(entity.getPhoneNumber()).hasToString("+33642645678");
         assertThat(entity.getAccounts()).hasSize(2);
-        Set<BankAccountEntity> accountsToCompar = Stream.of(accountEntity1, accountEntity2).collect(Collectors.toSet());
-        assertThat(entity.getAccounts()).containsExactlyInAnyOrderElementsOf(accountsToCompar);
+        Set<BankAccountEntity> accountsToCompare = Stream.of(accountEntity1, accountEntity2).collect(Collectors.toSet());
+        assertThat(entity.getAccounts()).containsExactlyInAnyOrderElementsOf(accountsToCompare);
         assertThat(entity.getMetadata()).hasToString("{\"contact_preferences\":\"email\",\"annual_salary\":\"48000\"}");
-
         verify(bankAccountMapper).toEntity(account1);
         verify(bankAccountMapper).toEntity(account2);
         verifyNoMoreInteractions(bankAccountMapper);
     }
     
-    private BankAccount createBankAccount(long accountId, Instant instantDate) {
+    private BankAccount createBankAccount(long accountId, Instant timestamp) {
         BankAccount bankAccount = new CheckingBankAccount();
         bankAccount.setId(accountId);
         bankAccount.setType(AccountType.CHECKING);
@@ -228,9 +236,39 @@ public class CustomerMapperTest {
         customersId.add(99L);
         bankAccount.setCustomersId(customersId);
         Set<Transaction> transactions = new HashSet<>();
-        transactions.add(TransactionTestUtils.createTransaction(99L, accountId, instantDate));
-        transactions.add(TransactionTestUtils.createTransaction(100L, accountId, instantDate));
-        transactions.add(TransactionTestUtils.createTransaction(100L, accountId, instantDate));
+        transactions.add(Transaction.builder()
+                .id(100L)
+                .type(CREDIT)
+                .emitterAccountId(accountId)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal("100"))
+                .currency("EUR")
+                .status(ERROR)
+                .date(timestamp)
+                .label("transaction test")
+                .build());
+        transactions.add(Transaction.builder()
+                .id(100L)
+                .type(CREDIT)
+                .emitterAccountId(accountId)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal("100"))
+                .currency("EUR")
+                .status(ERROR)
+                .date(timestamp)
+                .label("transaction test")
+                .build());
+        transactions.add(Transaction.builder()
+                .id(100L)
+                .type(CREDIT)
+                .emitterAccountId(accountId)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal("100"))
+                .currency("EUR")
+                .status(ERROR)
+                .date(timestamp)
+                .label("transaction test")
+                .build());
         bankAccount.setIssuedTransactions(transactions);
         return bankAccount;
     }
@@ -244,9 +282,22 @@ public class CustomerMapperTest {
         customersId.add(new CustomerEntity());
         bankAccountEntity.setCustomers(customersId);
         HashSet<TransactionEntity> transactionEntities = new HashSet<>();
-        transactionEntities.add(TransactionTestUtils.createTransactionEntity(99L, instantDate));
-        transactionEntities.add(TransactionTestUtils.createTransactionEntity(100L, instantDate));
+        transactionEntities.add(createTransactionEntity(99L, instantDate));
+        transactionEntities.add(createTransactionEntity(100L, instantDate));
         bankAccountEntity.setIssuedTransactions(transactionEntities);
         return bankAccountEntity;
+    }
+
+    private TransactionEntity createTransactionEntity(long id, Instant instantDate) {
+        TransactionEntity transactionEntity = new TransactionEntity();
+        transactionEntity.setId(id);
+        transactionEntity.setEmitterBankAccountEntity(null);
+        transactionEntity.setReceiverBankAccountEntity(null);
+        transactionEntity.setAmount(new BigDecimal("100"));
+        transactionEntity.setType(TransactionType.CREDIT);
+        transactionEntity.setStatus(TransactionStatus.ERROR);
+        transactionEntity.setDate(instantDate);
+        transactionEntity.setLabel("transaction test");
+        return transactionEntity;
     }
 }
