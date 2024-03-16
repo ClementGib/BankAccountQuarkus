@@ -42,9 +42,23 @@ class TransactionTypeProcessingServiceImplTest {
         long emitterAccountId = 99L;
         long receiverAccountId = 77L;
         Instant instantDate = Instant.now();
-        Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, new BigDecimal("1000"), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction transaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         Map<String, String> metadata = Map.of("error", "Emitter bank account 99 is not found.");
-        Transaction erroredTransaction = TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, new BigDecimal("1000"), ERROR, instantDate, metadata);
+        Transaction erroredTransaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(ERROR)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
 
         when(bankAccountService.findBankAccount(emitterAccountId)).thenThrow(new NoSuchElementException("Emitter bank account 99 is not found."));
         when(transactionStatusService.setStatus(eq(transaction), eq(ERROR), eq(metadata))).thenReturn(erroredTransaction);
@@ -54,7 +68,14 @@ class TransactionTypeProcessingServiceImplTest {
 
         // Assert
         assertThat(returnedTransaction).usingRecursiveComparison()
-                .isEqualTo(TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, new BigDecimal("1000"), ERROR, instantDate, metadata));
+                .isEqualTo(Transaction.builder()
+                        .emitterAccountId(emitterAccountId)
+                        .receiverAccountId(receiverAccountId)
+                        .amount(new BigDecimal("1000"))
+                        .status(ERROR)
+                        .date(instantDate)
+                        .metadata(new HashMap<>())
+                        .build());
         verify(bankAccountService).findBankAccount(eq(emitterAccountId));
         verify(transactionStatusService).setStatus(eq(transaction), eq(ERROR), eq(metadata));
         verifyNoMoreInteractions(bankAccountService, transactionStatusService);
@@ -67,9 +88,23 @@ class TransactionTypeProcessingServiceImplTest {
         long receiverAccountId = 77L;
         Money amountOfMoney = Money.of(new BigDecimal("0"));
         Instant instantDate = Instant.now();
-        Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, new BigDecimal("1000"), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction transaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         Map<String, String> metadata = Map.of("error", "Receiver bank account 77 is not found.");
-        Transaction erroredTransaction = TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, new BigDecimal("1000"), ERROR, instantDate, metadata);
+        Transaction erroredTransaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(ERROR)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         BankAccount emitterBankAccount = CheckingBankAccount.builder()
                 .id(emitterAccountId)
                 .type(CHECKING)
@@ -87,7 +122,14 @@ class TransactionTypeProcessingServiceImplTest {
 
         // Assert
         assertThat(returnedTransaction).usingRecursiveComparison()
-                .isEqualTo (TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, new BigDecimal("1000"), ERROR, instantDate, metadata));
+                .isEqualTo(Transaction.builder()
+                        .emitterAccountId(emitterAccountId)
+                        .receiverAccountId(receiverAccountId)
+                        .amount(new BigDecimal("1000"))
+                        .status(ERROR)
+                        .date(instantDate)
+                        .metadata(new HashMap<>())
+                        .build());
         verify(bankAccountService).findBankAccount(eq(emitterAccountId));
         verify(bankAccountService).findBankAccount(eq(receiverAccountId));
         verify(transactionStatusService).setStatus(eq(transaction), eq(ERROR), eq(metadata));
@@ -97,14 +139,30 @@ class TransactionTypeProcessingServiceImplTest {
     @Test
     public void credit_shouldReturnCompletedTransaction_whenAccountsAreFoundAndCreditTransactionIsValid() {
         // Arrange
-        long emitterBankAccountId = 99L;
+        long emitterAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Mockito.mock(Money.class);
         Instant instantDate = Instant.now();
-        Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("1000"), UNPROCESSED, instantDate, new HashMap<>());
-        Transaction outstandingTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("1000"), OUTSTANDING, instantDate, new HashMap<>());
+        Transaction transaction = Transaction.builder()
+                .id(1L)
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
+        Transaction outstandingTransaction = Transaction.builder()
+                .id(1L)
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         BankAccount emitterBankAccount = CheckingBankAccount.builder()
-                .id(emitterBankAccountId)
+                .id(emitterAccountId)
                 .type(CHECKING)
                 .balance(amountOfMoney)
                 .customersId(List.of(99L))
@@ -121,16 +179,24 @@ class TransactionTypeProcessingServiceImplTest {
                 "receiver_amount_before", "0",
                 "emitter_amount_after", "0",
                 "receiver_amount_after", "1000");
-        Transaction completedTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("1000"), COMPLETED, instantDate, metadataAfter);
+        Transaction completedTransaction = Transaction.builder()
+                .id(1L)
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(COMPLETED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         BankAccount updatedEmitterBankAccount = CheckingBankAccount.builder()
-                .id(emitterBankAccountId)
+                .id(emitterAccountId)
                 .type(CHECKING)
                 .balance(amountOfMoney)
                 .customersId(List.of(99L))
                 .issuedTransactions(Set.of(completedTransaction))
                 .build();
 
-        when(bankAccountService.findBankAccount(emitterBankAccountId)).thenReturn(emitterBankAccount);
+        when(bankAccountService.findBankAccount(emitterAccountId)).thenReturn(emitterBankAccount);
         when(bankAccountService.findBankAccount(receiverAccountId)).thenReturn(receiverBankAccount);
         when(transactionStatusService.setAsOutstanding(transaction)).thenReturn(outstandingTransaction);
         when(amountOfMoney.getAmount())
@@ -148,19 +214,34 @@ class TransactionTypeProcessingServiceImplTest {
 
         // Assert
         assertThat(returnedTransaction).usingRecursiveComparison()
-                .isEqualTo (TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("1000"), COMPLETED, instantDate, metadataAfter));
+                .isEqualTo(Transaction.builder()
+                        .id(1L)
+                        .emitterAccountId(emitterAccountId)
+                        .receiverAccountId(receiverAccountId)
+                        .amount(new BigDecimal("1000"))
+                        .status(COMPLETED)
+                        .date(instantDate)
+                        .metadata(new HashMap<>())
+                        .build());
     }
 
     @Test
     public void credit_shouldAddMoneyToTheReceiverAccount_whenAccountsAreFound_fromCreditTransaction() {
         // Arrange
-        long emitterBankAccountId = 99L;
+        long emitterAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Mockito.mock(Money.class);
         Instant instantDate = Instant.now();
-        Transaction oldTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("1000"), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction oldTransaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         BankAccount emitterBankAccount = CheckingBankAccount.builder()
-                .id(emitterBankAccountId)
+                .id(emitterAccountId)
                 .type(CHECKING)
                 .balance(amountOfMoney)
                 .customersId(List.of(99L))
@@ -173,23 +254,47 @@ class TransactionTypeProcessingServiceImplTest {
                 .customersId(List.of(99L))
                 .build();
 
-        Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("1000"), UNPROCESSED, instantDate, new HashMap<>());
-        Transaction outstandingTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("1000"), OUTSTANDING, instantDate, new HashMap<>());
+        Transaction transaction = Transaction.builder()
+                .id(1L)
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
+        Transaction outstandingTransaction = Transaction.builder()
+                .id(1L)
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(OUTSTANDING)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
 
         Map<String, String> metadataAfter = Map.of("emitter_amount_before", "1000",
                 "receiver_amount_before", "0",
                 "emitter_amount_after", "0",
                 "receiver_amount_after", "1000");
-        Transaction completedTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("1000"), COMPLETED, instantDate, metadataAfter);
+        Transaction completedTransaction = Transaction.builder()
+                .id(1L)
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(COMPLETED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         BankAccount updatedEmitterBankAccount = CheckingBankAccount.builder()
-                .id(emitterBankAccountId)
+                .id(emitterAccountId)
                 .type(CHECKING)
                 .balance(amountOfMoney)
                 .customersId(List.of(99L))
                 .issuedTransactions(Set.of(completedTransaction))
                 .build();
 
-        when(bankAccountService.findBankAccount(emitterBankAccountId)).thenReturn(emitterBankAccount);
+        when(bankAccountService.findBankAccount(emitterAccountId)).thenReturn(emitterBankAccount);
         when(bankAccountService.findBankAccount(receiverAccountId)).thenReturn(receiverBankAccount);
         when(transactionStatusService.setAsOutstanding(transaction)).thenReturn(outstandingTransaction);
         when(amountOfMoney.getAmount())
@@ -204,7 +309,7 @@ class TransactionTypeProcessingServiceImplTest {
         transactionProcessingService.credit(transaction);
 
         // Assert
-        verify(bankAccountService).findBankAccount(eq(emitterBankAccountId));
+        verify(bankAccountService).findBankAccount(eq(emitterAccountId));
         verify(bankAccountService).findBankAccount(eq(receiverAccountId));
         verify(transactionStatusService).setAsOutstanding(transaction);
         verify(bankAccountService).transferAmountBetweenAccounts(outstandingTransaction, emitterBankAccount, receiverBankAccount);
@@ -218,13 +323,20 @@ class TransactionTypeProcessingServiceImplTest {
     @Test
     public void credit_shouldReturnRefusedTransaction_whenTransferThrowTransactionExceptionException() {
         // Arrange
-        long emitterBankAccountId = 99L;
+        long emitterAccountId = 99L;
         long receiverAccountId = 77L;
         Money amountOfMoney = Mockito.mock(Money.class);
         Instant instantDate = Instant.now();
-        Transaction oldTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("-1000"), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction oldTransaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("-1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         BankAccount emitterBankAccount = CheckingBankAccount.builder()
-                .id(emitterBankAccountId)
+                .id(emitterAccountId)
                 .type(CHECKING)
                 .balance(amountOfMoney)
                 .customersId(List.of(99L))
@@ -237,11 +349,25 @@ class TransactionTypeProcessingServiceImplTest {
                 .customersId(List.of(99L))
                 .build();
 
-        Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("-1000"), UNPROCESSED, instantDate, new HashMap<>());
-        Transaction outstandingTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverAccountId, new BigDecimal("-1000"), OUTSTANDING, instantDate, new HashMap<>());
+        Transaction transaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("-1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
+        Transaction outstandingTransaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("-1000"))
+                .status(OUTSTANDING)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         Map<String, String> metadataAfter = Map.of("error", "Credit transaction 1 should have positive value, actual value: -1000");
 
-        when(bankAccountService.findBankAccount(emitterBankAccountId)).thenReturn(emitterBankAccount);
+        when(bankAccountService.findBankAccount(emitterAccountId)).thenReturn(emitterBankAccount);
         when(bankAccountService.findBankAccount(receiverAccountId)).thenReturn(receiverBankAccount);
         when(transactionStatusService.setAsOutstanding(transaction)).thenReturn(outstandingTransaction);
         when(amountOfMoney.getAmount())
@@ -254,7 +380,7 @@ class TransactionTypeProcessingServiceImplTest {
         transactionProcessingService.credit(transaction);
 
         // Assert
-        verify(bankAccountService).findBankAccount(eq(emitterBankAccountId));
+        verify(bankAccountService).findBankAccount(eq(emitterAccountId));
         verify(bankAccountService).findBankAccount(eq(receiverAccountId));
         verify(transactionStatusService).setAsOutstanding(transaction);
         verify(bankAccountService).transferAmountBetweenAccounts(outstandingTransaction, emitterBankAccount, receiverBankAccount);
@@ -265,35 +391,63 @@ class TransactionTypeProcessingServiceImplTest {
     @Test
     public void credit_shouldReturnErroredTransaction_whenAddTransactionThrowsBankAccountException() {
         // Arrange
-        long emitterBankAccountId = 99L;
-        long receiverBankAccountId = 77L;
+        long emitterAccountId = 99L;
+        long receiverAccountId = 77L;
         Money amountOfMoney = Mockito.mock(Money.class);
         Instant instantDate = Instant.now();
-        Transaction oldTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverBankAccountId, new BigDecimal("1000"), UNPROCESSED, instantDate, new HashMap<>());
+        Transaction oldTransaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         BankAccount emitterBankAccount = CheckingBankAccount.builder()
-                .id(emitterBankAccountId)
+                .id(emitterAccountId)
                 .type(CHECKING)
                 .balance(amountOfMoney)
                 .customersId(List.of(99L))
                 .issuedTransactions(Set.of(oldTransaction))
                 .build();
         BankAccount receiverBankAccount = CheckingBankAccount.builder()
-                .id(receiverBankAccountId)
+                .id(receiverAccountId)
                 .type(CHECKING)
                 .balance(amountOfMoney)
                 .customersId(List.of(99L))
                 .build();
 
-        Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverBankAccountId, new BigDecimal("1000"), UNPROCESSED, instantDate, new HashMap<>());
-        Transaction outstandingTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverBankAccountId, new BigDecimal("1000"), OUTSTANDING, instantDate, new HashMap<>());
+        Transaction transaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(UNPROCESSED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
+        Transaction outstandingTransaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(OUTSTANDING)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
 
         Map<String, String> metadataDuringProcess = Map.of("emitter_amount_before", "0",
                 "receiver_amount_before", "0",
                 "emitter_amount_after", "-1000",
                 "receiver_amount_after", "1000");
-        Transaction completedTransaction = TransactionTestUtils.createTransactionUtils(emitterBankAccountId, receiverBankAccountId, new BigDecimal("1000"), COMPLETED, instantDate, new HashMap<>());
+        Transaction completedTransaction = Transaction.builder()
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal("1000"))
+                .status(COMPLETED)
+                .date(instantDate)
+                .metadata(new HashMap<>())
+                .build();
         BankAccount updatedEmitterBankAccount = CheckingBankAccount.builder()
-                .id(emitterBankAccountId)
+                .id(emitterAccountId)
                 .type(CHECKING)
                 .balance(amountOfMoney)
                 .customersId(List.of(99L))
@@ -301,8 +455,8 @@ class TransactionTypeProcessingServiceImplTest {
                 .build();
         Map<String, String> metadataAfterError = Map.of("error", "Amount of credit should not be negative");
 
-        when(bankAccountService.findBankAccount(emitterBankAccountId)).thenReturn(emitterBankAccount);
-        when(bankAccountService.findBankAccount(receiverBankAccountId)).thenReturn(receiverBankAccount);
+        when(bankAccountService.findBankAccount(emitterAccountId)).thenReturn(emitterBankAccount);
+        when(bankAccountService.findBankAccount(receiverAccountId)).thenReturn(receiverBankAccount);
         when(transactionStatusService.setAsOutstanding(transaction)).thenReturn(outstandingTransaction);
         when(amountOfMoney.getAmount())
                 .thenReturn(new BigDecimal("0"))
@@ -317,8 +471,8 @@ class TransactionTypeProcessingServiceImplTest {
         transactionProcessingService.credit(transaction);
 
         // Assert
-        verify(bankAccountService).findBankAccount(eq(emitterBankAccountId));
-        verify(bankAccountService).findBankAccount(eq(receiverBankAccountId));
+        verify(bankAccountService).findBankAccount(eq(emitterAccountId));
+        verify(bankAccountService).findBankAccount(eq(receiverAccountId));
         verify(transactionStatusService).setAsOutstanding(transaction);
         verify(bankAccountService).transferAmountBetweenAccounts(outstandingTransaction, emitterBankAccount, receiverBankAccount);
         verify(transactionStatusService).setStatus(outstandingTransaction, COMPLETED, metadataDuringProcess);

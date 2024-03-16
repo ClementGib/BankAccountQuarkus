@@ -1,6 +1,5 @@
 package com.cdx.bas.application.bank.account;
 
-import com.cdx.bas.application.bank.transaction.TransactionTestUtils;
 import com.cdx.bas.domain.bank.account.BankAccount;
 import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
 import com.cdx.bas.domain.bank.account.BankAccountServicePort;
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.cdx.bas.domain.bank.account.type.AccountType.CHECKING;
+import static com.cdx.bas.domain.bank.transaction.status.TransactionStatus.ERROR;
+import static com.cdx.bas.domain.bank.transaction.type.TransactionType.CREDIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -92,7 +93,17 @@ public class BankAccountServiceImplTest {
                 .build();
 
         // Act
-        Transaction transaction = TransactionTestUtils.createTransaction(10L, 99L, timestamp);
+        Transaction transaction = Transaction.builder()
+                .id(10L)
+                .type(CREDIT)
+                .emitterAccountId(99L)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal("100"))
+                .currency("EUR")
+                .status(ERROR)
+                .date(timestamp)
+                .label("transaction test")
+                .build();
 
         // Assert
         BankAccount actualBankAccount = bankAccountService.addTransaction(transaction, bankAccount);
@@ -113,7 +124,17 @@ public class BankAccountServiceImplTest {
                 .customersId(List.of(99L))
                 .issuedTransactions(new HashSet<>())
                 .build();
-        Transaction transaction = TransactionTestUtils.createTransaction(10L, 99L, timestamp);
+        Transaction transaction = Transaction.builder()
+                .id(10L)
+                .type(CREDIT)
+                .emitterAccountId(99L)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal("100"))
+                .currency("EUR")
+                .status(ERROR)
+                .date(timestamp)
+                .label("transaction test")
+                .build();
         bankAccount.getIssuedTransactions().add(transaction);
 
         when(transactionService.mergeTransactions(transaction, transaction)).thenReturn(transaction);
@@ -153,7 +174,17 @@ public class BankAccountServiceImplTest {
     @Test
     public void transferAmountBetweenAccounts_shouldAddAmountOfMoneyCorrespondingToTransactionAmount_whenTransactionHasAmount() {
         // Arrange
-        Transaction transaction = TransactionTestUtils.createTransaction(10L, 99L, Instant.now());
+        Transaction transaction = Transaction.builder()
+                .id(10L)
+                .type(CREDIT)
+                .emitterAccountId(99L)
+                .receiverAccountId(77L)
+                .amount(new BigDecimal("100"))
+                .currency("EUR")
+                .status(ERROR)
+                .date(Instant.now())
+                .label("transaction test")
+                .build();
         BankAccount bankAccountEmitter = CheckingBankAccount.builder()
                 .id(99L)
                 .type(CHECKING)

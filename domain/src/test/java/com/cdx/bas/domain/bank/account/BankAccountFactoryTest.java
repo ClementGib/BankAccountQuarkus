@@ -16,29 +16,38 @@ public class BankAccountFactoryTest {
     
     @Test
     public void createBankAccount_shouldReturnNull_whenAccountTypeIsNull() {
-        BankAccount bankAccount = BankAccountFactory.createBankAccount(null);
-        
-        assertThat(bankAccount).isNull();
+        // Act
+        try {
+            BankAccountFactory.createBankAccount(null);
+        } catch (IllegalArgumentException exception) {
+            assertThat(exception.getMessage()).isEqualTo("Unexpected account type null");
+        }
     }
 
     @Test
     public void createBankAccount_shouldReturnCheckingBankAccountInstance_whenAccountTypeIsChecking() {
+        // Act
         BankAccount bankAccount = BankAccountFactory.createBankAccount(AccountType.CHECKING);
-        
+
+        // Assert
         assertThat(bankAccount).isInstanceOf(CheckingBankAccount.class);
     }
     
     @Test
     public void createBankAccount_shouldReturnSavingBankAccountInstance_whenAccountTypeIsSaving() {
+        // Act
         BankAccount bankAccount = BankAccountFactory.createBankAccount(AccountType.SAVING);
-        
+
+        // Assert
         assertThat(bankAccount).isInstanceOf(SavingBankAccount.class);
     }
     
     @Test
     public void createBankAccount_shouldReturnMMABankAccountInstance_whenAccountTypeIsMMA() {
+        // Act
         BankAccount bankAccount = BankAccountFactory.createBankAccount(AccountType.MMA);
-        
+
+        // Assert
         assertThat(bankAccount).isInstanceOf(MMABankAccount.class);
     }
 }

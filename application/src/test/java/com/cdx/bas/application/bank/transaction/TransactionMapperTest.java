@@ -2,7 +2,8 @@ package com.cdx.bas.application.bank.transaction;
 
 import com.cdx.bas.application.bank.account.BankAccountEntity;
 import com.cdx.bas.application.bank.account.BankAccountRepository;
-import com.cdx.bas.application.bank.account.BankAccountEntityUtils;
+import com.cdx.bas.application.bank.customer.CustomerEntity;
+import com.cdx.bas.domain.bank.account.type.AccountType;
 import com.cdx.bas.domain.bank.transaction.Transaction;
 import com.cdx.bas.domain.bank.transaction.status.TransactionStatus;
 import com.cdx.bas.domain.bank.transaction.type.TransactionType;
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -94,11 +95,21 @@ public class TransactionMapperTest {
     
     @Test
     public void toDto_shouldMapEntityValues_whenEntityHasValues() {
-        Instant date = Instant.now();
+        Instant timestamp = Instant.now();
         long emitterAccountId = 99L;
         long receiverAccountId = 77L;
         Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "100");
-        TransactionEntity transactionEntity = TransactionTestUtils.createTransactionEntityUtils(emitterAccountId, receiverAccountId, date);
+        TransactionEntity transactionEntity = new TransactionEntity();
+        transactionEntity.setId(10L);
+        transactionEntity.setEmitterBankAccountEntity(createBankAccountEntity(emitterAccountId));
+        transactionEntity.setReceiverBankAccountEntity(createBankAccountEntity(receiverAccountId));
+        transactionEntity.setAmount(new BigDecimal("100"));
+        transactionEntity.setCurrency("EUR");
+        transactionEntity.setType(TransactionType.CREDIT);
+        transactionEntity.setStatus(TransactionStatus.COMPLETED);
+        transactionEntity.setDate(timestamp);
+        transactionEntity.setLabel("transaction test");
+        transactionEntity.setMetadata("{\"amount_after\" : \"100\", \"amount_before\" : \"0\"}");
 
         Transaction dto = transactionMapper.toDto(transactionEntity);
 
@@ -109,24 +120,32 @@ public class TransactionMapperTest {
         assertThat(dto.getCurrency()).isEqualTo("EUR");
         assertThat(dto.getType()).isEqualTo(TransactionType.CREDIT);
         assertThat(dto.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
-        assertThat(dto.getDate()).isEqualTo(date);
+        assertThat(dto.getDate()).isEqualTo(timestamp);
         assertThat(dto.getLabel()).hasToString("transaction test");
         assertThat(dto.getMetadata()).usingRecursiveComparison().isEqualTo(metadata);
     }
     
     @Test
     public void toEntity_shouldMapEntityValues_whenDtoHasValues() {
-        Instant date = Instant.now();
+        Instant timestamp = Instant.now();
         long emitterAccountId = 99L;
         long receiverAccountId = 77L;
-        String strMetadata = "{\"amount_after\":\"100\",\"amount_before\":\"0\"}";
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("amount_before", "0");
-        metadata.put("amount_after", "100");
-        BankAccountEntity emitterBankAccountEntity = BankAccountEntityUtils.createBankAccountEntity(emitterAccountId);
-        BankAccountEntity receiverBankAccountEntity = BankAccountEntityUtils.createBankAccountEntity(receiverAccountId);
-        Transaction transaction = TransactionTestUtils.createTransactionUtils(emitterAccountId, receiverAccountId, date);
-        transaction.setMetadata(metadata);
+
+        Map<String, String> metadata = Map.of("amount_before", "0", "amount_after", "100");
+        BankAccountEntity emitterBankAccountEntity = createBankAccountEntity(emitterAccountId);
+        BankAccountEntity receiverBankAccountEntity = createBankAccountEntity(receiverAccountId);
+        Transaction transaction = Transaction.builder()
+                .id(10L)
+                .emitterAccountId(emitterAccountId)
+                .receiverAccountId(receiverAccountId)
+                .amount(new BigDecimal(100))
+                .currency("EUR")
+                .type(TransactionType.CREDIT)
+                .status(TransactionStatus.COMPLETED)
+                .date(timestamp)
+                .label("transaction test")
+                .metadata(metadata)
+                .build();
 
         when(bankAccountRepository.findByIdOptional(99L)).thenReturn(Optional.of(emitterBankAccountEntity));
         when(bankAccountRepository.findByIdOptional(77L)).thenReturn(Optional.of(receiverBankAccountEntity));
@@ -140,8 +159,23 @@ public class TransactionMapperTest {
         assertThat(entity.getCurrency()).isEqualTo("EUR");
         assertThat(entity.getType()).isEqualTo(TransactionType.CREDIT);
         assertThat(entity.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
-        assertThat(entity.getDate()).isEqualTo(date);
+        assertThat(entity.getDate()).isEqualTo(timestamp);
         assertThat(entity.getLabel()).hasToString("transaction test");
-        assertThat(entity.getMetadata()).contains(strMetadata);
+        String amountBefore = "\"amount_before\":\"0\"";
+        String amountAfter = "\"amount_after\":\"100\"";
+        assertThat(entity.getMetadata())
+                .contains(amountBefore)
+                .contains(amountAfter);
+    }
+
+    public BankAccountEntity createBankAccountEntity(long id) {
+        BankAccountEntity bankAccountEntity = new BankAccountEntity();
+        bankAccountEntity.setId(id);
+        bankAccountEntity.setType(AccountType.CHECKING);
+        bankAccountEntity.setBalance(new BigDecimal("100"));
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setId(99L);
+        bankAccountEntity.setCustomers(List.of(customerEntity));
+        return bankAccountEntity;
     }
 }
