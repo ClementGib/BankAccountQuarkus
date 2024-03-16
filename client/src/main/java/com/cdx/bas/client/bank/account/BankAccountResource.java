@@ -12,7 +12,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-import java.util.Set;
+import java.util.List;
 
 @Path("/accounts")
 @RequestScoped
@@ -25,7 +25,7 @@ public class BankAccountResource implements BankAccountControllerPort {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     @Override
-    public Set<BankAccount> getAll() {
+    public List<BankAccount> getAll() {
         return bankAccountServicePort.getAll();
     }
 

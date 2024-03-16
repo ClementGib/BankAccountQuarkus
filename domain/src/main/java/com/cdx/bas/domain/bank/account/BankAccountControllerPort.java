@@ -1,6 +1,6 @@
 package com.cdx.bas.domain.bank.account;
 
-import java.util.Set;
+import java.util.List;
 
 public interface BankAccountControllerPort {
 
@@ -9,7 +9,7 @@ public interface BankAccountControllerPort {
      *
      * @return all BankAccount found
      */
-    public Set<BankAccount> getAll();
+    public List<BankAccount> getAll();
     
     /**
      * Find BankAccount from its id

@@ -1,12 +1,15 @@
 package com.cdx.bas.application.bank.account;
 
-import com.cdx.bas.domain.bank.account.*;
+import com.cdx.bas.domain.bank.account.BankAccount;
+import com.cdx.bas.domain.bank.account.BankAccountException;
+import com.cdx.bas.domain.bank.account.BankAccountPersistencePort;
+import com.cdx.bas.domain.bank.account.BankAccountServicePort;
 import com.cdx.bas.domain.bank.account.validation.BankAccountValidator;
-import com.cdx.bas.domain.money.Money;
 import com.cdx.bas.domain.bank.transaction.Transaction;
 import com.cdx.bas.domain.bank.transaction.TransactionException;
 import com.cdx.bas.domain.bank.transaction.TransactionServicePort;
 import com.cdx.bas.domain.currency.rate.ExchangeRateUtils;
+import com.cdx.bas.domain.money.Money;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -14,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RequestScoped
 public class BankAccountServiceImpl implements BankAccountServicePort {
@@ -33,7 +36,7 @@ public class BankAccountServiceImpl implements BankAccountServicePort {
 
     @Override
     @Transactional
-    public Set<BankAccount> getAll() {
+    public List<BankAccount> getAll() {
         return bankAccountRepository.getAll();
     }
 
