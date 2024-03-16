@@ -51,7 +51,7 @@ public class TransactionServiceImpl implements TransactionServicePort {
 
     @Override
     @Transactional
-    public void createTransaction(NewTransaction newTransaction) throws TransactionException {
+    public void createDigitalTransaction(NewTransaction newTransaction) throws TransactionException {
         Transaction transactionToCreate = Transaction.builder()
                 .emitterAccountId(newTransaction.emitterAccountId())
                 .receiverAccountId(newTransaction.receiverAccountId())
@@ -63,7 +63,7 @@ public class TransactionServiceImpl implements TransactionServicePort {
                 .label(newTransaction.label())
                 .metadata(newTransaction.metadata())
                 .build();
-        transactionValidator.validateNewTransaction(transactionToCreate);
+        transactionValidator.validateNewDigitalTransaction(transactionToCreate);
         transactionRepository.create(transactionToCreate);
     }
 

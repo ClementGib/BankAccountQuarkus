@@ -10,8 +10,6 @@ import jakarta.validation.Validator;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.cdx.bas.domain.bank.transaction.type.TransactionType.*;
-
 
 @RequestScoped
 public class TransactionValidator {
@@ -19,22 +17,23 @@ public class TransactionValidator {
     @Inject
     Validator validator;
 
-    public void validateNewTransaction(Transaction transaction) throws TransactionException {
-        validateTransaction(transaction, NewTransactionGroup.class);
+    public void validateNewDigitalTransaction(Transaction transaction) throws TransactionException {
+        validateTransaction(transaction, NewTransactionGroup.class, DigitalTransactionGroup.class);
     }
 
-    public void validateExistingTransaction(Transaction transaction) throws TransactionException {
-        validateTransaction(transaction, ExistingTransactionGroup.class);
+    public void validateExistingDigitalTransaction(Transaction transaction) throws TransactionException {
+        validateTransaction(transaction, ExistingTransactionGroup.class, DigitalTransactionGroup.class);
     }
 
-    private void validateTransaction(Transaction transaction, Class<?> stateGroup) throws TransactionException {
+
+    public void validateCashTransaction(Transaction transaction) throws TransactionException {
+        validateTransaction(transaction, NewTransactionGroup.class, CashTransactionGroup.class);
+    }
+
+    private void validateTransaction(Transaction transaction, Class<?> stateGroup, Class<?> typeGroup) throws TransactionException {
         Set<ConstraintViolation<Transaction>> violations = new HashSet<>(validator.validate(transaction));
         violations.addAll(validator.validate(transaction, stateGroup));
-        if (DEPOSIT.equals(transaction.getType()) || WITHDRAW.equals(transaction.getType())) {
-            violations.addAll(validator.validate(transaction, CashMovementGroup.class));
-        } else if(CREDIT.equals(transaction.getType()) || DEBIT.equals(transaction.getType())) {
-            violations.addAll(validator.validate(transaction, AccountMovementGroup.class));
-        }
+        violations.addAll(validator.validate(transaction, typeGroup));
         checkConstraintViolation(violations);
     }
 

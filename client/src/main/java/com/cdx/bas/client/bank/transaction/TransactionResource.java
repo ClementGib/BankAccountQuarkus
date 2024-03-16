@@ -59,6 +59,29 @@ public class TransactionResource implements TransactionControllerPort {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Add transaction", description = "Returns acceptance information about the added transaction")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "New transaction accepted"),
+            @APIResponse(responseCode = "400", description = "Transaction invalid check error details"),
+            @APIResponse(responseCode = "500", description = "Unexpected error happened")
+    })
+    @Transactional
+    @Override
+    public Response addDigitalTransaction(NewTransaction newTransaction) {
+        try {
+            transactionServicePort.createDigitalTransaction(newTransaction);
+            return Response.status(Response.Status.ACCEPTED).entity("Deposit transaction accepted").build();
+        } catch (TransactionException transactionException) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(transactionException.getMessage()).build();
+        } catch (Exception exception) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unexpected error happened").build();
+        }
+    }
+
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Add deposit transaction", description = "Returns acceptance information about the added transaction")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "New transaction accepted"),
@@ -67,9 +90,9 @@ public class TransactionResource implements TransactionControllerPort {
     })
     @Transactional
     @Override
-    public Response create(NewTransaction newTransaction) {
+    public Response processCashTransaction(NewTransaction newTransaction) {
         try {
-            transactionServicePort.createTransaction(newTransaction);
+            transactionServicePort.createDigitalTransaction(newTransaction);
             return Response.status(Response.Status.ACCEPTED).entity("Deposit transaction accepted").build();
         } catch (TransactionException transactionException) {
             return Response.status(Response.Status.BAD_REQUEST).entity(transactionException.getMessage()).build();

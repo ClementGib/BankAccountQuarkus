@@ -31,11 +31,19 @@ public interface TransactionControllerPort {
     public Transaction findById(long id);
 
     /**
-     * Create a new transaction
+     * Create a new digital transaction
      *
-     * @param newTransaction to add to the BankAccount
+     * @param newTransaction to add to a BankAccount
      * @return Response with status corresponding to transaction validation or not
      */
-    public Response create(NewTransaction newTransaction);
+    public Response addDigitalTransaction(NewTransaction newTransaction);
+
+    /**
+     * process a new transaction
+     *
+     * @param newTransaction to process for a BankAccount
+     * @return Response with status corresponding to transaction validation or not
+     */
+    public Response processCashTransaction(NewTransaction newTransaction);
 
 }
