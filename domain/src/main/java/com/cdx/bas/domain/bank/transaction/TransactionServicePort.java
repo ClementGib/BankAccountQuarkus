@@ -24,7 +24,7 @@ public interface TransactionServicePort {
      *
      * @param newTransaction to add
      */
-    void createTransaction(NewTransaction newTransaction);
+    void createDigitalTransaction(NewTransaction newTransaction);
 
     /**
      * merge two transactions

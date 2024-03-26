@@ -30,16 +30,16 @@ public class Transaction implements Comparable<Transaction> {
     private Long id;
 
     @Positive(message = "Emitter account id  must be positive")
-    @Null(message = "Emitter account id must be null for cash movement.", groups = CashMovementGroup.class)
-    @NotNull(message = "Emitter account id must not be null.", groups = AccountMovementGroup.class)
+    @Null(message = "Emitter account id must be null for cash movement.", groups = CashTransactionGroup.class)
+    @NotNull(message = "Emitter account id must not be null.", groups = DigitalTransactionGroup.class)
     private Long emitterAccountId;
 
     @Positive(message = "Receiver account id  must be positive")
     @NotNull(message = "Receiver account id must not be null.")
     private Long receiverAccountId;
 
-    @Min(value = 10, message = "Amount must be greater than 10 for cash movement.", groups = CashMovementGroup.class)
-    @Min(value = 1, message = "Amount must be positive and greater than 0.", groups = AccountMovementGroup.class)
+    @Min(value = 10, message = "Amount must be greater than 10 for cash movement.", groups = CashTransactionGroup.class)
+    @Min(value = 1, message = "Amount must be positive and greater than 0.", groups = DigitalTransactionGroup.class)
     @NotNull(message = "Amount must not be null.")
     private BigDecimal amount;
 
@@ -48,6 +48,10 @@ public class Transaction implements Comparable<Transaction> {
     private String currency;
 
     @NotNull(message = "Type must not be null.")
+    @ValidTypes({
+            @ValidType(expectedTypes = {TransactionType.CREDIT, TransactionType.DEBIT}, groups = DigitalTransactionGroup.class),
+            @ValidType(expectedTypes = {TransactionType.DEPOSIT, TransactionType.WITHDRAW}, groups = CashTransactionGroup.class)
+    })
     private TransactionType type;
 
     @ValidStatus(expectedStatus = UNPROCESSED, groups = NewTransactionGroup.class)
@@ -60,8 +64,8 @@ public class Transaction implements Comparable<Transaction> {
     @NotNull(message = "Label must not be null.")
     private String label;
 
-    @NotNull(message = "Metadata must not be null for cash movements.", groups = CashMovementGroup.class)
-    @NotEmpty(message = "Bill must be define for cash movements.", groups = CashMovementGroup.class)
+    @NotNull(message = "Metadata must not be null for cash movements.", groups = CashTransactionGroup.class)
+    @NotEmpty(message = "Bill must be define for cash movements.", groups = CashTransactionGroup.class)
     private Map<String, String> metadata = new HashMap<>();
 
     @Override

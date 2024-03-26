@@ -150,7 +150,7 @@ class TransactionResourceTest {
         NewTransaction validNewTransaction =  new NewTransaction(1L, 2L, new BigDecimal("1000.00"), "EUR", CREDIT, "transaction 1", new HashMap<>());
         Transaction expectedCreatedTransaction = new Transaction(10L, 1L, 2L, new BigDecimal("1000.00"), "EUR", CREDIT, UNPROCESSED, timestampBefore, "transaction 1", new HashMap<>());
 
-       Response actualResponse = transactionResource.create(validNewTransaction);
+       Response actualResponse = transactionResource.add(validNewTransaction);
        Transaction actualTransaction = transactionResource.findById(10L);
        Instant timestampAfter = Instant.now();
        assertThat(actualResponse.getEntity()).isEqualTo("Deposit transaction accepted");
@@ -173,7 +173,7 @@ class TransactionResourceTest {
                 "Currency must not be null.",
                 "Amount must not be null.");
 
-        Response actualResponse = transactionResource.create(invalidNewTransaction);
+        Response actualResponse = transactionResource.add(invalidNewTransaction);
         List<String> actualLines = Arrays.asList(actualResponse.getEntity().toString().split("\n"));
         assertThat(actualLines).containsExactlyInAnyOrderElementsOf(expectedLines);
     }

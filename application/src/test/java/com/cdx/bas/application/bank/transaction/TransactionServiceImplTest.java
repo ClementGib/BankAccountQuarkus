@@ -38,7 +38,7 @@ public class TransactionServiceImplTest {
 
 
     @Test
-    public void getAll_shouldReturnAllTransactions_whenRepositoryReturnsTransactions() {
+    public void shouldReturnAllTransactions_whenRepositoryReturnsTransactions() {
         // Arrange
         Set<Transaction> transactions = Set.of(
                 Transaction.builder().id(1L).build(),
@@ -57,7 +57,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void findAllByStatus_shouldReturnTransactionCorrespondingToStatus_whenStatusIsValid() {
+    public void shouldReturnTransactionCorrespondingToStatus_whenStatusIsValid() {
         // Arrange
         Set<Transaction> transactions = Set.of(
                 Transaction.builder().id(1L).status(COMPLETED).build(),
@@ -76,7 +76,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void findAllByStatus_shouldThrowException_whenStatusIsInvalid() {
+    public void shouldThrowException_whenStatusIsInvalid() {
         // Act
         try {
             transactionService.findAllByStatus("INVALID");
@@ -88,7 +88,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void createTransaction_shouldCreateTransaction_whenNewTransactionIsValid() {
+    public void shouldCreateTransaction_whenNewTransactionIsValid() {
         // Arrange
         Instant timestamp = Instant.parse("2024-03-14T12:00:00Z");
         NewTransaction newTransaction = new NewTransaction(99L, 77L,
@@ -109,16 +109,16 @@ public class TransactionServiceImplTest {
         when(clock.instant()).thenReturn(timestamp);
 
         // Act
-        transactionService.createTransaction(newTransaction);
+        transactionService.createDigitalTransaction(newTransaction);
 
         // Assert
-        verify(transactionValidator).validateNewTransaction(transactionToCreate);
+        verify(transactionValidator).validateNewDigitalTransaction(transactionToCreate);
         verify(transactionRepository).create(transactionToCreate);
         verifyNoMoreInteractions(transactionValidator, transactionRepository);
     }
 
     @Test
-    public void createTransaction_shouldThrowException_whenNewTransactionIsInvalid() {
+    public void shouldThrowException_whenNewTransactionIsInvalid() {
         // Arrange
         Instant timestamp = Instant.parse("2024-03-14T12:00:00Z");
         Transaction invalidTransaction = new Transaction();
@@ -127,22 +127,22 @@ public class TransactionServiceImplTest {
         invalidTransaction.setMetadata(null);
 
         when(clock.instant()).thenReturn(timestamp);
-        doThrow(new TransactionException("invalid transaction...")).when(transactionValidator).validateNewTransaction(invalidTransaction);
+        doThrow(new TransactionException("invalid transaction...")).when(transactionValidator).validateNewDigitalTransaction(invalidTransaction);
 
         try {
             // Act
-            transactionService.createTransaction(new NewTransaction(null, null, null, null, null, null, null));
+            transactionService.createDigitalTransaction(new NewTransaction(null, null, null, null, null, null, null));
         } catch (TransactionException exception) {
             // Assert
             assertThat(exception.getMessage()).isEqualTo("invalid transaction...");
         }
-        verify(transactionValidator).validateNewTransaction(invalidTransaction);
+        verify(transactionValidator).validateNewDigitalTransaction(invalidTransaction);
         verifyNoMoreInteractions(transactionValidator);
         verifyNoInteractions(transactionRepository);
     }
 
     @Test
-    public void mergeTransaction_shouldMergeOldTransactionWithNewTransaction_whenOldTransactionAndNewTransactionAreValid() {
+    public void shouldMergeOldTransactionWithNewTransaction_whenOldTransactionAndNewTransactionAreValid() {
         // Arrange
         Transaction oldTransaction = Transaction.builder()
                 .id(1L)
@@ -186,7 +186,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void findTransaction_shouldFindTransaction_whenTransactionExists() {
+    public void shouldFindTransaction_whenTransactionExists() {
         // Arrange
         Transaction transaction = Transaction.builder()
                 .id(1L)
@@ -210,7 +210,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void findTransaction_shouldReturnNull_whenTransactionDoesNotExist() {
+    public void shouldReturnNull_whenTransactionDoesNotExist() {
         // Arrange
         when(transactionRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -224,7 +224,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void process_shouldProcessBankAccountCredit_whenTransactionHasCreditType() {
+    public void shouldProcessBankAccountCredit_whenTransactionHasCreditType() {
         // Arrange
         Transaction transaction = Transaction.builder()
                 .id(1L)
@@ -246,7 +246,7 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void process_shouldProcessBankAccountDeposit_whenTransactionHasDepositType() {
+    public void shouldProcessBankAccountDeposit_whenTransactionHasDepositType() {
         // Arrange
         Transaction transaction = Transaction.builder()
                 .id(1L)
